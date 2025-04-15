@@ -1,30 +1,22 @@
-<!-- For CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" 
-      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" 
-      crossorigin="anonymous">
-
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" 
-      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" 
-      crossorigin="anonymous">
-
-<link href="${pageContext.request.contextPath}/assets/css/materialdesignicons.min.css" rel="stylesheet" type="text/css" />
-<link href="${pageContext.request.contextPath}/assets/css/remixicon.css" rel="stylesheet" type="text/css" />
-<link href="https://unicons.iconscout.com/release/v3.0.6/css/line.css"  rel="stylesheet">
-<link href="${pageContext.request.contextPath}/assets/css/style.min.css" rel="stylesheet" type="text/css" id="theme-opt" />
-
-<!-- For JavaScript -->
-<script src="https://code.jquery.com/jquery-3.5.1.min.js" 
-        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" 
-crossorigin="anonymous"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" 
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" 
-crossorigin="anonymous"></script>
-
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" 
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" 
-crossorigin="anonymous"></script>
-
-<script src="${pageContext.request.contextPath}/assets/js/bootstrap.bundle.min.js"></script>
-<script src="${pageContext.request.contextPath}/assets/js/feather.min.js"></script>
-<script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
+ <!-- favicon -->
+        <link rel="shortcut icon" href="<c:url value='/assets/images/favicon.ico.png'/>">
+        <!-- Bootstrap -->
+        <link href="<c:url value='/assets/css/bootstrap.min.css'/>" rel="stylesheet" type="text/css" />
+        <!-- simplebar -->
+        <link href="<c:url value='/assets/css/simplebar.css'/>" type="text/css" />
+        <!-- Icons -->
+        <link href="<c:url value='/assets/css/materialdesignicons.min.css'/>" rel="stylesheet" type="text/css" />
+        <link href="<c:url value='/assets/css/remixicon.css'/>" rel="stylesheet" type="text/css" />
+        <link href="https://unicons.iconscout.com/release/v3.0.6/css/line.css"  rel="stylesheet">
+        <!-- Css -->
+        <link href="<c:url value='/assets/css/style.min.css'/>" rel="stylesheet" type="text/css" id="theme-opt" />
+        
+        <!-- javascript -->
+        <script src="<c:url value='../assets/js/bootstrap.bundle.min.js'/>"></script>
+        <c:url value='/assets/css/style.min.css'/>
+        <!-- simplebar -->
+        <script src="<c:url value='../assets/js/simplebar.min.js'/>"></script>
+        <!-- Icons -->
+        <script src="<c:url value='../assets/js/feather.min.js'/>"></script>
+        <!-- Main Js -->
+        <script src="<c:url value='../assets/js/app.js'/>"></script>
