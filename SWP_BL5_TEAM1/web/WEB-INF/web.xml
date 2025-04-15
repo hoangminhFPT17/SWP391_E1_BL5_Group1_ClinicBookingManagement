@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    <servlet>
+        <servlet-name>HomePageServlet</servlet-name>
+        <servlet-class>controller.Customer.HomePageServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ViewScheduleServlet</servlet-name>
+        <servlet-class>controller.Customer.ViewScheduleServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>BookScheduleServlet</servlet-name>
+        <servlet-class>controller.Customer.BookScheduleServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HomePageServlet</servlet-name>
+        <url-pattern>/home</url-pattern>
+    </servlet-mapping>
+    <welcome-file-list>
+        <welcome-file>home</welcome-file>
+    </welcome-file-list>
+    <servlet-mapping>
+        <servlet-name>ViewScheduleServlet</servlet-name>
+        <url-pattern>/myschedule</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BookScheduleServlet</servlet-name>
+        <url-pattern>/bookschedule</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+    <servlet>
+        <servlet-name>StaffListServlet</servlet-name>
+        <servlet-class>AdminController.StaffListServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StaffListServlet</servlet-name>
+        <url-pattern>/admin/StaffList</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>PaymentBookingServlet</servlet-name>
+        <servlet-class>controller.Customer.PaymentBookingServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PaymentBookingServlet</servlet-name>
+        <url-pattern>/payment</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>VnpayReturnBooking</servlet-name>
+        <servlet-class>controller.Customer.VnpayReturnBooking</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>VnpayReturnBooking</servlet-name>
+        <url-pattern>/vnpayReturn</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>ReportController</servlet-name>
+        <servlet-class>UserController.ReportController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReportController</servlet-name>
+        <url-pattern>/Report</url-pattern>
+    </servlet-mapping>
+    
+</web-app>
