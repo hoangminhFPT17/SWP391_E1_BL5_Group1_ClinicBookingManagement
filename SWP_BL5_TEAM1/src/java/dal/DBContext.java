@@ -17,16 +17,42 @@ import java.util.logging.Logger;
  */
 public class DBContext {
     protected Connection connection;
+    
+     // Configurable parameters
+    private static final String DB_HOST = "localhost";
+    private static final String DB_PORT = "3306";
+    private static final String DB_NAME = "swp_bl5_testing";
+    private static final String DB_USER = "root";
+    private static final String DB_PASSWORD = ""; // Update if needed
+    private static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
+    
     public DBContext() {
         try {
-            String user = "sa";
-            String pass = "1234";
-            // Updated URL uses only "localhost"
-            String url = "jdbc:sqlserver://localhost:1433;databaseName=";        
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            connection = DriverManager.getConnection(url, user, pass);         
+            Class.forName(DB_DRIVER);
+            String url = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME + "?useSSL=false&serverTimezone=UTC";
+            connection = DriverManager.getConnection(url, DB_USER, DB_PASSWORD);
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+     public boolean isConnected() {
+        try {
+            return connection != null && !connection.isClosed();
+        } catch (SQLException ex) {
+            Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    // Phương thức main để kiểm tra kết nối
+    public static void main(String[] args) {
+        DBContext dbContext = new DBContext();
+        if (dbContext.isConnected()) {
+            System.out.println("Kết nối cơ sở dữ liệu thành công!");
+        } else {
+            System.out.println("Kết nối cơ sở dữ liệu thất bại.");
+        }
+
     }
 }

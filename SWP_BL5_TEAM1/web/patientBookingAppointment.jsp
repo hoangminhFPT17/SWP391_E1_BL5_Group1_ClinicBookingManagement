@@ -24,6 +24,8 @@
         </div>
         <!-- Loader -->
 
+        <jsp:include page="/WEB-INF/jsp/common/patientHeaderNav.jsp" />
+
         <!-- Start Hero -->
         <section class="bg-half-170 d-table w-100 bg-light">
             <div class="container">
