@@ -24,7 +24,7 @@ public class DBContext {
         try {
             // URL: string connection: Server,Datebase
             // username,password: account of SQL Sever
-            // cal driver
+            // call driver
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             //call connection
             conn = DriverManager.getConnection(URL, userName, password);
@@ -61,5 +61,25 @@ public class DBContext {
 
     public Connection getConnection() {
         return conn; // Trả về connection để sử dụng
+    }
+    
+     public boolean isConnected() {
+        try {
+            return connection != null && !connection.isClosed();
+        } catch (SQLException ex) {
+            Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    // Phương thức main để kiểm tra kết nối
+    public static void main(String[] args) {
+        DBContext dbContext = new DBContext();
+        if (dbContext.isConnected()) {
+            System.out.println("Kết nối cơ sở dữ liệu thành công!");
+        } else {
+            System.out.println("Kết nối cơ sở dữ liệu thất bại.");
+        }
+
     }
 }
