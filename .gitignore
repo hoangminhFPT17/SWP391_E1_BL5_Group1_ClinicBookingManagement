@@ -1,2 +1,8 @@
 /SWP_BL5_TEAM1/dist/
 /SWP_BL5_TEAM1/build/
+/SWP_BL5_TEAM1/.idea/
+/SWP_BL5_TEAM1/.smarttomcat/
+
+# IntelliJ build output
+/SWP_BL5_TEAM1/out/
+/SWP_BL5_TEAM1/*.iml
