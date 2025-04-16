@@ -5,6 +5,8 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -81,75 +83,103 @@
 
                             <div class="tab-content p-4" id="pills-tabContent">
                                 <div class="tab-pane fade show active" id="pills-clinic" role="tabpanel" aria-labelledby="clinic-booking">
-                                    <form>
+                                    <form method="post" action="BookAppointmentServlet">
                                         <div class="row">
+
+                                            <!-- Full Name -->
                                             <div class="col-lg-12">
                                                 <div class="mb-3">
-                                                    <label class="form-label">Patient Name <span class="text-danger">*</span></label>
-                                                    <input name="name" id="name" type="text" class="form-control" placeholder="Patient Name :">
+                                                    <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                                                    <input name="fullName" id="fullName" type="text" class="form-control" placeholder="Patient Full Name :" required>
                                                 </div>
-                                            </div><!--end col-->
+                                            </div>
 
+                                            <!-- Phone -->
                                             <div class="col-md-6">
                                                 <div class="mb-3">
-                                                    <label class="form-label">Departments</label>
-                                                    <select class="form-control department-name select2input">
-                                                        <option value="EY">Eye Care</option>
-                                                        <option value="GY">Gynecologist</option>
-                                                        <option value="PS">Psychotherapist</option>
-                                                        <option value="OR">Orthopedic</option>
-                                                        <option value="DE">Dentist</option>
-                                                        <option value="GA">Gastrologist</option>
-                                                        <option value="UR">Urologist</option>
-                                                        <option value="NE">Neurologist</option>
+                                                    <label class="form-label">Phone <span class="text-danger">*</span></label>
+                                                    <input name="phone" id="phone" type="tel" class="form-control" placeholder="Your Phone :" required>
+                                                </div>
+                                            </div>
+
+                                            <!-- Email -->
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Email</label>
+                                                    <input name="email" id="email" type="email" class="form-control" placeholder="Your Email :">
+                                                </div>
+                                            </div>
+
+                                            <!-- Date of Birth -->
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Date of Birth</label>
+                                                    <input name="dateOfBirth" id="dateOfBirth" type="date" class="form-control">
+                                                </div>
+                                            </div>
+
+                                            <!-- Gender -->
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Gender</label>
+                                                    <select name="gender" class="form-control">
+                                                        <option value="">Select Gender</option>
+                                                        <option value="Male">Male</option>
+                                                        <option value="Female">Female</option>
+                                                        <option value="Other">Other</option>
                                                     </select>
                                                 </div>
-                                            </div><!--end col-->
+                                            </div>
 
+                                            <!-- Doctor -->
                                             <div class="col-md-6">
                                                 <div class="mb-3">
-                                                    <label class="form-label">Doctor</label>
-                                                    <select class="form-control doctor-name select2input" id="doctorSelect">
-                                                        <option value="CA" data-department="EY">Dr. Calvin Carlo</option>
-                                                        <option value="CR" data-department="GY">Dr. Cristino Murphy</option>
-                                                        <option value="AL" data-department="PS">Dr. Alia Reddy</option>
-                                                        <option value="TO" data-department="OR">Dr. Toni Kovar</option>
-                                                        <option value="JE" data-department="DE">Dr. Jessica McFarlane</option>
-                                                        <option value="EL" data-department="GA">Dr. Elsie Sherman</option>
-                                                        <option value="BE" data-department="UR">Dr. Bertha Magers</option>
-                                                        <option value="LO" data-department="NE">Dr. Louis Batey</option>
+                                                    <label class="form-label">Doctor <span class="text-danger">*</span></label>
+                                                    <select class="form-control doctor-name select2input" name="doctorId" id="doctorSelect" required>
+                                                        <option value="1">Dr. Calvin Carlo</option>
+                                                        <option value="2">Dr. Cristino Murphy</option>
+                                                        <option value="3">Dr. Alia Reddy</option>
+                                                        <option value="4">Dr. Toni Kovar</option>
+                                                        <option value="5">Dr. Jessica McFarlane</option>
+                                                        <option value="6">Dr. Elsie Sherman</option>
+                                                        <option value="7">Dr. Bertha Magers</option>
+                                                        <option value="8">Dr. Louis Batey</option>
                                                     </select>
                                                 </div>
-                                            </div><!--end col-->
+                                            </div>
 
+                                            <!-- Appointment Date -->
                                             <div class="col-md-6">
                                                 <div class="mb-3">
-                                                    <label class="form-label">Your Email <span class="text-danger">*</span></label>
-                                                    <input name="email" id="email" type="email" class="form-control" placeholder="Your email :">
-                                                </div> 
-                                            </div><!--end col-->
-
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Your Phone <span class="text-danger">*</span></label>
-                                                    <input name="phone" id="phone" type="tel" class="form-control" placeholder="Your Phone :">
-                                                </div> 
-                                            </div><!--end col-->
-
-                                            <div class="col-lg-12">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Comments <span class="text-danger">*</span></label>
-                                                    <textarea name="comments" id="comments" rows="4" class="form-control" placeholder="Your Message :"></textarea>
+                                                    <label class="form-label">Appointment Date <span class="text-danger">*</span></label>
+                                                    <input name="appointmentDate" id="appointmentDate" type="date" class="form-control" required>
                                                 </div>
-                                            </div><!--end col-->
+                                            </div>
 
+                                            <!-- Time Slot -->
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Time Slot <span class="text-danger">*</span></label>
+                                                    <select name="slotId" class="form-control select2input" required>
+                                                        <c:forEach var="slot" items="${timeSlots}">
+                                                            <option value="${slot.slotId}">
+                                                                ${slot.name} (${slot.startTime} - ${slot.endTime})
+                                                            </option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <!-- Submit Button -->
                                             <div class="col-lg-12">
                                                 <div class="d-grid">
-                                                    <button type="submit" class="btn btn-primary">Book An Appointment</button>
+                                                    <button type="submit" class="btn btn-primary">Book Appointment</button>
                                                 </div>
-                                            </div><!--end col-->
-                                        </div><!--end row-->
+                                            </div>
+
+                                        </div>
                                     </form>
+
                                 </div>
 
                                 <div class="tab-pane fade" id="pills-online" role="tabpanel" aria-labelledby="online-booking">
@@ -449,6 +479,11 @@
                     // Optional: reset selected value
                     doctorSelect.selectedIndex = 0;
                 });
+            });
+        </script>
+        <script>
+            $(document).ready(function() {
+                $('.select2input').select2();
             });
         </script>
 
