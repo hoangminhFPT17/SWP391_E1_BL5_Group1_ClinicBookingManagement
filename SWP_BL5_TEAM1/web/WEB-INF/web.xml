@@ -4,8 +4,16 @@
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <servlet-class>controller.PatientBookAppointmentServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DoctorBySlotServlet</servlet-name>
+        <servlet-class>controller.DoctorBySlotServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <url-pattern>/PatientBookAppointmentServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DoctorBySlotServlet</servlet-name>
+        <url-pattern>/doctor-by-slot</url-pattern>
     </servlet-mapping>
 </web-app>

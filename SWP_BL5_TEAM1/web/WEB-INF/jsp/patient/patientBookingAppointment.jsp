@@ -135,18 +135,12 @@
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label">Doctor <span class="text-danger">*</span></label>
-                                                    <select class="form-control doctor-name select2input" name="doctorId" id="doctorSelect" required>
-                                                        <option value="1">Dr. Calvin Carlo</option>
-                                                        <option value="2">Dr. Cristino Murphy</option>
-                                                        <option value="3">Dr. Alia Reddy</option>
-                                                        <option value="4">Dr. Toni Kovar</option>
-                                                        <option value="5">Dr. Jessica McFarlane</option>
-                                                        <option value="6">Dr. Elsie Sherman</option>
-                                                        <option value="7">Dr. Bertha Magers</option>
-                                                        <option value="8">Dr. Louis Batey</option>
+                                                    <select name="doctorId" id="doctorSelect" class="form-control select2" required>
+                                                        <option value="">Select a time slot first</option>
                                                     </select>
                                                 </div>
                                             </div>
+
 
                                             <!-- Appointment Date -->
                                             <div class="col-md-6">
@@ -481,8 +475,41 @@
                 });
             });
         </script>
+        
         <script>
-            $(document).ready(function() {
+            document.querySelector('select[name="slotId"]').addEventListener('change', function () {
+                const slotId = this.value;
+                const doctorSelect = document.getElementById('doctorSelect');
+
+                fetch(`/doctor-by-slot?slotId=${slotId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        doctorSelect.innerHTML = '';
+                        if (data.length === 0) {
+                            const opt = document.createElement('option');
+                            opt.value = '';
+                            opt.text = 'No doctors on duty';
+                            doctorSelect.appendChild(opt);
+                        } else {
+                            data.forEach(doctor => {
+                                const opt = document.createElement('option');
+                                opt.value = doctor.staffId;
+                                opt.text = `Dr. ${doctor.userId}`; // You can use name if you have it
+                                doctorSelect.appendChild(opt);
+                            });
+                        }
+                        // reinitialize select2 if used
+                        if ($(doctorSelect).hasClass('select2')) {
+                            $(doctorSelect).trigger('change.select2');
+                        }
+                    })
+                    .catch(error => console.error('Error fetching doctors:', error));
+            });
+        </script>
+
+        
+        <script>
+            $(document).ready(function () {
                 $('.select2input').select2();
             });
         </script>
