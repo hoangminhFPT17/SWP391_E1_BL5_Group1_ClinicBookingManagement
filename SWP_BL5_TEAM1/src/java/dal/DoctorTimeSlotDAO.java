@@ -97,6 +97,22 @@ public class DoctorTimeSlotDAO extends DBContext {
         }
         return false;
     }
+    
+    public List<Integer> getDoctorIdsBySlotId(int slotId) {
+        List<Integer> doctorIds = new ArrayList<>();
+        String query = "SELECT DISTINCT staff_id FROM DoctorTimeSlot WHERE slot_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, slotId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                doctorIds.add(rs.getInt("staff_id"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorTimeSlotDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return doctorIds;
+    }
+
 
     private DoctorTimeSlot mapToDoctorTimeSlot(ResultSet rs) throws SQLException {
         DoctorTimeSlot dts = new DoctorTimeSlot();

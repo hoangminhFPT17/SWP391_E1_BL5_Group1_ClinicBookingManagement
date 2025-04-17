@@ -21,3 +21,9 @@
 <link href="${pageContext.request.contextPath}/assets/css/style.min.css" rel="stylesheet" type="text/css" id="theme-opt" />
 <!-- Select2 -->
 <link href="${pageContext.request.contextPath}/assets/css/select2.min.css" rel="stylesheet" />
+<!-- Bootstrap CSS (include in <head>) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap JS (before closing </body>) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+

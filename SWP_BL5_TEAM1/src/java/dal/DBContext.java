@@ -21,9 +21,9 @@ public class DBContext {
      // Configurable parameters
     private static final String DB_HOST = "localhost";
     private static final String DB_PORT = "3306";
-    private static final String DB_NAME = "swp_bl5_testing";
+    private static final String DB_NAME = "swp_clinic";
     private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "1234"; // Update if needed
+    private static final String DB_PASSWORD = ""; // Update if needed
     private static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
     
     public DBContext() {
