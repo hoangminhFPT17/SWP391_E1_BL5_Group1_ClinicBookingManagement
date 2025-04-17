@@ -71,7 +71,7 @@ public class PatientBookAppointmentServlet extends HttpServlet {
 
         request.setAttribute("timeSlots", timeSlots);
         request.getRequestDispatcher("/WEB-INF/jsp/patient/patientBookingAppointment.jsp")
-               .forward(request, response);
+                .forward(request, response);
     }
 
     /**
@@ -110,29 +110,37 @@ public class PatientBookAppointmentServlet extends HttpServlet {
 
         // Check if patient already exists
         Patient patient = patientDAO.getByPhone(phone);
-        if (patient == null) {
-            patient = new Patient();
-            patient.setPhone(phone);
-            patient.setFullName(fullName);
-            patient.setEmail(email);
-            patient.setGender(gender);
-            patient.setDateOfBirth(dateOfBirth);
-            // Leave patientAccountId as null (walk-in)
-            patientDAO.insert(patient);
+        boolean success = false;
+
+        try {
+            if (patient == null) {
+                patient = new Patient();
+                patient.setPhone(phone);
+                patient.setFullName(fullName);
+                patient.setEmail(email);
+                patient.setGender(gender);
+                patient.setDateOfBirth(dateOfBirth);
+                patientDAO.insert(patient);
+            }
+
+            Appointment appointment = new Appointment();
+            appointment.setPatientPhone(phone);
+            appointment.setDoctorId(doctorId);
+            appointment.setSlotId(slotId);
+            appointment.setAppointmentDate(appointmentDate);
+            appointment.setStatus("Pending");
+
+            appointmentDAO.insert(appointment);
+            success = true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            success = false;
         }
 
-        // Create appointment
-        Appointment appointment = new Appointment();
-        appointment.setPatientPhone(phone);
-        appointment.setDoctorId(doctorId);
-        appointment.setSlotId(slotId);
-        appointment.setAppointmentDate(appointmentDate);
-        appointment.setStatus("Pending"); // Default
-
-        appointmentDAO.insert(appointment);
-
         // Redirect or forward to confirmation
-        response.sendRedirect("appointment-success.jsp");
+        request.setAttribute("appointmentStatus", success ? "success" : "fail");
+        request.getRequestDispatcher("/patientBookingAppointment.jsp").forward(request, response);
     }
 
     /**

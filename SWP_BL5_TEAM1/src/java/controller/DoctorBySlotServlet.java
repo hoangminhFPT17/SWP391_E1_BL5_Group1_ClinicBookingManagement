@@ -7,14 +7,18 @@ package controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dal.DoctorTimeSlotDAO;
 import dal.StaffAccountDAO;
+import dal.UserDAO;
+import dto.DoctorDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import model.StaffAccount;
+import model.User;
 
 /**
  *
@@ -39,7 +43,7 @@ public class DoctorBySlotServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet DoctorBySlotServlet</title>");            
+            out.println("<title>Servlet DoctorBySlotServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet DoctorBySlotServlet at " + request.getContextPath() + "</h1>");
@@ -57,21 +61,49 @@ public class DoctorBySlotServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-     @Override
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int slotId = Integer.parseInt(request.getParameter("slotId"));
+        String slotIdStr = request.getParameter("slotId");
+
+        if (slotIdStr == null || slotIdStr.trim().isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing or empty slotId");
+            return;
+        }
+
+        int slotId;
+        try {
+            slotId = Integer.parseInt(slotIdStr);
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid slotId");
+            return;
+        }
 
         DoctorTimeSlotDAO doctorTimeSlotDAO = new DoctorTimeSlotDAO();
         StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
+        UserDAO userDAO = new UserDAO(); // You need to create this if you don't have one yet
 
         List<Integer> staffIds = doctorTimeSlotDAO.getDoctorIdsBySlotId(slotId);
         List<StaffAccount> doctors = staffAccountDAO.getDoctorsByIds(staffIds);
+
+        List<DoctorDTO> enrichedDoctors = new ArrayList<>();
+        for (StaffAccount doc : doctors) {
+            User user = userDAO.getUserById(doc.getUserId());
+            if (user != null) {
+                enrichedDoctors.add(new DoctorDTO(
+                        doc.getStaffId(),
+                        doc.getUserId(),
+                        user.getFullName(),
+                        doc.getRole(),
+                        doc.getDepartment()
+                ));
+            }
+        }
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
         ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(response.getWriter(), doctors);
+        mapper.writeValue(response.getWriter(), enrichedDoctors);
     }
 
     /**
