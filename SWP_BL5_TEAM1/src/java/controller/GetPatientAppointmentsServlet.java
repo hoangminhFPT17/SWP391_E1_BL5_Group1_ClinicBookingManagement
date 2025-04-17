@@ -78,7 +78,7 @@ public class GetPatientAppointmentsServlet extends HttpServlet {
             return;
         }
 
-        Patient patient = patientDAO.getByPhone(phone);
+        Patient patient = patientDAO.getPatientByPhone(phone);
         if (patient == null) {
             request.setAttribute("error", "Patient not found.");
             request.getRequestDispatcher("/views/patient-appointments.jsp").forward(request, response);
