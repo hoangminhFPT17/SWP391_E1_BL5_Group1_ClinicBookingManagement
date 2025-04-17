@@ -109,7 +109,7 @@ public class PatientBookAppointmentServlet extends HttpServlet {
         AppointmentDAO appointmentDAO = new AppointmentDAO();
 
         // Check if patient already exists
-        Patient patient = patientDAO.getByPhone(phone);
+        Patient patient = patientDAO.getPatientByPhone(phone);
         boolean success = false;
 
         try {
@@ -120,7 +120,7 @@ public class PatientBookAppointmentServlet extends HttpServlet {
                 patient.setEmail(email);
                 patient.setGender(gender);
                 patient.setDateOfBirth(dateOfBirth);
-                patientDAO.insert(patient);
+                patientDAO.insertPatient(patient);
             }
 
             Appointment appointment = new Appointment();

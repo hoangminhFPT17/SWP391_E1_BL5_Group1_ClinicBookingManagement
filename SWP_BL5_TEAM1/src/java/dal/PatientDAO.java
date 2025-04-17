@@ -10,24 +10,27 @@ import model.Patient;
 
 /**
  * Data Access Object for Patient operations
+ *
  * @author ADMIN
  */
 public class PatientDAO extends DBContext {
+
     private static final Logger LOGGER = Logger.getLogger(PatientDAO.class.getName());
-    
+
     /**
      * Get patient information by userId
+     *
      * @param userId the user ID to retrieve
      * @return Patient object with data or null if not found
      */
     public Patient getPatientByUserId(int userId) {
-        String sql = "SELECT p.* FROM patient p " +
-                    "INNER JOIN user u ON p.phone = u.phone " +
-                    "WHERE u.user_id = ?";
-        
+        String sql = "SELECT p.* FROM patient p "
+                + "INNER JOIN user u ON p.phone = u.phone "
+                + "WHERE u.user_id = ?";
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, userId);
-            
+
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 Patient patient = new Patient();
@@ -38,7 +41,7 @@ public class PatientDAO extends DBContext {
                 patient.setGender(rs.getString("gender"));
                 patient.setEmail(rs.getString("email"));
                 patient.setCreatedAt(rs.getTimestamp("created_at"));
-                
+
                 return patient;
             }
         } catch (SQLException ex) {
@@ -46,18 +49,19 @@ public class PatientDAO extends DBContext {
         }
         return null;
     }
-    
+
     /**
      * Get patient by phone number
+     *
      * @param phone the phone number to search for
      * @return Patient object with data or null if not found
      */
     public Patient getPatientByPhone(String phone) {
         String sql = "SELECT * FROM patient WHERE phone = ?";
-        
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, phone);
-            
+
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 Patient patient = new Patient();
@@ -68,7 +72,7 @@ public class PatientDAO extends DBContext {
                 patient.setGender(rs.getString("gender"));
                 patient.setEmail(rs.getString("email"));
                 patient.setCreatedAt(rs.getTimestamp("created_at"));
-                
+
                 return patient;
             }
         } catch (SQLException ex) {
@@ -76,20 +80,21 @@ public class PatientDAO extends DBContext {
         }
         return null;
     }
-    
+
     /**
      * Update patient name only
+     *
      * @param phone The patient phone
      * @param fullName The new full name
      * @return true if update was successful, false otherwise
      */
     public boolean updatePatientName(String phone, String fullName) {
         String sql = "UPDATE patient SET full_name = ? WHERE phone = ?";
-        
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, fullName);
             stmt.setString(2, phone);
-            
+
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException ex) {
@@ -97,9 +102,10 @@ public class PatientDAO extends DBContext {
             return false;
         }
     }
-    
+
     /**
      * Update patient profile information without changing the phone number
+     *
      * @param phone The patient's phone number (not to be changed)
      * @param fullName The patient's full name
      * @param dateOfBirth The patient's date of birth
@@ -108,15 +114,15 @@ public class PatientDAO extends DBContext {
      * @return true if update was successful, false otherwise
      * @throws SQLException if a database error occurs
      */
-    public boolean updatePatientProfileWithoutPhone(String phone, String fullName, 
-                                                   Date dateOfBirth, String gender, int userId)
-                                                   throws SQLException {
+    public boolean updatePatientProfileWithoutPhone(String phone, String fullName,
+            Date dateOfBirth, String gender, int userId)
+            throws SQLException {
         boolean success = false;
-        
+
         try {
             // Start transaction
             connection.setAutoCommit(false);
-            
+
             // Update patient fields without changing phone
             String updatePatientSql = "UPDATE patient SET full_name = ?, date_of_birth = ?, gender = ? WHERE phone = ?";
             try (PreparedStatement stmt = connection.prepareStatement(updatePatientSql)) {
@@ -126,7 +132,7 @@ public class PatientDAO extends DBContext {
                 stmt.setString(4, phone);
                 int updated = stmt.executeUpdate();
                 LOGGER.info("Updated profile for patient with phone: " + phone);
-                
+
                 if (updated == 0) {
                     // If no patient record exists, this could be a new patient
                     LOGGER.warning("No patient record found for phone: " + phone);
@@ -134,7 +140,7 @@ public class PatientDAO extends DBContext {
                     return false;
                 }
             }
-            
+
             // Update name in User table
             String updateUserNameSql = "UPDATE user SET full_name = ? WHERE user_id = ?";
             try (PreparedStatement stmt = connection.prepareStatement(updateUserNameSql)) {
@@ -143,7 +149,7 @@ public class PatientDAO extends DBContext {
                 stmt.executeUpdate();
                 LOGGER.info("Updated name in user table for user ID " + userId);
             }
-            
+
             // Commit transaction
             connection.commit();
             success = true;
@@ -165,7 +171,34 @@ public class PatientDAO extends DBContext {
                 LOGGER.log(Level.SEVERE, "Error resetting auto-commit", ex);
             }
         }
-        
+
         return success;
+    }
+
+    public boolean insertPatient(Patient patient) {
+        String sql = "INSERT INTO patient (phone, patient_account_id, full_name, date_of_birth, gender, email, created_at) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, patient.getPhone());
+
+            if (patient.getPatientAccountId() != null) {
+                stmt.setInt(2, patient.getPatientAccountId());
+            } else {
+                stmt.setNull(2, java.sql.Types.INTEGER);
+            }
+
+            stmt.setString(3, patient.getFullName());
+            stmt.setDate(4, patient.getDateOfBirth());
+            stmt.setString(5, patient.getGender());
+            stmt.setString(6, patient.getEmail());
+            stmt.setTimestamp(7, patient.getCreatedAt());
+
+            int rowsInserted = stmt.executeUpdate();
+            return rowsInserted > 0;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error inserting new patient", ex);
+            return false;
+        }
     }
 }
