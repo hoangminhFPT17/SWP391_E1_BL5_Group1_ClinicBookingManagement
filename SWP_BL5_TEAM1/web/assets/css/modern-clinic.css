@@ -1,0 +1,1207 @@
+/*===================================
+    Modern Clinic Header & Footer CSS
+====================================*/
+
+:root {
+    /* Main Colors */
+    --primary-color: #0cb8b6; /* Teal */
+    --secondary-color: #14bef0; /* Light Blue */
+    --dark-color: #1e3a8a; /* Navy Blue */
+    --accent-color: #FF6B6B; /* Coral */
+    
+    /* Text Colors */
+    --text-dark: #1a202c;
+    --text-medium: #4a5568;
+    --text-light: #718096;
+    --text-white: #ffffff;
+    
+    /* Background Colors */
+    --bg-light: #f8fafc;
+    --bg-white: #ffffff;
+    --bg-footer: #1e3a8a;
+    
+    /* Other Variables */
+    --border-radius: 8px;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+/*===================================
+    COMMON STYLES
+====================================*/
+a {
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    text-align: center;
+    transition: var(--transition);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--text-white);
+    border: none;
+    box-shadow: 0 4px 15px rgba(12, 184, 182, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(12, 184, 182, 0.4);
+}
+
+.btn-light {
+    background-color: var(--bg-white);
+    color: var(--primary-color);
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-light:hover {
+    background-color: var(--primary-color);
+    color: var(--text-white);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn-outline:hover {
+    background: var(--primary-color);
+    color: var(--text-white);
+}
+
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+}
+
+.btn-lg {
+    padding: 14px 28px;
+    font-size: 1.1rem;
+}
+
+.btn-block {
+    display: block;
+    width: 100%;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/*===================================
+    HEADER STYLES
+====================================*/
+.clinic-header {
+    position: relative;
+    z-index: 1000;
+}
+
+/* Top Bar */
+.top-bar {
+    background-color: var(--dark-color);
+    color: var(--text-white);
+    padding: 8px 0;
+}
+
+.top-bar-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-contact-info {
+    display: flex;
+    gap: 20px;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.contact-item i {
+    margin-right: 8px;
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+}
+
+.top-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.social-links {
+    display: flex;
+    gap: 10px;
+}
+
+.social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    color: var(--text-white);
+    font-size: 0.85rem;
+    transition: var(--transition);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.social-links a:hover {
+    background-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.language-selector select {
+    background-color: transparent;
+    color: var(--text-white);
+    border: none;
+    font-size: 0.85rem;
+    cursor: pointer;
+    outline: none;
+}
+
+.language-selector select option {
+    background-color: var(--dark-color);
+    color: var(--text-white);
+}
+
+/* Main Navigation */
+.main-nav-wrapper {
+    background-color: var(--bg-white);
+    box-shadow: var(--box-shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.main-nav-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+}
+
+.clinic-logo img {
+    height: 45px;
+    width: auto;
+}
+
+/* Main Menu */
+.main-menu {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 5px;
+}
+
+.main-menu > li {
+    position: relative;
+}
+
+.main-menu > li > a {
+    display: block;
+    padding: 10px 15px;
+    color: var(--text-dark);
+    font-weight: 500;
+    transition: var(--transition);
+    position: relative;
+}
+
+.main-menu > li > a:hover,
+.main-menu > li.active > a {
+    color: var(--primary-color);
+}
+
+.main-menu > li.active > a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 15px;
+    right: 15px;
+    height: 3px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 3px;
+}
+
+.main-menu > li > a .fas {
+    font-size: 0.7rem;
+    margin-left: 5px;
+    transition: var(--transition);
+}
+
+.main-menu > li:hover > a .fas {
+    transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--bg-white);
+    box-shadow: var(--box-shadow);
+    border-radius: var(--border-radius);
+    min-width: 200px;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s;
+    padding: 15px;
+    z-index: 10;
+}
+
+.has-dropdown:hover .dropdown-menu {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.dropdown-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    width: 650px;
+}
+
+.dropdown-column h6 {
+    color: var(--text-medium);
+    margin-bottom: 10px;
+    font-weight: 600;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.dropdown-column a {
+    display: block;
+    padding: 5px 0;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+.dropdown-column a:hover {
+    color: var(--primary-color);
+    transform: translateX(5px);
+}
+
+.dropdown-image {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.dropdown-image img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    margin-bottom: 10px;
+}
+
+.simple-dropdown {
+    width: 200px;
+    padding: 10px 0;
+    list-style: none;
+}
+
+.simple-dropdown li a {
+    display: block;
+    padding: 8px 15px;
+    color: var(--text-medium);
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+.simple-dropdown li a:hover {
+    color: var(--primary-color);
+    background-color: rgba(12, 184, 182, 0.05);
+}
+
+/* Navigation Actions */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.appointment-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--text-white);
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(12, 184, 182, 0.3);
+    transition: var(--transition);
+}
+
+.appointment-btn:hover {
+    color: var(--text-white);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(12, 184, 182, 0.4);
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-toggle,
+.user-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-medium);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+    transition: var(--transition);
+}
+
+.search-toggle:hover,
+.user-btn:hover {
+    color: var(--primary-color);
+}
+
+.user-dropdown {
+    position: relative;
+}
+
+.user-dropdown .dropdown-menu {
+    right: 0;
+    left: auto;
+    width: 200px;
+    padding: 10px 0;
+}
+
+.user-dropdown .dropdown-menu a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 15px;
+    color: var(--text-medium);
+    transition: var(--transition);
+}
+
+.user-dropdown .dropdown-menu a:hover {
+    background-color: rgba(12, 184, 182, 0.05);
+    color: var(--primary-color);
+}
+
+.user-dropdown:hover .dropdown-menu {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Mobile Menu Toggle */
+.mobile-menu-toggle {
+    display: none;
+    background: transparent;
+    border: none;
+    width: 30px;
+    height: 30px;
+    position: relative;
+    cursor: pointer;
+    padding: 0;
+}
+
+.mobile-menu-toggle span {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: var(--text-dark);
+    margin: 5px 0;
+    border-radius: 3px;
+    transition: var(--transition);
+}
+
+/* Search Overlay */
+.search-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.search-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.search-form-wrapper {
+    width: 600px;
+    max-width: 90%;
+    position: relative;
+}
+
+.search-form {
+    display: flex;
+}
+
+.search-form input {
+    flex: 1;
+    height: 60px;
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    padding: 0 15px;
+    font-size: 1.2rem;
+    color: var(--text-white);
+}
+
+.search-form input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.search-form button {
+    background: transparent;
+    border: none;
+    color: var(--text-white);
+    font-size: 1.2rem;
+    padding: 0 15px;
+    cursor: pointer;
+}
+
+.search-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: transparent;
+    border: none;
+    color: var(--text-white);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Mobile Menu */
+.mobile-menu {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100%;
+    background-color: var(--bg-white);
+    z-index: 1000;
+    overflow-y: auto;
+    transition: right 0.3s ease;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-menu.active {
+    right: 0;
+}
+
+.mobile-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.mobile-logo img {
+    height: 35px;
+}
+
+.mobile-menu-close {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--text-medium);
+    cursor: pointer;
+}
+
+.mobile-menu-body {
+    padding: 20px 15px;
+}
+
+.mobile-nav {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.mobile-nav li {
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.mobile-nav li a {
+    display: block;
+    padding: 12px 0;
+    color: var(--text-dark);
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.mobile-nav li.active > a {
+    color: var(--primary-color);
+}
+
+.mobile-nav li.has-submenu > a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mobile-nav li.has-submenu > a i {
+    transition: var(--transition);
+}
+
+.mobile-nav li.has-submenu.open > a i {
+    transform: rotate(180deg);
+}
+
+.submenu {
+    list-style: none;
+    padding-left: 15px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.mobile-nav li.has-submenu.open .submenu {
+    max-height: 1000px;
+}
+
+.submenu li a {
+    font-weight: 400;
+    padding: 8px 0;
+    font-size: 0.9rem;
+}
+
+.mobile-contact {
+    margin-top: 30px;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    padding-top: 20px;
+}
+
+.mobile-contact .contact-item {
+    margin-bottom: 15px;
+}
+
+.mobile-contact .contact-item:last-child {
+    margin-bottom: 0;
+}
+
+.mobile-actions {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/*===================================
+    FOOTER STYLES
+====================================*/
+.clinic-footer {
+    position: relative;
+    z-index: 1;
+}
+
+/* Appointment Banner */
+.appointment-banner {
+    margin-top: 80px;
+    padding: 0 15px;
+}
+
+.appointment-inner {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: var(--border-radius);
+    padding: 40px;
+    color: var(--text-white);
+    box-shadow: 0 10px 30px rgba(12, 184, 182, 0.3);
+    position: relative;
+    overflow: hidden;
+    z-index: 2;
+    transform: translateY(50px);
+}
+
+.appointment-inner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+    transform: translate(150px, -150px);
+    z-index: -1;
+}
+
+.appointment-inner::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+    transform: translate(-100px, 100px);
+    z-index: -1;
+}
+
+.banner-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.banner-icon {
+    flex-shrink: 0;
+}
+
+.banner-icon img {
+    width: 60px;
+    height: 60px;
+    filter: brightness(0) invert(1);
+}
+
+.banner-text h3 {
+    margin: 0 0 5px;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.banner-text p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+.banner-action {
+    text-align: right;
+}
+
+/* Main Footer */
+.footer-main {
+    background-color: var(--bg-footer);
+    color: var(--text-white);
+    padding: 100px 0 50px;
+}
+
+.footer-column {
+    margin-bottom: 30px;
+}
+
+.footer-widget {
+    height: 100%;
+}
+
+.footer-logo {
+    margin-bottom: 25px;
+}
+
+.footer-logo img {
+    height: 45px;
+}
+
+.info-widget p {
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 25px;
+    line-height: 1.7;
+}
+
+.clinic-info {
+    margin-top: 20px;
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.info-item i {
+    width: 35px;
+    height: 35px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--primary-color);
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.info-item div {
+    flex: 1;
+}
+
+.info-item span {
+    display: block;
+    font-size: 12px;
+    opacity: 0.7;
+    margin-bottom: 3px;
+}
+
+.info-item a {
+    color: var(--text-white);
+    font-weight: 500;
+}
+
+.info-item a:hover {
+    color: var(--primary-color);
+}
+
+.widget-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 25px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.widget-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
+.list-style-one {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list-style-one li {
+    margin-bottom: 12px;
+    position: relative;
+    padding-left: 20px;
+}
+
+.list-style-one li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--primary-color);
+    font-size: 18px;
+    line-height: 1.2;
+}
+
+.list-style-one li a {
+    color: rgba(255, 255, 255, 0.7);
+    transition: var(--transition);
+}
+
+.list-style-one li a:hover {
+    color: var(--primary-color);
+    padding-left: 5px;
+}
+
+.two-column {
+    column-count: 2;
+    column-gap: 10px;
+}
+
+.newsletter-widget p {
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 20px;
+    line-height: 1.7;
+}
+
+.newsletter-form .form-group {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.newsletter-form input {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    height: 50px;
+    border-radius: 50px;
+    padding: 0 60px 0 20px;
+    color: var(--text-white);
+}
+
+.newsletter-form input:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.newsletter-form .submit-btn {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    height: 40px;
+    width: 40px;
+    background: var(--primary-color);
+    color: var(--text-white);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.newsletter-form .submit-btn:hover {
+    background: var(--secondary-color);
+    transform: scale(1.05);
+}
+
+.form-message {
+    margin-top: 15px;
+    font-size: 13px;
+}
+
+.checkbox-container {
+    position: relative;
+    padding-left: 30px;
+    cursor: pointer;
+    user-select: none;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.checkbox-container:hover input ~ .checkmark {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.checkbox-container input:checked ~ .checkmark {
+    background-color: var(--primary-color);
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.checkbox-container .checkmark:after {
+    left: 6px;
+    top: 3px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Social Links in Footer */
+.footer-widget .social-links {
+    margin-top: 25px;
+}
+
+.footer-widget .social-links h6 {
+    display: inline-block;
+    margin: 0 10px 0 0;
+    font-size: 14px;
+    font-weight: 400;
+    vertical-align: middle;
+}
+
+.footer-widget .social-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-white);
+    margin-right: 8px;
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.footer-widget .social-links a:hover {
+    background-color: var(--primary-color);
+    transform: translateY(-3px);
+}
+
+/* Footer Bottom */
+.footer-bottom {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 20px 0;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.bottom-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.copyright p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.bottom-links a {
+    color: rgba(255, 255, 255, 0.7);
+    margin-left: 20px;
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.bottom-links a:hover {
+    color: var(--primary-color);
+}
+
+/*===================================
+    RESPONSIVE STYLES
+====================================*/
+@media (max-width: 1199px) {
+    .dropdown-grid {
+        width: 550px;
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .dropdown-image {
+        display: none;
+    }
+}
+
+@media (max-width: 991px) {
+    .top-contact-info {
+        gap: 10px;
+    }
+    
+    .main-menu {
+        display: none;
+    }
+    
+    .mobile-menu-toggle {
+        display: block;
+    }
+    
+    .appointment-btn span {
+        display: none;
+    }
+    
+    .appointment-btn {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .appointment-btn i {
+        margin: 0;
+    }
+    
+    .banner-action {
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    .bottom-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .bottom-links {
+        margin-top: 10px;
+    }
+    
+    .bottom-links a {
+        margin: 0 10px;
+    }
+}
+
+@media (max-width: 767px) {
+    .top-bar-inner {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .top-contact-info {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .top-actions {
+        justify-content: center;
+    }
+    
+    .appointment-inner {
+        padding: 30px 20px;
+    }
+    
+    .banner-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .footer-main {
+        padding-top: 70px;
+    }
+}
+
+@media (max-width: 575px) {
+    .contact-item span {
+        font-size: 0.75rem;
+    }
+    
+    .social-links {
+        gap: 5px;
+    }
+    
+    .social-links a {
+        width: 24px;
+        height: 24px;
+        font-size: 0.75rem;
+    }
+    
+    .main-nav-inner {
+        padding: 10px 0;
+    }
+    
+    .clinic-logo img {
+        height: 35px;
+    }
+    
+    .nav-actions {
+        gap: 10px;
+    }
+    
+    .search-toggle,
+    .user-btn {
+        font-size: 1rem;
+    }
+    
+    .mobile-menu {
+        width: 260px;
+    }
+    
+    .appointment-inner {
+        transform: translateY(30px);
+    }
+    
+    .info-item i {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+    
+    .two-column {
+        column-count: 1;
+    }
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.5s ease;
+}
+
+.slide-in-right {
+    animation: slideInRight 0.5s ease;
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Active states for interactive elements */
+.main-menu > li:hover > a {
+    color: var(--primary-color);
+}
+
+.search-toggle.active,
+.user-btn.active {
+    color: var(--primary-color);
+}
+
+.mobile-menu-toggle.active span:first-child {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.mobile-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-toggle.active span:last-child {
+    transform: rotate(-45deg) translate(5px, -5px);
+}

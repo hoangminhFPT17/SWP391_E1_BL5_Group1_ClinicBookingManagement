@@ -1,108 +1,171 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dal;
 
-/**
- *
- * @author LENOVO
- */
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Patient;
 
+/**
+ * Data Access Object for Patient operations
+ * @author ADMIN
+ */
 public class PatientDAO extends DBContext {
-
-    public void insert(Patient patient) {
-        String sql = "INSERT INTO Patient (phone, patient_account_id, full_name, date_of_birth, gender, email, created_at) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, NOW())";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, patient.getPhone());
-            if (patient.getPatientAccountId() != null)
-                ps.setInt(2, patient.getPatientAccountId());
-            else
-                ps.setNull(2, Types.INTEGER);
-            ps.setString(3, patient.getFullName());
-            ps.setDate(4, patient.getDateOfBirth());
-            ps.setString(5, patient.getGender());
-            ps.setString(6, patient.getEmail());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Patient getByPhone(String phone) {
-        String sql = "SELECT * FROM Patient WHERE phone = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, phone);
-            ResultSet rs = ps.executeQuery();
+    private static final Logger LOGGER = Logger.getLogger(PatientDAO.class.getName());
+    
+    /**
+     * Get patient information by userId
+     * @param userId the user ID to retrieve
+     * @return Patient object with data or null if not found
+     */
+    public Patient getPatientByUserId(int userId) {
+        String sql = "SELECT p.* FROM patient p " +
+                    "INNER JOIN user u ON p.phone = u.phone " +
+                    "WHERE u.user_id = ?";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            
+            ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                Patient p = new Patient();
-                p.setPhone(rs.getString("phone"));
-                p.setPatientAccountId(rs.getObject("patient_account_id") != null ? rs.getInt("patient_account_id") : null);
-                p.setFullName(rs.getString("full_name"));
-                p.setDateOfBirth(rs.getDate("date_of_birth"));
-                p.setGender(rs.getString("gender"));
-                p.setEmail(rs.getString("email"));
-                p.setCreatedAt(rs.getTimestamp("created_at"));
-                return p;
+                Patient patient = new Patient();
+                patient.setPhone(rs.getString("phone"));
+                patient.setPatientAccountId(rs.getInt("patient_account_id"));
+                patient.setFullName(rs.getString("full_name"));
+                patient.setDateOfBirth(rs.getDate("date_of_birth"));
+                patient.setGender(rs.getString("gender"));
+                patient.setEmail(rs.getString("email"));
+                patient.setCreatedAt(rs.getTimestamp("created_at"));
+                
+                return patient;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error retrieving patient profile", ex);
         }
         return null;
     }
-
-    public void update(Patient patient) {
-        String sql = "UPDATE Patient SET patient_account_id = ?, full_name = ?, date_of_birth = ?, gender = ?, email = ? WHERE phone = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            if (patient.getPatientAccountId() != null)
-                ps.setInt(1, patient.getPatientAccountId());
-            else
-                ps.setNull(1, Types.INTEGER);
-            ps.setString(2, patient.getFullName());
-            ps.setDate(3, patient.getDateOfBirth());
-            ps.setString(4, patient.getGender());
-            ps.setString(5, patient.getEmail());
-            ps.setString(6, patient.getPhone());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void delete(String phone) {
-        String sql = "DELETE FROM Patient WHERE phone = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, phone);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public List<Patient> getAll() {
-        List<Patient> list = new ArrayList<>();
-        String sql = "SELECT * FROM Patient";
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Patient p = new Patient();
-                p.setPhone(rs.getString("phone"));
-                p.setPatientAccountId(rs.getObject("patient_account_id") != null ? rs.getInt("patient_account_id") : null);
-                p.setFullName(rs.getString("full_name"));
-                p.setDateOfBirth(rs.getDate("date_of_birth"));
-                p.setGender(rs.getString("gender"));
-                p.setEmail(rs.getString("email"));
-                p.setCreatedAt(rs.getTimestamp("created_at"));
-                list.add(p);
+    
+    /**
+     * Get patient by phone number
+     * @param phone the phone number to search for
+     * @return Patient object with data or null if not found
+     */
+    public Patient getPatientByPhone(String phone) {
+        String sql = "SELECT * FROM patient WHERE phone = ?";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, phone);
+            
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                Patient patient = new Patient();
+                patient.setPhone(rs.getString("phone"));
+                patient.setPatientAccountId(rs.getInt("patient_account_id"));
+                patient.setFullName(rs.getString("full_name"));
+                patient.setDateOfBirth(rs.getDate("date_of_birth"));
+                patient.setGender(rs.getString("gender"));
+                patient.setEmail(rs.getString("email"));
+                patient.setCreatedAt(rs.getTimestamp("created_at"));
+                
+                return patient;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error retrieving patient by phone", ex);
         }
-        return list;
+        return null;
+    }
+    
+    /**
+     * Update patient name only
+     * @param phone The patient phone
+     * @param fullName The new full name
+     * @return true if update was successful, false otherwise
+     */
+    public boolean updatePatientName(String phone, String fullName) {
+        String sql = "UPDATE patient SET full_name = ? WHERE phone = ?";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, fullName);
+            stmt.setString(2, phone);
+            
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error updating patient name", ex);
+            return false;
+        }
+    }
+    
+    /**
+     * Update patient profile information without changing the phone number
+     * @param phone The patient's phone number (not to be changed)
+     * @param fullName The patient's full name
+     * @param dateOfBirth The patient's date of birth
+     * @param gender The patient's gender
+     * @param userId The user ID associated with this patient
+     * @return true if update was successful, false otherwise
+     * @throws SQLException if a database error occurs
+     */
+    public boolean updatePatientProfileWithoutPhone(String phone, String fullName, 
+                                                   Date dateOfBirth, String gender, int userId)
+                                                   throws SQLException {
+        boolean success = false;
+        
+        try {
+            // Start transaction
+            connection.setAutoCommit(false);
+            
+            // Update patient fields without changing phone
+            String updatePatientSql = "UPDATE patient SET full_name = ?, date_of_birth = ?, gender = ? WHERE phone = ?";
+            try (PreparedStatement stmt = connection.prepareStatement(updatePatientSql)) {
+                stmt.setString(1, fullName);
+                stmt.setDate(2, dateOfBirth);
+                stmt.setString(3, gender);
+                stmt.setString(4, phone);
+                int updated = stmt.executeUpdate();
+                LOGGER.info("Updated profile for patient with phone: " + phone);
+                
+                if (updated == 0) {
+                    // If no patient record exists, this could be a new patient
+                    LOGGER.warning("No patient record found for phone: " + phone);
+                    connection.rollback();
+                    return false;
+                }
+            }
+            
+            // Update name in User table
+            String updateUserNameSql = "UPDATE user SET full_name = ? WHERE user_id = ?";
+            try (PreparedStatement stmt = connection.prepareStatement(updateUserNameSql)) {
+                stmt.setString(1, fullName);
+                stmt.setInt(2, userId);
+                stmt.executeUpdate();
+                LOGGER.info("Updated name in user table for user ID " + userId);
+            }
+            
+            // Commit transaction
+            connection.commit();
+            success = true;
+            LOGGER.info("Successfully updated profile for phone " + phone);
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error updating patient profile: " + ex.getMessage(), ex);
+            try {
+                // Roll back on error
+                connection.rollback();
+                LOGGER.info("Transaction rolled back due to error");
+            } catch (SQLException rollbackEx) {
+                LOGGER.log(Level.SEVERE, "Error rolling back transaction", rollbackEx);
+            }
+            throw ex;
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, "Error resetting auto-commit", ex);
+            }
+        }
+        
+        return success;
     }
 }

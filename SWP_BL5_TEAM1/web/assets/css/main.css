@@ -1,0 +1,449 @@
+/* Basic Reset & Common Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    line-height: 1.6;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Header Styles */
+.main-header {
+    background-color: #fff;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-top {
+    background-color: #1e3a8a;
+    color: #fff;
+    padding: 8px 0;
+    font-size: 14px;
+}
+
+.contact-info {
+    display: flex;
+    gap: 20px;
+}
+
+.contact-info i {
+    color: #0cb8b6;
+    margin-right: 5px;
+}
+
+.social-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    margin-left: 8px;
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    background-color: #0cb8b6;
+    transform: translateY(-2px);
+}
+
+.main-nav-container {
+    padding: 15px 0;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    height: 50px;
+    width: auto;
+}
+
+.clinic-name {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-left: 10px;
+}
+
+.clinic-name span {
+    color: #0cb8b6;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 5px;
+}
+
+.nav-menu li a {
+    padding: 10px 15px;
+    display: block;
+    color: #333;
+    font-weight: 500;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.nav-menu li.active a,
+.nav-menu li a:hover {
+    color: #0cb8b6;
+}
+
+.nav-menu li.active a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 15px;
+    right: 15px;
+    height: 3px;
+    background: linear-gradient(135deg, #0cb8b6, #14bef0);
+    border-radius: 3px;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.appointment-btn {
+    background: linear-gradient(135deg, #0cb8b6, #14bef0);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(12, 184, 182, 0.3);
+}
+
+.appointment-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(12, 184, 182, 0.4);
+    color: #fff;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-btn {
+    background: transparent;
+    border: none;
+    color: #333;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.user-btn:hover {
+    color: #0cb8b6;
+}
+
+/* Mobile Menu Toggle */
+.mobile-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+.mobile-toggle span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: #333;
+    margin: 3px 0;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+/* Hero Section */
+.hero-section {
+    background: url('assets/images/bg/healthcare-hero.jpg') center/cover no-repeat;
+    padding: 120px 0;
+    position: relative;
+    color: #fff;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.hero-text {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto 30px;
+}
+
+.btn {
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0cb8b6, #14bef0);
+    border: none;
+    box-shadow: 0 4px 15px rgba(12, 184, 182, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(12, 184, 182, 0.4);
+    background: linear-gradient(135deg, #14bef0, #0cb8b6);
+}
+
+.btn-light {
+    background: #fff;
+    color: #333;
+}
+
+.btn-light:hover {
+    background: #f0f0f0;
+    transform: translateY(-2px);
+}
+
+/* Footer Styles */
+.footer {
+    background-color: #1e3a8a;
+    color: #fff;
+    padding: 60px 0 0;
+}
+
+.footer-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 25px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.footer-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background-color: #0cb8b6;
+    border-radius: 3px;
+}
+
+.footer p {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 12px;
+}
+
+.footer-links a {
+    color: rgba(255, 255, 255, 0.7);
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.footer-links a:hover {
+    color: #0cb8b6;
+    transform: translateX(5px);
+}
+
+.footer-social a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+}
+
+.footer-social a:hover {
+    background-color: #0cb8b6;
+    transform: translateY(-3px);
+}
+
+.footer-bottom {
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 20px 0;
+    margin-top: 40px;
+}
+
+.copyright {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+}
+
+.footer-nav a {
+    color: rgba(255, 255, 255, 0.7);
+    margin-left: 20px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.footer-nav a:hover {
+    color: #0cb8b6;
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+    .nav-menu {
+        display: none;
+    }
+    
+    .mobile-toggle {
+        display: flex;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .contact-info {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .appointment-btn span {
+        display: none;
+    }
+    
+    .appointment-btn {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+ .profile-container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+                background-color: #fff;
+                margin-top: 50px;
+                margin-bottom: 50px;
+            }
+            .profile-header {
+                margin-bottom: 30px;
+                text-align: center;
+            }
+            .form-group {
+                margin-bottom: 20px;
+            }
+            .readonly-field {
+                background-color: #f8f9fa;
+            }
+            .message-alert {
+                margin-bottom: 20px;
+            }
+ .medical-history-container {
+                padding: 30px 0;
+            }
+            
+            .medical-record-card {
+                margin-bottom: 20px;
+                border-radius: 10px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                transition: transform 0.2s;
+            }
+            
+            .medical-record-card:hover {
+                transform: translateY(-5px);
+            }
+            
+            .record-date {
+                color: #6c757d;
+                font-size: 0.9rem;
+            }
+            
+            .section-title {
+                color: #0d6efd;
+                font-weight: 600;
+                font-size: 1.2rem;
+                margin-bottom: 10px;
+            }
+            
+            .empty-state {
+                text-align: center;
+                padding: 50px 0;
+            }
+            
+            .empty-state i {
+                font-size: 60px;
+                color: #dee2e6;
+                margin-bottom: 20px;
+            }
+            
+            .page-title {
+                color: #0d6efd;
+                border-bottom: 2px solid #0d6efd;
+                padding-bottom: 10px;
+                margin-bottom: 30px;
+            }
