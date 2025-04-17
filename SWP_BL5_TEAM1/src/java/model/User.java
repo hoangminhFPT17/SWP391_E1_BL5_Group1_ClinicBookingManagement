@@ -20,6 +20,7 @@ public class User {
     private String otpCode;
     private java.sql.Timestamp otpExpiry;
     private java.sql.Timestamp createdAt;
+    private String role;
 
     public User() {
     }
@@ -106,6 +107,14 @@ public class User {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     @Override
