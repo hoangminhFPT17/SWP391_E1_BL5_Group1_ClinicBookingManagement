@@ -6,3 +6,7 @@
 # IntelliJ build output
 /SWP_BL5_TEAM1/out/
 /SWP_BL5_TEAM1/*.iml
+
+# Ignore NetBeans private configs
+/SWP_BL5_TEAM/nbproject/private/
+/SWP_BL5_TEAM/nbproject/genfiles.properties
