@@ -17,50 +17,24 @@ import java.util.logging.Logger;
  * @author FPT University - PRJ301
  */
 public class DBContext {
-
-    Connection conn = null;
-
-    public DBContext(String URL, String userName, String password) {
-        try {
-            // URL: string connection: Server,Datebase
-            // username,password: account of SQL Sever
-            // call driver
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            //call connection
-            conn = DriverManager.getConnection(URL, userName, password);
-            System.out.println("connected");
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public DBContext() {
-        this("jdbc:sqlserver://localhost:1433;databaseName=G4", "sa", "1");
-    }
+    protected Connection connection;
     
-    public ResultSet getData(String sql) {
-        ResultSet rs = null;
+     // Configurable parameters
+    private static final String DB_HOST = "localhost";
+    private static final String DB_PORT = "3306";
+    private static final String DB_NAME = "swp_bl5_testing";
+    private static final String DB_USER = "root";
+    private static final String DB_PASSWORD = "123456789"; // Update if needed
+    private static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
+    
+    public DBContext() {
         try {
-            Statement state = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
-                    ResultSet.CONCUR_UPDATABLE);
-            rs = state.executeQuery(sql);
-        } catch (SQLException ex) {
+            Class.forName(DB_DRIVER);
+            String url = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME + "?useSSL=false&serverTimezone=UTC";
+            connection = DriverManager.getConnection(url, DB_USER, DB_PASSWORD);
+        } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return rs;
-    }
-
-    public static void main(String[] args) {
-        DBContext conn = new DBContext();
-        if (conn == null) {
-            System.out.println("failed");
-        }
-    }
-
-    public Connection getConnection() {
-        return conn; // Trả về connection để sử dụng
     }
     
      public boolean isConnected() {
@@ -81,5 +55,9 @@ public class DBContext {
             System.out.println("Kết nối cơ sở dữ liệu thất bại.");
         }
 
+    }
+    
+      public Connection getConnection() {
+        return connection; // Trả về connection để sử dụng
     }
 }

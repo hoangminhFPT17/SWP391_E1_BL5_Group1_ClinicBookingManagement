@@ -3,16 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/dal/DBContext.java</file>
-            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/staff/doctorStatus.jsp</file>
-            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/home.jsp</file>
             <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/login.jsp</file>
-            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/dal/DAOUser.java</file>
             <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/entity/User.java</file>
-            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/UserController/LoginServlet.java</file>
-            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/dal/DAOHistoryLog.java</file>
-            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/dal/DAOToken.java</file>
-            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/WEB-INF/web.xml</file>
+            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/home.jsp</file>
+            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/profile_user.jsp</file>
+            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/UserController/ProfileServlet.java</file>
+            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/forgotPassword.jsp</file>
+            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/resetPassword.jsp</file>
+            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/UserController/ResetPassword.java</file>
+            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/entity/GoogleAccount.java</file>
+            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/UserController/GoogleLogin.java</file>
         </group>
     </open-files>
 </project-private>

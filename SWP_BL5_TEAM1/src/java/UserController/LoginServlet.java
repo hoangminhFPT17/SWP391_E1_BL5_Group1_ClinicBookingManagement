@@ -35,7 +35,7 @@ public class LoginServlet extends HttpServlet {
 
         switch (service) {
             case "googleLogin":
-//                handleGoogleLogin(request, response, session, dao, logDAO);
+                handleGoogleLogin(request, response, session, dao, logDAO);
                 break;
 
             case "loginUser":
@@ -49,48 +49,49 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
-//    private void handleGoogleLogin(HttpServletRequest request, HttpServletResponse response, HttpSession session, DAOUser dao, DAOHistoryLog logDAO)
-//            throws ServletException, IOException {
-//        String code = request.getParameter("code");
-//        String error = request.getParameter("error");
-//
-//        if (error != null) {
-//            request.setAttribute("error", "Bạn đã từ chối quyền truy cập Google");
-//            request.getRequestDispatcher("login.jsp").forward(request, response);
-//            return;
-//        }
-//
-//        if (code != null) {
-//            GoogleLogin gg = new GoogleLogin();
-//            String accessToken = gg.getToken(code);
-//            GoogleAccount googleAccount = gg.getUserInfo(accessToken);
-//
-//            if (googleAccount != null) {
-//                User user = dao.getUserByEmail(googleAccount.getEmail());
-//
-//                if (user == null) {
-//                    request.setAttribute("error", "Tài khoản Google chưa được đăng ký trong hệ thống.");
-//                    request.getRequestDispatcher("register.jsp").forward(request, response);
-//                } else if (user.getIsActive() == 0) {
+    private void handleGoogleLogin(HttpServletRequest request, HttpServletResponse response, HttpSession session, DAOUser dao, DAOHistoryLog logDAO)
+            throws ServletException, IOException {
+        String code = request.getParameter("code");
+        String error = request.getParameter("error");
+
+        if (error != null) {
+            request.setAttribute("error", "Bạn đã từ chối quyền truy cập Google");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+            return;
+        }
+
+        if (code != null) {
+            GoogleLogin gg = new GoogleLogin();
+            String accessToken = gg.getToken(code);
+            GoogleAccount googleAccount = gg.getUserInfo(accessToken);
+
+            if (googleAccount != null) {
+                User user = dao.getUserByEmail(googleAccount.getEmail());
+
+                if (user == null) {
+                    request.setAttribute("error", "Tài khoản Google chưa được đăng ký trong hệ thống.");
+                    request.getRequestDispatcher("register.jsp").forward(request, response);
+                } else if (user.isIsVertified() == false) {
 //                    handleDeactivatedAccount(user, request, response);
-//                } else {
-//                    session.setAttribute("user", user);
-//                    session.setAttribute("userId", user.getUserID());
-//                    try {
-//                        logDAO.logLogin(user.getUserID());
-//                    } catch (SQLException e) {
-//                        e.printStackTrace();
-//                    }
-//                    redirectBasedOnRole(user, request, response);
-//                }
-//            } else {
-//                request.setAttribute("error", "Không lấy được thông tin tài khoản Google.");
-//                request.getRequestDispatcher("login.jsp").forward(request, response);
-//            }
-//        } else {
-//            request.getRequestDispatcher("login.jsp").forward(request, response);
-//        }
-//    }
+                    return;
+                } else {
+                    session.setAttribute("user", user);
+                    session.setAttribute("userId", user.getUserID());
+                    try {
+                        logDAO.logLogin(user.getUserID());
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    redirectBasedOnRole(user, request, response);
+                }
+            } else {
+                request.setAttribute("error", "Không lấy được thông tin tài khoản Google.");
+                request.getRequestDispatcher("login.jsp").forward(request, response);
+            }
+        } else {
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+        }
+    }
 
     private void handleUserLogin(HttpServletRequest request, HttpServletResponse response, HttpSession session, DAOUser dao, DAOHistoryLog logDAO)
             throws ServletException, IOException {
@@ -108,11 +109,12 @@ public class LoginServlet extends HttpServlet {
                 System.out.println("Login failed: No user found or incorrect credentials");
                 request.setAttribute("error", "Thông tin đăng nhập hoặc mật khẩu không chính xác");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
-            } else if (user.getIsActive() == 0) {
+            } else if (user.isIsVertified() == false) {
                 System.out.println("Login failed: User is deactivated, UserID=" + user.getUserID());
-                handleDeactivatedAccount(user, request, response);
+//                handleDeactivatedAccount(user, request, response);
+                redirectBasedOnRole(user, request, response);
             } else {
-                System.out.println("Login successful: UserID=" + user.getUserID() + ", RoleID=" + user.getRoleID());
+                //System.out.println("Login successful: UserID=" + user.getUserID() + ", RoleID=" + user.getRoleID());
                 session.setAttribute("user", user);
                 session.setAttribute("userId", user.getUserID());
                 try {
@@ -126,18 +128,18 @@ public class LoginServlet extends HttpServlet {
     }
 
     // Phương thức xử lý tài khoản bị deactivate
-    private void handleDeactivatedAccount(User user, HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        if (user.getRoleID() == 4) {
-            request.setAttribute("error", "Tài khoản của bạn đã bị vô hiệu hóa. Liên hệ với quản lý để có thể kích hoạt lại tài khoản.");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
-        } else if (user.getRoleID() == 2 || user.getRoleID() == 3) {
-//            sendActivationReminder(user, request, response);
-        } else {
-            request.setAttribute("error", "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ hỗ trợ.");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
-        }
-    }
+//    private void handleDeactivatedAccount(User user, HttpServletRequest request, HttpServletResponse response)
+//            throws ServletException, IOException {
+//        if (user.getRoleID() == 4) {
+//            request.setAttribute("error", "Tài khoản của bạn đã bị vô hiệu hóa. Liên hệ với quản lý để có thể kích hoạt lại tài khoản.");
+//            request.getRequestDispatcher("login.jsp").forward(request, response);
+//        } else if (user.getRoleID() == 2 || user.getRoleID() == 3) {
+    ////            sendActivationReminder(user, request, response);
+//        } else {
+//            request.setAttribute("error", "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ hỗ trợ.");
+//            request.getRequestDispatcher("login.jsp").forward(request, response);
+//        }
+//    }
 
     // Phương thức gửi email nhắc nhở kích hoạt
 //    private void sendActivationReminder(User user, HttpServletRequest request, HttpServletResponse response)
@@ -172,24 +174,24 @@ public class LoginServlet extends HttpServlet {
 //    }
 
     private void redirectBasedOnRole(User user, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int roleId = user.getRoleID();
+        int roleId = user.getUserID();
         String contextPath = request.getContextPath();
 
         switch (roleId) {
             case 1:
-                response.sendRedirect(contextPath + "/staff/doctorStatus.jsp");
+                response.sendRedirect(contextPath + "/home.jsp");
                 break;
             case 2:
-                response.sendRedirect(contextPath + "/staff/doctorStatus.jsp");
+                response.sendRedirect(contextPath + "/home.jsp");
                 break;
             case 3:
-                response.sendRedirect(contextPath + "/staff/doctorStatus.jsp");
+                response.sendRedirect(contextPath + "/home.jsp");
                 break;
             case 4:
-                response.sendRedirect(contextPath + "/staff/doctorStatus.jsp");
+                response.sendRedirect(contextPath + "/home.jsp");
                 break;
             default:
-                response.sendRedirect(contextPath + "/staff/doctorStatus.jsp");
+                response.sendRedirect(contextPath + "/home.jsp");
                 break;
         }
     }

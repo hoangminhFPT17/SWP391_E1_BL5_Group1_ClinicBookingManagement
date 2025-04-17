@@ -18,7 +18,7 @@ public class DAOHistoryLog {
     }
 
     public DAOHistoryLog(String url, String username, String password) {
-        dbcontext = new DBContext(url, username, password);
+        dbcontext = new DBContext();
     }
 
     public void logAction(int userId, String actionType, Integer targetId, String details) throws SQLException {

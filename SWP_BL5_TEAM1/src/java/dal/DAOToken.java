@@ -23,7 +23,7 @@ public class DAOToken extends DBContext {
 
     public boolean insertTokenForget(Token tokenForget) {
         String sql = "INSERT INTO Token (token, expiryTime, isUsed, userId) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, tokenForget.getToken());
             ps.setTimestamp(2, Timestamp.valueOf(tokenForget.getExpiryTime()));
             ps.setBoolean(3, tokenForget.isUsed());
@@ -37,7 +37,7 @@ public class DAOToken extends DBContext {
 
     public Token getTokenPassword(String token) {
         String sql = "SELECT * FROM Token WHERE token = ?";
-        try (PreparedStatement st = conn.prepareStatement(sql)) {
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setString(1, token);
             try (ResultSet rs = st.executeQuery()) {
                 if (rs.next()) {
@@ -58,7 +58,7 @@ public class DAOToken extends DBContext {
 
     public void updateStatus(Token token) {
         String sql = "UPDATE Token SET isUsed = ? WHERE token = ?";
-        try (PreparedStatement st = conn.prepareStatement(sql)) {
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setBoolean(1, token.isUsed());
             st.setString(2, token.getToken());
             st.executeUpdate();

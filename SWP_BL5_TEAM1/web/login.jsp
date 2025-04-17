@@ -60,6 +60,7 @@
                                     <input type="hidden" name="service" value="loginUser">
                                     <div class="row">
                                         <div class="col-lg-12">
+                                            <p class="text-danger form-label">${error}</p>
                                             <div class="mb-3">
                                                 <label class="form-label">Your Email <span class="text-danger">*</span></label>
                                                 <input type="email" class="form-control" placeholder="Email" name="loginInput" required="">
@@ -81,7 +82,7 @@
                                                         <label class="form-check-label" for="remember-check">Remember me</label>
                                                     </div>
                                                 </div>
-                                                <a href="forgot-password.html" class="text-dark h6 mb-0">Forgot password ?</a>
+                                                <a href="forgotPassword.jsp" class="text-dark h6 mb-0">Forgot password ?</a>
                                             </div>
                                         </div>
                                         <div class="col-lg-12 mb-0">
@@ -102,7 +103,7 @@
                                         
                                         <div class="col-6 mt-3">
                                             <div class="d-grid">
-                                                <a href="#" class="btn btn-soft-primary"><i class="uil uil-google"></i> Google</a>
+                                                <a href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=http://localhost:8080/SWP_BL5_TEAM1/login&response_type=code&client_id=1019052356272-nvvto028fvsehnrcro7kkso841n9pmrh.apps.googleusercontent.com&approval_prompt=force" class="btn btn-soft-primary"><i class="uil uil-google google"></i> Google</a>
                                             </div>
                                         </div><!--end col-->
 
