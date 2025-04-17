@@ -94,5 +94,14 @@ public class TimeSlotDAO extends DBContext {
         slot.setIsActive(rs.getBoolean("is_active"));
         return slot;
     }
+    
+    //main just for testing
+    public static void main(String[] args) {
+         TimeSlotDAO timeSlotDAO = new TimeSlotDAO();
+        List<TimeSlot> timeSlots = timeSlotDAO.getAllTimeSlots();
+        for (TimeSlot slot : timeSlots) {
+            System.out.println(slot);
+        }
+    }
 }
 

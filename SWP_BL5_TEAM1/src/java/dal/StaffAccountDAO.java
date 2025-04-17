@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import model.StaffAccount;
 
 public class StaffAccountDAO extends DBContext {
@@ -81,6 +82,30 @@ public class StaffAccountDAO extends DBContext {
         }
         return false;
     }
+    
+    public List<StaffAccount> getDoctorsByIds(List<Integer> ids) {
+        List<StaffAccount> doctors = new ArrayList<>();
+        if (ids == null || ids.isEmpty()) return doctors;
+
+        // Build SQL placeholders (?, ?, ?) based on list size
+        String placeholders = ids.stream().map(id -> "?").collect(Collectors.joining(","));
+        String query = "SELECT * FROM StaffAccount WHERE staff_id IN (" + placeholders + ") AND role = 'Doctor'";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            for (int i = 0; i < ids.size(); i++) {
+                ps.setInt(i + 1, ids.get(i));
+            }
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                doctors.add(mapToStaffAccount(rs));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(StaffAccountDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return doctors;
+    }
+
 
     private StaffAccount mapToStaffAccount(ResultSet rs) throws SQLException {
         StaffAccount staff = new StaffAccount();
