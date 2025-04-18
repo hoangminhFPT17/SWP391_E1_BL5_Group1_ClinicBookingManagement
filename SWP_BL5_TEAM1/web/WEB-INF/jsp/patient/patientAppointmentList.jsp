@@ -25,34 +25,59 @@
                 <div class="row">
                     <div class="col-12 mt-4 pt-2 mt-sm-0 pt-sm-0">
                         <div class="row">
-                            <div class="col-xl-9 col-lg-6 col-md-4">
+                            <div class="col-xl-6 col-lg-6 col-md-4">
                                 <h5 class="mb-0">Appointment</h5>
                             </div><!--end col-->
+                        </div>
+                        <div class="row align-items-end">
+                            <!-- LEFT HALF: Filters and Search -->
+                            <div class="col-md-6">
+                                <form method="get" action="PatientAppointmentsListServlet">
+                                    <input type="hidden" name="phone" value="3333333333" />
+                                    <div class="row g-3">
+                                        <!-- Time Slot -->
+                                        <div class="col-4">
+                                            <label class="form-label">Time Slot</label>
+                                            <select name="slotId" class="form-control select2input" style="min-width: 100%;">
+                                                <option value="">All</option>
+                                                <c:forEach var="slot" items="${timeSlots}">
+                                                    <option value="${slot.slotId}" ${param.slotId == slot.slotId ? 'selected' : ''}>
+                                                        ${slot.name}: ${slot.startTime} - ${slot.endTime}
+                                                    </option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
 
-                            <div class="col-xl-3 col-lg-6 col-md-8 mt-4 mt-md-0">
-                                <div class="justify-content-md-end">
-                                    <form>
-                                        <div class="row justify-content-between align-items-center">
-                                            <div class="col-sm-12 col-md-5">
-                                                <div class="mb-0 position-relative">
-                                                    <select class="form-control time-during select2input">
-                                                        <option value="EY">Today</option>
-                                                        <option value="GY">Tomorrow</option>
-                                                        <option value="PS">Yesterday</option>
-                                                    </select>
-                                                </div>
-                                            </div><!--end col-->
+                                        <!-- Status -->
+                                        <div class="col-2">
+                                            <label class="form-label">Status</label>
+                                            <select name="status" class="form-control select2input" style="min-width: 100%;">
+                                                <option value="">All</option>
+                                                <option value="Approved" ${param.status == 'Approved' ? 'selected' : ''}>Approved</option>
+                                                <option value="Pending" ${param.status == 'Pending' ? 'selected' : ''}>Pending</option>
+                                                <option value="Cancelled" ${param.status == 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                                            </select>
+                                        </div>
 
-                                            <div class="col-sm-12 col-md-7 mt-4 mt-sm-0">
-                                                <div class="d-grid">
-                                                    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#appointmentform">Appointment</a>
-                                                </div>
-                                            </div><!--end col-->
-                                        </div><!--end row-->
-                                    </form><!--end form-->
-                                </div>
-                            </div><!--end col-->
-                        </div><!--end row-->
+                                        <!-- Search + Button -->
+                                        <div class="col-4">
+                                            <label class="form-label">Search by Doctor</label>
+                                            <input type="text" name="keyword" class="form-control" placeholder="Doctor name" value="${param.keyword}">
+                                        </div>
+
+                                        <div class="col-2 d-flex align-items-end">
+                                            <button type="submit" class="btn btn-primary w-100">Search</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- RIGHT HALF: Appointment Button -->
+                            <div class="col-md-6 text-end mt-3 mt-md-0">
+                                <a href="#" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#appointmentform">+ Appointment</a>
+                            </div>
+                        </div>
+
 
                         <div class="row">
                             <div class="col-12 mt-4">

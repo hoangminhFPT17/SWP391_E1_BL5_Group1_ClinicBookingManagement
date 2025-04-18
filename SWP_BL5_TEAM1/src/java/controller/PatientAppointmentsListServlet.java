@@ -82,13 +82,35 @@ public class PatientAppointmentsListServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing phone number");
             return;
         }
-        
-        List<Appointment> appointments = appointmentDAO.getByPatientPhone(phone);
+
+        // Get query parameters for paging and filters
+        int page = 1;
+        int limit = 5;
+        try {
+            page = Integer.parseInt(request.getParameter("page"));
+            if (page < 1) {
+                page = 1;
+            }
+        } catch (NumberFormatException ignored) {
+        }
+
+        int offset = (page - 1) * limit;
+        String keyword = request.getParameter("keyword");
+        String status = request.getParameter("status");
+        String slotIdParam = request.getParameter("slotId");
+        Integer slotId = (slotIdParam != null && !slotIdParam.isEmpty()) ? Integer.parseInt(slotIdParam) : null;
+
+        // Get filtered + paged appointments
+        List<Appointment> appointments = appointmentDAO.searchAppointments(phone, keyword, status, slotId, offset, limit);
+
+        // Get total count for pagination
+        int totalAppointments = appointmentDAO.countAppointments(phone, keyword, status, slotId);
+        int totalPages = (int) Math.ceil((double) totalAppointments / limit);
+
         List<AppointmentDTO> dtoList = new ArrayList<>();
-        
-        Patient patient = patientDAO.getPatientByPhone(phone); // You need to have this method in PatientDAO
-        
-        int index = 1;
+        Patient patient = patientDAO.getPatientByPhone(phone);
+
+        int index = offset + 1;
         for (Appointment appt : appointments) {
             AppointmentDTO dto = new AppointmentDTO();
             dto.setIndex(index++);
@@ -101,13 +123,11 @@ public class PatientAppointmentsListServlet extends HttpServlet {
                 dto.setPatientDateOfBirth(patient.getDateOfBirth());
             }
 
-            // Get time slot
             TimeSlot slot = timeSlotDAO.getTimeSlotById(appt.getSlotId());
             if (slot != null) {
                 dto.setTimeSlotName(slot.getName() + ": " + slot.getStartTime() + " - " + slot.getEndTime());
             }
 
-            // Get doctor name
             StaffAccount doctorAccount = staffAccountDAO.getStaffById(appt.getDoctorId());
             if (doctorAccount != null) {
                 User doctorUser = userDAO.getUserById(doctorAccount.getUserId());
@@ -118,9 +138,20 @@ public class PatientAppointmentsListServlet extends HttpServlet {
 
             dtoList.add(dto);
         }
+        
+        //Data for select dropdownbox
+        List<TimeSlot> timeSlots = timeSlotDAO.getAllTimeSlots();
+        request.setAttribute("timeSlots", timeSlots);
+        
 
         request.setAttribute("appointments", dtoList);
-        
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("phone", phone);
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("status", status);
+        request.setAttribute("slotId", slotId);
+
         request.getRequestDispatcher("/WEB-INF/jsp/patient/patientAppointmentList.jsp").forward(request, response);
     }
 
