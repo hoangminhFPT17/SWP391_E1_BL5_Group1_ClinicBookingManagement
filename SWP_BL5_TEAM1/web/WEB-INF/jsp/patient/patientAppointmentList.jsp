@@ -70,32 +70,47 @@
                                                 <th class="border-bottom p-3" style="min-width: 150px;">Action</th>
                                             </tr>
                                         </thead>
-
                                         <tbody>
-                                            <c:forEach var="appt" items="${appointments}" varStatus="loop">
+                                            <c:forEach var="dto" items="${appointments}">
                                                 <tr>
-                                                    <th class="p-3">${loop.index + 1}</th>
+                                                    <th class="p-3">${dto.index}</th>
                                                     <td class="p-3">
                                                         <a href="#" class="text-dark">
                                                             <div class="d-flex align-items-center">
-                                                                <!-- Assuming patient has a profile image path in the model -->
-                                                                <span class="ms-2">${patient.fullName}</span>
+                                                                <img src="${pageContext.request.contextPath}/assets/images/client/01.jpg" class="avatar avatar-md-sm rounded-circle shadow" alt="">
+                                                                <span class="ms-2">${dto.patientName}</span>
                                                             </div>
                                                         </a>
                                                     </td>
-                                                    <td class="p-3">${patient.dateOfBirth}</td>
-                                                    <td class="p-3">${appt.appointmentDate}</td>
-                                                    <td class="p-3">${slotMap[appt.slotId].startTime} - ${slotMap[appt.slotId].endTime}</td>
+                                                    <td class="p-3">
+                                                        <fmt:formatDate value="${dto.patientDateOfBirth}" pattern="dd MMM yyyy" />
+                                                    </td>
+                                                    <td class="p-3">
+                                                        <fmt:formatDate value="${dto.appointmentDate}" pattern="dd MMM yyyy" />
+                                                    </td>
+                                                    <td class="p-3">${dto.timeSlotName}</td>
                                                     <td class="p-3">
                                                         <a href="#" class="text-dark">
                                                             <div class="d-flex align-items-center">
-                                                                <!-- Assuming doctor has a profile image path in the model -->
-                                                                <span class="ms-2">${doctorMap[appt.doctorId].staffId}</span>
+                                                                <img src="${pageContext.request.contextPath}/assets/images/doctors/01.jpg" class="avatar avatar-md-sm rounded-circle border shadow" alt="">
+                                                                <span class="ms-2">${dto.doctorFullName}</span>
                                                             </div>
                                                         </a>
                                                     </td>
-                                                    <td class="p-3"><span class="badge bg-${appt.status == 'Pending' ? 'warning' : 'success'}">${appt.status}</span></td>
-                                                    <td class="text-end p-3">
+                                                    <td class="p-3">
+                                                        <c:choose>
+                                                            <c:when test="${dto.status == 'Pending'}">
+                                                                <span class="badge bg-warning">${dto.status}</span>
+                                                            </c:when>
+                                                            <c:when test="${dto.status == 'Approved'}">
+                                                                <span class="badge bg-success">${dto.status}</span>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <span class="badge bg-secondary">${dto.status}</span>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </td>
+                                                    <td class="text-start p-3">
                                                         <a href="#" class="btn btn-icon btn-pills btn-soft-primary" data-bs-toggle="modal" data-bs-target="#viewappointment"><i class="uil uil-eye"></i></a>
                                                         <a href="#" class="btn btn-icon btn-pills btn-soft-success" data-bs-toggle="modal" data-bs-target="#acceptappointment"><i class="uil uil-edit"></i></a>
                                                         <a href="#" class="btn btn-icon btn-pills btn-soft-danger" data-bs-toggle="modal" data-bs-target="#cancelappointment"><i class="uil uil-times-circle"></i></a>
@@ -103,7 +118,6 @@
                                                 </tr>
                                             </c:forEach>
                                         </tbody>
-
                                     </table>
                                 </div>
                             </div>

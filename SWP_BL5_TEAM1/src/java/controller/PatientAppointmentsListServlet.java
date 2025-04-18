@@ -8,12 +8,15 @@ import dal.AppointmentDAO;
 import dal.PatientDAO;
 import dal.StaffAccountDAO;
 import dal.TimeSlotDAO;
+import dal.UserDAO;
+import dto.AppointmentDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,12 +24,13 @@ import model.Appointment;
 import model.Patient;
 import model.StaffAccount;
 import model.TimeSlot;
+import model.User;
 
 /**
  *
  * @author LENOVO
  */
-public class GetPatientAppointmentsServlet extends HttpServlet {
+public class PatientAppointmentsListServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -71,42 +75,52 @@ public class GetPatientAppointmentsServlet extends HttpServlet {
         PatientDAO patientDAO = new PatientDAO();
         StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
         TimeSlotDAO timeSlotDAO = new TimeSlotDAO();
+        UserDAO userDAO = new UserDAO();
 
         String phone = request.getParameter("phone");
-        if (phone == null || phone.trim().isEmpty()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Phone number is required.");
+        if (phone == null || phone.isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing phone number");
             return;
         }
-
-        Patient patient = patientDAO.getPatientByPhone(phone);
-        if (patient == null) {
-            request.setAttribute("error", "Patient not found.");
-            request.getRequestDispatcher("/views/patient-appointments.jsp").forward(request, response);
-            return;
-        }
-
+        
         List<Appointment> appointments = appointmentDAO.getByPatientPhone(phone);
-
-        Map<Integer, StaffAccount> doctorMap = new HashMap<>();
-        Map<Integer, TimeSlot> slotMap = new HashMap<>();
-
+        List<AppointmentDTO> dtoList = new ArrayList<>();
+        
+        Patient patient = patientDAO.getPatientByPhone(phone); // You need to have this method in PatientDAO
+        
+        int index = 1;
         for (Appointment appt : appointments) {
-            int doctorId = appt.getDoctorId();
-            int slotId = appt.getSlotId();
+            AppointmentDTO dto = new AppointmentDTO();
+            dto.setIndex(index++);
+            dto.setAppointmentId(appt.getAppointmentId());
+            dto.setAppointmentDate(appt.getAppointmentDate());
+            dto.setStatus(appt.getStatus());
 
-            if (!doctorMap.containsKey(doctorId)) {
-                doctorMap.put(doctorId, staffAccountDAO.getStaffById(doctorId));
+            if (patient != null) {
+                dto.setPatientName(patient.getFullName());
+                dto.setPatientDateOfBirth(patient.getDateOfBirth());
             }
 
-            if (!slotMap.containsKey(slotId)) {
-                slotMap.put(slotId, timeSlotDAO.getTimeSlotById(slotId));
+            // Get time slot
+            TimeSlot slot = timeSlotDAO.getTimeSlotById(appt.getSlotId());
+            if (slot != null) {
+                dto.setTimeSlotName(slot.getName() + ": " + slot.getStartTime() + " - " + slot.getEndTime());
             }
+
+            // Get doctor name
+            StaffAccount doctorAccount = staffAccountDAO.getStaffById(appt.getDoctorId());
+            if (doctorAccount != null) {
+                User doctorUser = userDAO.getUserById(doctorAccount.getUserId());
+                if (doctorUser != null) {
+                    dto.setDoctorFullName(doctorUser.getFullName());
+                }
+            }
+
+            dtoList.add(dto);
         }
 
-        request.setAttribute("appointments", appointments);
-        request.setAttribute("doctorMap", doctorMap);
-        request.setAttribute("slotMap", slotMap);
-        request.setAttribute("patient", patient);  // Pass patient info to JSP if needed
+        request.setAttribute("appointments", dtoList);
+        
         request.getRequestDispatcher("/WEB-INF/jsp/patient/patientAppointmentList.jsp").forward(request, response);
     }
 
