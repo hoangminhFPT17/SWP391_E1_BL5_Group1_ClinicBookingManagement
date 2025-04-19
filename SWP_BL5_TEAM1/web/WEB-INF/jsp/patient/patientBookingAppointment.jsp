@@ -432,7 +432,58 @@
                 </ul><!--end icon-->
             </div>
         </div>
-        <!-- Offcanvas End -->    
+        <!-- Offcanvas End -->
+
+        <!<!-- Toast notification -->
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div class="toast align-items-center text-white bg-success border-0 ${appointmentStatus == 'fail' ? 'd-none' : ''}" 
+                 id="successToast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        Appointment booked successfully!
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+
+            <div class="toast align-items-center text-white bg-danger border-0 ${appointmentStatus == 'success' ? 'd-none' : ''}" 
+                 id="failToast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        Failed to book appointment. Please try again.
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+        <%
+            String status = request.getParameter("status");
+        %>
+
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <% if ("success".equals(status)) { %>
+            <div class="toast align-items-center text-white bg-success border-0" 
+                 id="statusToast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        Appointment booked successfully!
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+            <% } else if ("fail".equals(status)) { %>
+            <div class="toast align-items-center text-white bg-danger border-0" 
+                 id="statusToast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        Failed to book appointment. Please try again.
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+            <% }%>
+        </div>
+
 
         <!-- javascript -->
         <script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
@@ -451,85 +502,39 @@
         <!-- Main Js -->
         <script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
 
-        <c:if test="${not empty appointmentStatus}">
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    const status = '${appointmentStatus}';
-                    if (status === 'success') {
-                        showToast("Appointment booked successfully!", "success");
-                    } else {
-                        showToast("Failed to book appointment. Please try again.", "error");
-                    }
-                });
-
-                function showToast(message, type) {
-                    const toast = document.createElement('div');
-                    toast.className = 'toast ' + type;
-                    toast.textContent = message;
-                    document.body.appendChild(toast);
-
-                    setTimeout(() => {
-                        toast.classList.add('show');
-                        setTimeout(() => {
-                            toast.classList.remove('show');
-                            setTimeout(() => toast.remove(), 500);
-                        }, 3000);
-                    }, 100);
-                }
-            </script>
-
-            <style>
-                .toast {
-                    position: fixed;
-                    bottom: 30px;
-                    right: 30px;
-                    padding: 15px 25px;
-                    color: #fff;
-                    background-color: #333;
-                    border-radius: 8px;
-                    opacity: 0;
-                    transition: all 0.5s ease;
-                    z-index: 9999;
-                }
-
-                .toast.success {
-                    background-color: #28a745;
-                }
-
-                .toast.error {
-                    background-color: #dc3545;
-                }
-
-                .toast.show {
-                    opacity: 1;
-                    transform: translateY(-10px);
-                }
-            </style>
-        </c:if>
-        
         <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const departmentSelect = document.querySelector('.department-name');
-            const doctorSelect = document.querySelector('#doctorSelect');
-            const allDoctors = Array.from(doctorSelect.options);
-
-            departmentSelect.addEventListener('change', function () {
-                const selectedDept = departmentSelect.value;
-
-                // Clear current options
-                doctorSelect.innerHTML = '';
-
-                // Add matching options back
-                allDoctors.forEach(doctor => {
-                    if (doctor.dataset.department === selectedDept) {
-                        doctorSelect.appendChild(doctor);
-                    }
-                });
-
-                // Optional: reset selected value
-                doctorSelect.selectedIndex = 0;
+            document.addEventListener('DOMContentLoaded', function () {
+                const toastEl = document.getElementById('statusToast');
+                if (toastEl) {
+                    new bootstrap.Toast(toastEl).show();
+                }
             });
-        });
+        </script>
+
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const departmentSelect = document.querySelector('.department-name');
+                const doctorSelect = document.querySelector('#doctorSelect');
+                const allDoctors = Array.from(doctorSelect.options);
+
+                departmentSelect.addEventListener('change', function () {
+                    const selectedDept = departmentSelect.value;
+
+                    // Clear current options
+                    doctorSelect.innerHTML = '';
+
+                    // Add matching options back
+                    allDoctors.forEach(doctor => {
+                        if (doctor.dataset.department === selectedDept) {
+                            doctorSelect.appendChild(doctor);
+                        }
+                    });
+
+                    // Optional: reset selected value
+                    doctorSelect.selectedIndex = 0;
+                });
+            });
         </script>
 
         <script>

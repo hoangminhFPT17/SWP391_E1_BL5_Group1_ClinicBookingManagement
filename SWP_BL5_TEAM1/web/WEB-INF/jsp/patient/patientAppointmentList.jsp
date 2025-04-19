@@ -147,7 +147,9 @@
                                                                 <td class="text-start p-3">
                                                                     <a href="#" class="btn btn-icon btn-pills btn-soft-primary" data-bs-toggle="modal" data-bs-target="#viewappointment"><i class="uil uil-eye"></i></a>
                                                                     <a href="#" class="btn btn-icon btn-pills btn-soft-success" data-bs-toggle="modal" data-bs-target="#acceptappointment"><i class="uil uil-edit"></i></a>
-                                                                    <a href="#" class="btn btn-icon btn-pills btn-soft-danger" data-bs-toggle="modal" data-bs-target="#cancelappointment"><i class="uil uil-times-circle"></i></a>
+                                                                        <c:if test="${dto.status == 'Pending'}">
+                                                                        <a href="#" class="btn btn-icon btn-pills btn-soft-danger" data-bs-toggle="modal" data-bs-target="#cancelappointment"><i class="uil uil-times-circle"></i></a>
+                                                                        </c:if>
                                                                 </td>
                                                             </tr>
                                                         </c:forEach>
@@ -411,7 +413,7 @@
         <!-- Accept Appointment End -->
 
         <!-- Cancel Appointment Start -->
-        <div class="modal fade" id="cancelappointment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="cancelappointment" tabindex="-1" aria-labelledby="cancelAppointmentLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-body py-5">
@@ -420,10 +422,14 @@
                                 <span class="mb-0"><i class="uil uil-times-circle h1"></i></span>
                             </div>
                             <div class="mt-4">
-                                <h4>Cancel Appointment</h4>
-                                <p class="para-desc mx-auto text-muted mb-0">Great doctor if you need your family member to get immediate assistance, emergency treatment.</p>
+                                <h4 id="cancelAppointmentLabel">Cancel Appointment</h4>
+                                <p class="para-desc mx-auto text-muted mb-0">
+                                    Are you sure you want to cancel this appointment?<br />
+                                    <strong>You can only cancel appointments that are still pending.</strong>
+                                </p>
                                 <div class="mt-4">
-                                    <a href="#" class="btn btn-soft-danger">Cancel</a>
+                                    <a href="#" class="btn btn-soft-danger">Yes, Cancel</a>
+                                    <button type="button" class="btn btn-light ms-2" data-bs-dismiss="modal">No, Keep</button>
                                 </div>
                             </div>
                         </div>
@@ -432,30 +438,8 @@
             </div>
         </div>
         <!-- Cancel Appointment End -->
+
         <!-- Modal end -->
-
-        <!-- Footer Start -->
-        <footer class="bg-footer py-4">
-            <div class="container-fluid">
-                <div class="row align-items-center">
-                    <div class="col-sm-6">
-                        <div class="text-sm-start text-center">
-                            <p class="mb-0"><script>document.write(new Date().getFullYear())</script> © Doctris. Design with <i class="mdi mdi-heart text-danger"></i> by <a href="../../../index.html" target="_blank" class="text-reset">Shreethemes</a>.</p>
-                        </div>
-                    </div><!--end col-->
-
-                    <div class="col-sm-6 mt-4 mt-sm-0">
-                        <ul class="list-unstyled footer-list text-sm-end text-center mb-0">
-                            <li class="list-inline-item"><a href="terms.html" class="text-foot me-2">Terms</a></li>
-                            <li class="list-inline-item"><a href="privacy.html" class="text-foot me-2">Privacy</a></li>
-                            <li class="list-inline-item"><a href="aboutus.html" class="text-foot me-2">About</a></li>
-                            <li class="list-inline-item"><a href="contact.html" class="text-foot me-2">Contact</a></li>
-                        </ul>
-                    </div><!--end col-->
-                </div><!--end row-->
-            </div><!--end container-->
-        </footer><!--end footer-->
-        <!-- End -->
 
         <!-- Back to top -->
         <a href="#" onclick="topFunction()" id="back-to-top" class="btn btn-icon btn-pills btn-primary back-to-top"><i data-feather="arrow-up" class="icons"></i></a>

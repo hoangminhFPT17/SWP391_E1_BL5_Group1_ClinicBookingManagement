@@ -63,47 +63,49 @@ public class DoctorBySlotServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String slotIdStr = request.getParameter("slotId");
-
-        if (slotIdStr == null || slotIdStr.trim().isEmpty()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing or empty slotId");
-            return;
-        }
-
-        int slotId;
-        try {
-            slotId = Integer.parseInt(slotIdStr);
-        } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid slotId");
-            return;
-        }
-
-        DoctorTimeSlotDAO doctorTimeSlotDAO = new DoctorTimeSlotDAO();
-        StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
-        UserDAO userDAO = new UserDAO(); // You need to create this if you don't have one yet
-
-        List<Integer> staffIds = doctorTimeSlotDAO.getDoctorIdsBySlotId(slotId);
-        List<StaffAccount> doctors = staffAccountDAO.getDoctorsByIds(staffIds);
-
-        List<DoctorDTO> enrichedDoctors = new ArrayList<>();
-        for (StaffAccount doc : doctors) {
-            User user = userDAO.getUserById(doc.getUserId());
-            if (user != null) {
-                enrichedDoctors.add(new DoctorDTO(
-                        doc.getStaffId(),
-                        doc.getUserId(),
-                        user.getFullName(),
-                        doc.getRole(),
-                        doc.getDepartment()
-                ));
-            }
-        }
-
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(response.getWriter(), enrichedDoctors);
+        try {
+            String slotIdStr = request.getParameter("slotId");
+
+            if (slotIdStr == null || slotIdStr.trim().isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"error\": \"Missing or empty slotId\"}");
+                return;
+            }
+
+            int slotId = Integer.parseInt(slotIdStr);
+
+            DoctorTimeSlotDAO doctorTimeSlotDAO = new DoctorTimeSlotDAO();
+            StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
+            UserDAO userDAO = new UserDAO();
+
+            List<Integer> staffIds = doctorTimeSlotDAO.getDoctorIdsBySlotId(slotId);
+            List<StaffAccount> doctors = staffAccountDAO.getDoctorsByIds(staffIds);
+
+            List<DoctorDTO> enrichedDoctors = new ArrayList<>();
+            for (StaffAccount doc : doctors) {
+                User user = userDAO.getUserById(doc.getUserId());
+                if (user != null) {
+                    enrichedDoctors.add(new DoctorDTO(
+                            doc.getStaffId(),
+                            doc.getUserId(),
+                            user.getFullName(),
+                            doc.getRole(),
+                            doc.getDepartment()
+                    ));
+                }
+            }
+            //WARNING: IF MISSING THE 3 Jackson library, the UI wont able to get a json
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(response.getWriter(), enrichedDoctors);
+
+        } catch (Exception e) {
+            e.printStackTrace(); // Log the error to server logs
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"error\": \"Server error: " + e.getMessage() + "\"}");
+        }
     }
 
     /**

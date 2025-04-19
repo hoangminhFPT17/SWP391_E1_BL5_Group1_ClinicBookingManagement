@@ -140,7 +140,12 @@ public class PatientBookAppointmentServlet extends HttpServlet {
 
         // Redirect or forward to confirmation
         request.setAttribute("appointmentStatus", success ? "success" : "fail");
-        request.getRequestDispatcher("/patientBookingAppointment.jsp").forward(request, response);
+        if (success) {
+            response.sendRedirect("patientBookingAppointment.jsp?status=success");
+        } else {
+            response.sendRedirect("patientBookingAppointment.jsp?status=fail");
+        }
+        
     }
 
     /**

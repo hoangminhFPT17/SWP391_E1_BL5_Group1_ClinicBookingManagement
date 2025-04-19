@@ -20,6 +20,10 @@
         <servlet-name>doctorStatusController</servlet-name>
         <servlet-class>controller.staff.doctorStatusController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DeleteAppointmentServlet</servlet-name>
+        <servlet-class>controller.DeleteAppointmentServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <url-pattern>/PatientBookAppointmentServlet</url-pattern>
@@ -39,5 +43,9 @@
     <servlet-mapping>
         <servlet-name>doctorStatusController</servlet-name>
         <url-pattern>/doctorStatusController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteAppointmentServlet</servlet-name>
+        <url-pattern>/DeleteAppointmentServlet</url-pattern>
     </servlet-mapping>
 </web-app>
