@@ -33,7 +33,7 @@
                             <div class="row align-items-end">
                                 <!-- LEFT HALF: Filters and Search -->
                                 <div class="col-md-6">
-                                    <input type="hidden" name="phone" value="3333333333" />
+                                    <input type="hidden" name="phone" value="${phone}" />
                                     <input type="hidden" name="page" id="pageInput" value="${param.page != null ? param.page : 1}" />
                                     <div class="row g-3">
                                         <!-- Time Slot -->
@@ -74,8 +74,9 @@
 
                                 <!-- RIGHT HALF: Appointment Button -->
                                 <div class="col-md-6 text-end mt-3 mt-md-0">
-                                    <a href="#" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#appointmentform">+ Appointment</a>
+                                    <a href="/SWP_BL5_TEAM1/PatientBookAppointmentServlet" class="btn btn-success">+ Appointment</a>
                                 </div>
+
                             </div>
 
 
@@ -148,8 +149,8 @@
                                                                     <a href="#" class="btn btn-icon btn-pills btn-soft-primary" data-bs-toggle="modal" data-bs-target="#viewappointment"><i class="uil uil-eye"></i></a>
                                                                     <a href="#" class="btn btn-icon btn-pills btn-soft-success" data-bs-toggle="modal" data-bs-target="#acceptappointment"><i class="uil uil-edit"></i></a>
                                                                         <c:if test="${dto.status == 'Pending'}">
-                                                                        <a href="#" class="btn btn-icon btn-pills btn-soft-danger" data-bs-toggle="modal" data-bs-target="#cancelappointment"><i class="uil uil-times-circle"></i></a>
-                                                                        </c:if>
+                                                                        <a href="#" class="btn btn-icon btn-pills btn-soft-danger" data-bs-toggle="modal" data-bs-target="#cancelappointment" data-appointment-id="${dto.appointmentId}"><i class="uil uil-times-circle"></i></a>
+                                                                    </c:if>
                                                                 </td>
                                                             </tr>
                                                         </c:forEach>
@@ -412,28 +413,34 @@
         </div>
         <!-- Accept Appointment End -->
 
-        <!-- Cancel Appointment Start -->
+        <!-- Cancel Appointment Modal -->
         <div class="modal fade" id="cancelappointment" tabindex="-1" aria-labelledby="cancelAppointmentLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-                    <div class="modal-body py-5">
-                        <div class="text-center">
-                            <div class="icon d-flex align-items-center justify-content-center bg-soft-danger rounded-circle mx-auto" style="height: 95px; width:95px;">
-                                <span class="mb-0"><i class="uil uil-times-circle h1"></i></span>
-                            </div>
-                            <div class="mt-4">
-                                <h4 id="cancelAppointmentLabel">Cancel Appointment</h4>
-                                <p class="para-desc mx-auto text-muted mb-0">
-                                    Are you sure you want to cancel this appointment?<br />
-                                    <strong>You can only cancel appointments that are still pending.</strong>
-                                </p>
+                    <form method="post" action="DeleteAppointmentServlet">
+                        <div class="modal-body py-5">
+                            <div class="text-center">
+                                <div class="icon d-flex align-items-center justify-content-center bg-soft-danger rounded-circle mx-auto" style="height: 95px; width:95px;">
+                                    <span class="mb-0"><i class="uil uil-times-circle h1"></i></span>
+                                </div>
                                 <div class="mt-4">
-                                    <a href="#" class="btn btn-soft-danger">Yes, Cancel</a>
-                                    <button type="button" class="btn btn-light ms-2" data-bs-dismiss="modal">No, Keep</button>
+                                    <h4 id="cancelAppointmentLabel">Cancel Appointment</h4>
+                                    <p class="para-desc mx-auto text-muted mb-0">
+                                        Are you sure you want to cancel this appointment?<br />
+                                        <strong>You can only cancel appointments that are still pending.</strong>
+                                    </p>
+
+                                    <!-- Hidden input for appointment ID -->
+                                    <input type="hidden" name="id" id="cancelAppointmentId">
+
+                                    <div class="mt-4">
+                                        <button type="submit" class="btn btn-soft-danger">Yes, Cancel</button>
+                                        <button type="button" class="btn btn-light ms-2" data-bs-dismiss="modal">No, Keep</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -514,6 +521,39 @@
         </div>
         <!-- Offcanvas End -->
 
+        <%
+            String message = request.getParameter("message");
+        %>
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <% if (message != null) {%>
+            <div class="toast align-items-center text-white bg-success border-0"
+                 id="statusToast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <%= message%>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+            <% }%>
+        </div>
+
+
+        <script>
+            window.addEventListener('DOMContentLoaded', () => {
+                const toastEl = document.getElementById('statusToast');
+                if (toastEl) {
+                    const toast = new bootstrap.Toast(toastEl);
+                    toast.show();
+
+                    // Remove message param from URL after showing
+                    const url = new URL(window.location);
+                    url.searchParams.delete("message");
+                    window.history.replaceState({}, document.title, url);
+                }
+            });
+        </script>
+
         <!-- javascript -->
         <script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/bootstrap.bundle.min.js"></script>
@@ -530,5 +570,16 @@
         <script src="${pageContext.request.contextPath}/assets/js/feather.min.js"></script>
         <!-- Main Js -->
         <script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
+
+        <script>
+            const cancelModal = document.getElementById('cancelappointment');
+            cancelModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const appointmentId = button.getAttribute('data-appointment-id');
+                const hiddenInput = cancelModal.querySelector('#cancelAppointmentId');
+                hiddenInput.value = appointmentId;
+            });
+        </script>
+
     </body>
 </html>

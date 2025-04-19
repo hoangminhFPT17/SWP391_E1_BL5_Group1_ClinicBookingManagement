@@ -90,7 +90,9 @@
                                             <div class="col-lg-12">
                                                 <div class="mb-3">
                                                     <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                                                    <input name="fullName" id="fullName" type="text" class="form-control" placeholder="Patient Full Name :" required>
+                                                    <input name="fullName" id="fullName" type="text" class="form-control"
+                                                           placeholder="Patient Full Name :" required pattern="^[A-Za-z\s]{3,50}$"
+                                                           title="Full name must be 3-50 characters long and contain only letters and spaces.">
                                                 </div>
                                             </div>
 
@@ -98,16 +100,18 @@
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label">Phone <span class="text-danger">*</span></label>
-                                                    <input name="phone" id="phone" type="tel" class="form-control" placeholder="Your Phone :" required>
-                                                </div>
+                                                    <input name="phone" id="phone" type="tel" class="form-control"
+                                                           placeholder="Your Phone :" required pattern="^\d{10,15}$"
+                                                           title="Phone number must be between 10 to 15 digits.">                                                </div>
                                             </div>
 
                                             <!-- Email -->
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label">Email</label>
-                                                    <input name="email" id="email" type="email" class="form-control" placeholder="Your Email :">
-                                                </div>
+                                                    <input name="email" id="email" type="email" class="form-control"
+                                                           placeholder="Your Email :" pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$"
+                                                           title="Enter a valid email address.">                                                </div>
                                             </div>
 
                                             <!-- Date of Birth -->
@@ -503,14 +507,33 @@
         <script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
 
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const toastEl = document.getElementById('statusToast');
-                if (toastEl) {
-                    new bootstrap.Toast(toastEl).show();
+                                        document.addEventListener('DOMContentLoaded', function () {
+                                            const toastEl = document.getElementById('statusToast');
+                                            if (toastEl) {
+                                                new bootstrap.Toast(toastEl).show();
+                                            }
+                                        });
+        </script>
+
+        <script>
+            document.querySelector('form').addEventListener('submit', function (e) {
+                const phone = document.getElementById('phone').value;
+                const email = document.getElementById('email').value;
+
+                const phoneRegex = /^\d{10,15}$/;
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (!phoneRegex.test(phone)) {
+                    alert("Please enter a valid phone number (10-15 digits).");
+                    e.preventDefault();
+                }
+
+                if (email && !emailRegex.test(email)) {
+                    alert("Please enter a valid email address.");
+                    e.preventDefault();
                 }
             });
         </script>
-
 
         <script>
             document.addEventListener("DOMContentLoaded", function () {
@@ -540,23 +563,22 @@
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 const slotSelect = document.querySelector('select[name="slotId"]');
-                if (!slotSelect) {
-                    console.log('Dropdown not found!');
+                const doctorSelect = document.getElementById('doctorSelect');
+
+                if (!slotSelect || !doctorSelect) {
+                    console.log('Dropdowns not found!');
                     return;
                 }
 
-                slotSelect.addEventListener('change', function () {
-                    console.log('Slot dropdown changed!');
-                    const slotId = this.value;
-                    const doctorSelect = document.getElementById('doctorSelect');
-                    console.log('SLOT ID RIGHT NOW: ' + slotId);
+                function loadDoctors(slotId) {
+                    console.log('Loading doctors for slotId:', slotId);
 
                     fetch(`/SWP_BL5_TEAM1/doctor-by-slot?slotId=` + slotId)
                             .then(response => response.json())
                             .then(data => {
                                 console.log('Doctors fetched:', data);
-
                                 doctorSelect.innerHTML = '';
+
                                 if (data.length === 0) {
                                     const opt = document.createElement('option');
                                     opt.value = '';
@@ -566,7 +588,7 @@
                                     data.forEach(doctor => {
                                         const opt = document.createElement('option');
                                         opt.value = doctor.staffId;
-                                        opt.text = doctor.fullName; // <-- SHOW NAME INSTEAD
+                                        opt.text = doctor.fullName;
                                         doctorSelect.appendChild(opt);
                                     });
                                 }
@@ -576,9 +598,21 @@
                                 }
                             })
                             .catch(error => console.error('Error fetching doctors:', error));
+                }
+
+                // Run on slot select change
+                slotSelect.addEventListener('change', function () {
+                    const slotId = this.value;
+                    loadDoctors(slotId);
                 });
+
+                // Trigger initial load based on default selected slot
+                if (slotSelect.value) {
+                    loadDoctors(slotSelect.value);
+                }
             });
         </script>
+
 
 
         <!--        <script>

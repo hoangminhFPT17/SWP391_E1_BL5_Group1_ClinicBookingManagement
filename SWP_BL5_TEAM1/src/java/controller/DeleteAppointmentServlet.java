@@ -7,10 +7,11 @@ package controller;
 import dal.AppointmentDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
 import model.Appointment;
 
 /**
@@ -36,7 +37,7 @@ public class DeleteAppointmentServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet DeleteAppointmentServlet</title>");            
+            out.println("<title>Servlet DeleteAppointmentServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet DeleteAppointmentServlet at " + request.getContextPath() + "</h1>");
@@ -91,12 +92,23 @@ public class DeleteAppointmentServlet extends HttpServlet {
 
             if (!"Pending".equalsIgnoreCase(appointment.getStatus())) {
                 request.setAttribute("error", "Only pending appointments can be canceled.");
-                request.getRequestDispatcher("appointments.jsp").forward(request, response);
+                // If needed, you can forward to a proper error page here
+                response.sendRedirect("PatientAppointmentsListServlet?error=Only%20pending%20appointments%20can%20be%20canceled");
                 return;
             }
 
             dao.delete(appointmentId);
-            response.sendRedirect("appointments.jsp?message=Appointment canceled successfully");
+
+            String referer = request.getHeader("referer");
+            String successMessage = "Appointment canceled successfully";
+            String encodedMessage = URLEncoder.encode(successMessage, "UTF-8");
+
+            if (referer != null) {
+                String redirectUrl = referer.contains("message=") ? referer : (referer.contains("?") ? referer + "&message=" + encodedMessage : referer + "?message=" + encodedMessage);
+                response.sendRedirect(redirectUrl);
+            } else {
+                response.sendRedirect("PatientAppointmentsListServlet?message=" + encodedMessage);
+            }
 
         } catch (NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid appointment ID.");
