@@ -24,16 +24,17 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12 mt-4 pt-2 mt-sm-0 pt-sm-0">
-                        <div class="row">
-                            <div class="col-xl-6 col-lg-6 col-md-4">
-                                <h5 class="mb-0">Appointment</h5>
-                            </div><!--end col-->
-                        </div>
-                        <div class="row align-items-end">
-                            <!-- LEFT HALF: Filters and Search -->
-                            <div class="col-md-6">
-                                <form method="get" action="PatientAppointmentsListServlet">
+                        <form method="get" action="PatientAppointmentsListServlet">
+                            <div class="row mb-3">
+                                <div class="col-xl-6 col-lg-6 col-md-4">
+                                    <h5 class="mb-0">Your List Of Appointment</h5>
+                                </div><!--end col-->
+                            </div>
+                            <div class="row align-items-end">
+                                <!-- LEFT HALF: Filters and Search -->
+                                <div class="col-md-6">
                                     <input type="hidden" name="phone" value="3333333333" />
+                                    <input type="hidden" name="page" id="pageInput" value="${param.page != null ? param.page : 1}" />
                                     <div class="row g-3">
                                         <!-- Time Slot -->
                                         <div class="col-4">
@@ -69,102 +70,161 @@
                                             <button type="submit" class="btn btn-primary w-100">Search</button>
                                         </div>
                                     </div>
-                                </form>
+                                </div>
+
+                                <!-- RIGHT HALF: Appointment Button -->
+                                <div class="col-md-6 text-end mt-3 mt-md-0">
+                                    <a href="#" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#appointmentform">+ Appointment</a>
+                                </div>
                             </div>
 
-                            <!-- RIGHT HALF: Appointment Button -->
-                            <div class="col-md-6 text-end mt-3 mt-md-0">
-                                <a href="#" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#appointmentform">+ Appointment</a>
-                            </div>
-                        </div>
 
-
-                        <div class="row">
-                            <div class="col-12 mt-4">
-                                <div class="table-responsive bg-white shadow rounded">
-                                    <table class="table mb-0 table-center">
-                                        <thead>
-                                            <tr>
-                                                <th class="border-bottom p-3" style="min-width: 50px;">#</th>
-                                                <th class="border-bottom p-3" style="min-width: 180px;">Name</th>
-                                                <th class="border-bottom p-3" style="min-width: 150px;">Date of Birth</th>
-                                                <th class="border-bottom p-3" style="min-width: 150px;">Appointment Date</th>
-                                                <th class="border-bottom p-3">Time Slot</th>
-                                                <th class="border-bottom p-3" style="min-width: 220px;">Doctor</th>
-                                                <th class="border-bottom p-3" style="min-width: 130px;">Status</th>
-                                                <th class="border-bottom p-3" style="min-width: 150px;">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <c:forEach var="dto" items="${appointments}">
+                            <div class="row">
+                                <div class="col-12 mt-4">
+                                    <div class="table-responsive bg-white shadow rounded">
+                                        <table class="table mb-0 table-center">
+                                            <thead>
                                                 <tr>
-                                                    <th class="p-3">${dto.index}</th>
-                                                    <td class="p-3">
-                                                        <a href="#" class="text-dark">
-                                                            <div class="d-flex align-items-center">
-                                                                <img src="${pageContext.request.contextPath}/assets/images/client/01.jpg" class="avatar avatar-md-sm rounded-circle shadow" alt="">
-                                                                <span class="ms-2">${dto.patientName}</span>
-                                                            </div>
-                                                        </a>
-                                                    </td>
-                                                    <td class="p-3">
-                                                        <fmt:formatDate value="${dto.patientDateOfBirth}" pattern="dd MMM yyyy" />
-                                                    </td>
-                                                    <td class="p-3">
-                                                        <fmt:formatDate value="${dto.appointmentDate}" pattern="dd MMM yyyy" />
-                                                    </td>
-                                                    <td class="p-3">${dto.timeSlotName}</td>
-                                                    <td class="p-3">
-                                                        <a href="#" class="text-dark">
-                                                            <div class="d-flex align-items-center">
-                                                                <img src="${pageContext.request.contextPath}/assets/images/doctors/01.jpg" class="avatar avatar-md-sm rounded-circle border shadow" alt="">
-                                                                <span class="ms-2">${dto.doctorFullName}</span>
-                                                            </div>
-                                                        </a>
-                                                    </td>
-                                                    <td class="p-3">
-                                                        <c:choose>
-                                                            <c:when test="${dto.status == 'Pending'}">
-                                                                <span class="badge bg-warning">${dto.status}</span>
-                                                            </c:when>
-                                                            <c:when test="${dto.status == 'Approved'}">
-                                                                <span class="badge bg-success">${dto.status}</span>
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <span class="badge bg-secondary">${dto.status}</span>
-                                                            </c:otherwise>
-                                                        </c:choose>
-                                                    </td>
-                                                    <td class="text-start p-3">
-                                                        <a href="#" class="btn btn-icon btn-pills btn-soft-primary" data-bs-toggle="modal" data-bs-target="#viewappointment"><i class="uil uil-eye"></i></a>
-                                                        <a href="#" class="btn btn-icon btn-pills btn-soft-success" data-bs-toggle="modal" data-bs-target="#acceptappointment"><i class="uil uil-edit"></i></a>
-                                                        <a href="#" class="btn btn-icon btn-pills btn-soft-danger" data-bs-toggle="modal" data-bs-target="#cancelappointment"><i class="uil uil-times-circle"></i></a>
-                                                    </td>
+                                                    <th class="border-bottom p-3" style="min-width: 50px;">#</th>
+                                                    <th class="border-bottom p-3" style="min-width: 180px;">Name</th>
+                                                    <th class="border-bottom p-3" style="min-width: 150px;">Date of Birth</th>
+                                                    <th class="border-bottom p-3" style="min-width: 150px;">Appointment Date</th>
+                                                    <th class="border-bottom p-3">Time Slot</th>
+                                                    <th class="border-bottom p-3" style="min-width: 220px;">Doctor</th>
+                                                    <th class="border-bottom p-3" style="min-width: 130px;">Status</th>
+                                                    <th class="border-bottom p-3" style="min-width: 150px;">Action</th>
                                                 </tr>
-                                            </c:forEach>
-                                        </tbody>
-                                    </table>
+                                            </thead>
+                                            <tbody>
+                                                <c:choose>
+                                                    <c:when test="${empty appointments}">
+                                                        <tr>
+                                                            <td class="p-3 text-center" colspan="8">
+                                                                No appointments found matching your search or filters.
+                                                            </td>
+                                                        </tr>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <c:forEach var="dto" items="${appointments}">
+                                                            <tr>
+                                                                <th class="p-3">${dto.index}</th>
+                                                                <td class="p-3">
+                                                                    <a href="#" class="text-dark">
+                                                                        <div class="d-flex align-items-center">
+                                                                            <img src="${pageContext.request.contextPath}/assets/images/client/01.jpg" class="avatar avatar-md-sm rounded-circle shadow" alt="">
+                                                                            <span class="ms-2">${dto.patientName}</span>
+                                                                        </div>
+                                                                    </a>
+                                                                </td>
+                                                                <td class="p-3">
+                                                                    <fmt:formatDate value="${dto.patientDateOfBirth}" pattern="dd MMM yyyy" />
+                                                                </td>
+                                                                <td class="p-3">
+                                                                    <fmt:formatDate value="${dto.appointmentDate}" pattern="dd MMM yyyy" />
+                                                                </td>
+                                                                <td class="p-3">${dto.timeSlotName}</td>
+                                                                <td class="p-3">
+                                                                    <a href="#" class="text-dark">
+                                                                        <div class="d-flex align-items-center">
+                                                                            <img src="${pageContext.request.contextPath}/assets/images/doctors/01.jpg" class="avatar avatar-md-sm rounded-circle border shadow" alt="">
+                                                                            <span class="ms-2">${dto.doctorFullName}</span>
+                                                                        </div>
+                                                                    </a>
+                                                                </td>
+                                                                <td class="p-3">
+                                                                    <c:choose>
+                                                                        <c:when test="${dto.status == 'Pending'}">
+                                                                            <span class="badge bg-warning">${dto.status}</span>
+                                                                        </c:when>
+                                                                        <c:when test="${dto.status == 'Approved'}">
+                                                                            <span class="badge bg-success">${dto.status}</span>
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            <span class="badge bg-secondary">${dto.status}</span>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
+                                                                </td>
+                                                                <td class="text-start p-3">
+                                                                    <a href="#" class="btn btn-icon btn-pills btn-soft-primary" data-bs-toggle="modal" data-bs-target="#viewappointment"><i class="uil uil-eye"></i></a>
+                                                                    <a href="#" class="btn btn-icon btn-pills btn-soft-success" data-bs-toggle="modal" data-bs-target="#acceptappointment"><i class="uil uil-edit"></i></a>
+                                                                    <a href="#" class="btn btn-icon btn-pills btn-soft-danger" data-bs-toggle="modal" data-bs-target="#cancelappointment"><i class="uil uil-times-circle"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                        </c:forEach>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <!--end row-->
+                            <!--end row-->
 
-                        <div class="row text-center">
                             <!-- PAGINATION START -->
-                            <div class="col-12 mt-4">
-                                <div class="d-md-flex align-items-center text-center justify-content-between">
-                                    <span class="text-muted me-3">Showing 1 - 10 out of 50</span>
-                                    <ul class="pagination justify-content-center mb-0 mt-3 mt-sm-0">
-                                        <li class="page-item"><a class="page-link" href="javascript:void(0)" aria-label="Previous">Prev</a></li>
-                                        <li class="page-item active"><a class="page-link" href="javascript:void(0)">1</a></li>
-                                        <li class="page-item"><a class="page-link" href="javascript:void(0)">2</a></li>
-                                        <li class="page-item"><a class="page-link" href="javascript:void(0)">3</a></li>
-                                        <li class="page-item"><a class="page-link" href="javascript:void(0)" aria-label="Next">Next</a></li>
-                                    </ul>
+                            <input type="hidden" name="page" id="pageInput" value="${currentPage}" />
+                            <div class="row text-center">
+                                <div class="col-12 mt-4">
+                                    <div class="d-md-flex align-items-center text-center justify-content-between">
+                                        <!-- Showing dropdown -->
+                                        <div class="d-flex align-items-center">
+                                            <label for="pageSize" class="me-2 text-muted">Showing</label>
+                                            <select name="pageSize" id="pageSize" class="form-select form-select-sm me-2" style="width: auto;"
+                                                    onchange="this.form.submit()">
+                                                <option value="3" ${param.pageSize == '3' ? 'selected' : ''}>3</option>
+                                                <option value="5" ${param.pageSize == '5' ? 'selected' : ''}>5</option>
+                                                <option value="10" ${param.pageSize == '10' ? 'selected' : ''}>10</option>
+                                                <option value="20" ${param.pageSize == '20' ? 'selected' : ''}>20</option>
+                                            </select>
+                                            <span class="text-muted">out of ${totalAppointments} total records</span>
+                                        </div>
+
+
+                                        <ul class="pagination justify-content-center mb-0 mt-3 mt-sm-0">
+
+                                            <!-- First -->
+                                            <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                                                <button type="submit" class="page-link" onclick="document.getElementById('pageInput').value = 1">First</button>
+                                            </li>
+
+                                            <!-- Previous -->
+                                            <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                                                <button type="submit" class="page-link" onclick="document.getElementById('pageInput').value = ${currentPage - 1}">Prev</button>
+                                            </li>
+
+                                            <!-- Dynamic page buttons -->
+                                            <c:forEach var="i" begin="1" end="${totalPages}">
+                                                <c:choose>
+                                                    <c:when test="${i == 1 || i == totalPages || (i >= currentPage - 1 && i <= currentPage + 1)}">
+                                                        <li class="page-item ${currentPage == i ? 'active' : ''}">
+                                                            <button type="submit" class="page-link" onclick="document.getElementById('pageInput').value = ${i}">${i}</button>
+                                                        </li>
+                                                    </c:when>
+
+                                                    <c:when test="${i == 2 && currentPage > 3}">
+                                                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                                                        </c:when>
+
+                                                    <c:when test="${i == totalPages - 1 && currentPage < totalPages - 2}">
+                                                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                                                        </c:when>
+                                                    </c:choose>
+                                                </c:forEach>
+
+                                            <!-- Next -->
+                                            <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                                                <button type="submit" class="page-link" onclick="document.getElementById('pageInput').value = ${currentPage + 1}">Next</button>
+                                            </li>
+
+                                            <!-- Last -->
+                                            <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                                                <button type="submit" class="page-link" onclick="document.getElementById('pageInput').value = ${totalPages}">Last</button>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div><!--end col-->
-                            <!-- PAGINATION END -->
-                        </div><!--end row-->
+                            </div><!--end row-->
+
+                        </form>
                     </div><!--end col-->
                 </div><!--end row-->
             </div><!--end container-->

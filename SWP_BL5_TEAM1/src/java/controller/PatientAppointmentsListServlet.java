@@ -83,9 +83,8 @@ public class PatientAppointmentsListServlet extends HttpServlet {
             return;
         }
 
-        // Get query parameters for paging and filters
+        // Parse page number
         int page = 1;
-        int limit = 5;
         try {
             page = Integer.parseInt(request.getParameter("page"));
             if (page < 1) {
@@ -94,18 +93,33 @@ public class PatientAppointmentsListServlet extends HttpServlet {
         } catch (NumberFormatException ignored) {
         }
 
-        int offset = (page - 1) * limit;
+        // Parse page size (limit)
+        int pageSize = 5; // default value
+        try {
+            String pageSizeParam = request.getParameter("pageSize");
+            if (pageSizeParam != null && !pageSizeParam.isEmpty()) {
+                pageSize = Integer.parseInt(pageSizeParam);
+                if (pageSize <= 0) {
+                    pageSize = 5;
+                }
+            }
+        } catch (NumberFormatException ignored) {
+        }
+
+        int offset = (page - 1) * pageSize;
+
+        // Optional filters
         String keyword = request.getParameter("keyword");
         String status = request.getParameter("status");
         String slotIdParam = request.getParameter("slotId");
         Integer slotId = (slotIdParam != null && !slotIdParam.isEmpty()) ? Integer.parseInt(slotIdParam) : null;
 
         // Get filtered + paged appointments
-        List<Appointment> appointments = appointmentDAO.searchAppointments(phone, keyword, status, slotId, offset, limit);
+        List<Appointment> appointments = appointmentDAO.searchAppointments(phone, keyword, status, slotId, offset, pageSize);
 
         // Get total count for pagination
         int totalAppointments = appointmentDAO.countAppointments(phone, keyword, status, slotId);
-        int totalPages = (int) Math.ceil((double) totalAppointments / limit);
+        int totalPages = (int) Math.ceil((double) totalAppointments / pageSize);
 
         List<AppointmentDTO> dtoList = new ArrayList<>();
         Patient patient = patientDAO.getPatientByPhone(phone);
@@ -138,15 +152,17 @@ public class PatientAppointmentsListServlet extends HttpServlet {
 
             dtoList.add(dto);
         }
-        
-        //Data for select dropdownbox
+
+        // Time slot options
         List<TimeSlot> timeSlots = timeSlotDAO.getAllTimeSlots();
         request.setAttribute("timeSlots", timeSlots);
-        
 
+        // Pass data to JSP
         request.setAttribute("appointments", dtoList);
+        request.setAttribute("totalAppointments", totalAppointments);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
+        request.setAttribute("pageSize", pageSize); // Pass this to retain selected dropdown
         request.setAttribute("phone", phone);
         request.setAttribute("keyword", keyword);
         request.setAttribute("status", status);
