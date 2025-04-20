@@ -71,14 +71,6 @@
                                         </div>
                                     </a><!--end nav link-->
                                 </li><!--end nav item-->
-
-                                <li class="nav-item">
-                                    <a class="nav-link rounded-0" id="online-booking" data-bs-toggle="pill" href="#pills-online" role="tab" aria-controls="pills-online" aria-selected="false">
-                                        <div class="text-center pt-1 pb-1">
-                                            <h4 class="title fw-normal mb-0">Online Appointment</h4>
-                                        </div>
-                                    </a><!--end nav link-->
-                                </li><!--end nav item-->
                             </ul>
 
                             <div class="tab-content p-4" id="pills-tabContent">
@@ -174,95 +166,7 @@
                                                     <button type="submit" class="btn btn-primary">Book Appointment</button>
                                                 </div>
                                             </div>
-
                                         </div>
-                                    </form>
-
-                                </div>
-
-                                <div class="tab-pane fade" id="pills-online" role="tabpanel" aria-labelledby="online-booking">
-                                    <form>
-                                        <div class="row">
-                                            <div class="col-lg-12">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Patient Name <span class="text-danger">*</span></label>
-                                                    <input name="name" id="name2" type="text" class="form-control" placeholder="Patient Name :">
-                                                </div>
-                                            </div><!--end col-->
-
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Departments</label>
-                                                    <select class="form-control department-name select2input">
-                                                        <option value="EY">Eye Care</option>
-                                                        <option value="GY">Gynecologist</option>
-                                                        <option value="PS">Psychotherapist</option>
-                                                        <option value="OR">Orthopedic</option>
-                                                        <option value="DE">Dentist</option>
-                                                        <option value="GA">Gastrologist</option>
-                                                        <option value="UR">Urologist</option>
-                                                        <option value="NE">Neurologist</option>
-                                                    </select>
-                                                </div>
-                                            </div><!--end col-->
-
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Doctor</label>
-                                                    <select class="form-control doctor-name select2input">
-                                                        <option value="CA">Dr. Calvin Carlo</option>
-                                                        <option value="CR">Dr. Cristino Murphy</option>
-                                                        <option value="AL">Dr. Alia Reddy</option>
-                                                        <option value="TO">Dr. Toni Kovar</option>
-                                                        <option value="JE">Dr. Jessica McFarlane</option>
-                                                        <option value="EL">Dr. Elsie Sherman</option>
-                                                        <option value="BE">Dr. Bertha Magers</option>
-                                                        <option value="LO">Dr. Louis Batey</option>
-                                                    </select>
-                                                </div>
-                                            </div><!--end col-->
-
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Your Email <span class="text-danger">*</span></label>
-                                                    <input name="email" id="email2" type="email" class="form-control" placeholder="Your email :">
-                                                </div> 
-                                            </div><!--end col-->
-
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Your Phone <span class="text-danger">*</span></label>
-                                                    <input name="phone" id="phone2" type="tel" class="form-control" placeholder="Your Phone :">
-                                                </div> 
-                                            </div><!--end col-->
-
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label"> Date : </label>
-                                                    <input name="date" type="text" class="flatpickr flatpickr-input form-control" id="checkin-date">
-                                                </div>
-                                            </div><!--end col-->
-
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label" for="input-time">Time : </label>
-                                                    <input name="time" type="text" class="form-control timepicker" id="input-time" placeholder="03:30 PM">
-                                                </div> 
-                                            </div><!--end col-->
-
-                                            <div class="col-lg-12">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Comments <span class="text-danger">*</span></label>
-                                                    <textarea name="comments" id="comments2" rows="4" class="form-control" placeholder="Your Message :"></textarea>
-                                                </div>
-                                            </div><!--end col-->
-
-                                            <div class="col-lg-12">
-                                                <div class="d-grid">
-                                                    <button type="submit" class="btn btn-primary">Book An Appointment</button>
-                                                </div>
-                                            </div><!--end col-->
-                                        </div><!--end row-->
                                     </form>
                                 </div>
                             </div>

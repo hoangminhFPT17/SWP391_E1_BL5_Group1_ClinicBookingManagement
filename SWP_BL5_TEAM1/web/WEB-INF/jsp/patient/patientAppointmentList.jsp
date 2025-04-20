@@ -147,10 +147,10 @@
                                                                 </td>
                                                                 <td class="text-start p-3">
                                                                     <a href="#" class="btn btn-icon btn-pills btn-soft-primary" data-bs-toggle="modal" data-bs-target="#viewappointment"><i class="uil uil-eye"></i></a>
-                                                                    <a href="#" class="btn btn-icon btn-pills btn-soft-success" data-bs-toggle="modal" data-bs-target="#acceptappointment"><i class="uil uil-edit"></i></a>
+                                                                    <a href="#" class="btn btn-icon btn-pills btn-soft-success" data-bs-toggle="modal" data-bs-target="#editAppointmentModal"><i class="uil uil-edit"></i></a>
                                                                         <c:if test="${dto.status == 'Pending'}">
                                                                         <a href="#" class="btn btn-icon btn-pills btn-soft-danger" data-bs-toggle="modal" data-bs-target="#cancelappointment" data-appointment-id="${dto.appointmentId}"><i class="uil uil-times-circle"></i></a>
-                                                                    </c:if>
+                                                                        </c:if>
                                                                 </td>
                                                             </tr>
                                                         </c:forEach>
@@ -390,28 +390,92 @@
         </div>
         <!-- View Appintment End -->
 
-        <!-- Accept Appointment Start -->
-        <div class="modal fade" id="acceptappointment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <!-- Edit/Update Appointment Modal Start -->
+        <div class="modal fade" id="editAppointmentModal" tabindex="-1" aria-labelledby="editAppointmentLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
+                <form method="post" action="UpdateAppointmentServlet" class="modal-content">
                     <div class="modal-body py-5">
                         <div class="text-center">
-                            <div class="icon d-flex align-items-center justify-content-center bg-soft-success rounded-circle mx-auto" style="height: 95px; width:95px;">
+                            <div class="icon d-flex align-items-center justify-content-center bg-soft-success rounded-circle mx-auto"
+                                 style="height: 95px; width:95px;">
                                 <span class="mb-0"><i class="uil uil-edit h1"></i></span>
                             </div>
-                            <div class="mt-4">
-                                <h4>Accept Appointment</h4>
-                                <p class="para-desc mx-auto text-muted mb-0">Great doctor if you need your family member to get immediate assistance, emergency treatment.</p>
-                                <div class="mt-4">
-                                    <a href="#" class="btn btn-soft-success">Accept</a>
+                            <div class="mt-4 px-4">
+                                <h4 class="mb-3">Edit Appointment</h4>
+
+                                <!-- Hidden input for Appointment ID -->
+                                <input type="hidden" name="appointmentId" id="editAppointmentId">
+
+                                <div class="form-group mb-3">
+                                    <input type="text" class="form-control" name="fullName" id="editFullName"
+                                           placeholder="Full Name" required pattern="^[A-Za-z\s]{3,50}$"
+                                           title="Full name must be 3-50 characters long and contain only letters and spaces.">
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <input type="tel" class="form-control" name="phone" id="editPhone"
+                                           placeholder="Phone" required pattern="^\d{10,15}$"
+                                           title="Phone number must be between 10 to 15 digits.">
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <input type="email" class="form-control" name="email" id="editEmail"
+                                           placeholder="Email" pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$"
+                                           title="Enter a valid email address.">
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group mb-3 col-md-6">
+                                        <label class="form-label">Date of Birth</label>
+                                        <input type="date" class="form-control" name="dateOfBirth" id="editDateOfBirth">
+                                    </div>
+                                    <div class="form-group mb-3 col-md-6">
+                                        <label class="form-label">Gender</label>
+                                        <select name="gender" id="editGender" class="form-control">
+                                            <option value="">Select Gender</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group mb-3 col-md-6">
+                                        <label class="form-label">Doctor</label>
+                                        <select name="doctorId" id="editDoctorId" class="form-control" required>
+                                            <c:forEach var="doctor" items="${doctors}">
+                                                <option value="${doctor.doctorId}">${doctor.fullName}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-3 col-md-6">
+                                        <label class="form-label">Appointment Date</label>
+                                        <input type="date" class="form-control" name="appointmentDate" id="editAppointmentDate" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Time Slot</label>
+                                    <select name="slotId" id="editSlotId" class="form-control" required>
+                                        <c:forEach var="slot" items="${timeSlots}">
+                                            <option value="${slot.slotId}">
+                                                ${slot.name} (${slot.startTime} - ${slot.endTime})
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+
+                                <div class="d-grid mt-4">
+                                    <button type="submit" class="btn btn-primary">Update Appointment</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
-        <!-- Accept Appointment End -->
+        <!-- Edit/Update Appointment Modal End -->
 
         <!-- Cancel Appointment Modal -->
         <div class="modal fade" id="cancelappointment" tabindex="-1" aria-labelledby="cancelAppointmentLabel" aria-hidden="true">
