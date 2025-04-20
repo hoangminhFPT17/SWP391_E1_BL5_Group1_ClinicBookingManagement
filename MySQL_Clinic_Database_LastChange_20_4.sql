@@ -129,3 +129,12 @@ CREATE TABLE DoctorUnavailability (
     UNIQUE (staff_id, slot_id, unavailable_date) -- Prevent duplicates
 );
 
+CREATE TABLE token (
+	id int AUTO_INCREMENT NOT NULL,
+	token varchar(255) NOT NULL,
+	expiryTime datetime(6) NOT NULL,
+	isUsed bit NOT NULL,
+	userId int NOT NULL,
+PRIMARY KEY CLUSTERED (id ASC)
+);
+
