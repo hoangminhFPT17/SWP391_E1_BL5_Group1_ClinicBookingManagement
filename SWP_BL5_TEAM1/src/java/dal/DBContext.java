@@ -23,7 +23,7 @@ public class DBContext {
     private static final String DB_PORT = "3306";
     private static final String DB_NAME = "swp_clinic";
     private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = ""; // Update if needed
+    private static final String DB_PASSWORD = "root"; // Update if needed
     private static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
     
     public DBContext() {
@@ -54,5 +54,10 @@ public class DBContext {
             System.out.println("Kết nối cơ sở dữ liệu thất bại.");
         }
 
+    }
+    
+    
+     public Connection getConnection() {
+        return connection; // Trả về connection để sử dụng
     }
 }
