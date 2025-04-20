@@ -5,28 +5,20 @@
 package controller;
 
 import dal.AppointmentDAO;
-import dal.PatientDAO;
-import dal.StaffAccountDAO;
-import dal.TimeSlotDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.URLEncoder;
 import model.Appointment;
-import model.Patient;
-import model.StaffAccount;
-import model.TimeSlot;
 
 /**
  *
  * @author LENOVO
  */
-public class GetPatientAppointmentsServlet extends HttpServlet {
+public class DeleteAppointmentServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,10 +37,10 @@ public class GetPatientAppointmentsServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet GetPatientAppointmentsServlet</title>");
+            out.println("<title>Servlet DeleteAppointmentServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet GetPatientAppointmentsServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet DeleteAppointmentServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -66,48 +58,7 @@ public class GetPatientAppointmentsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        AppointmentDAO appointmentDAO = new AppointmentDAO();
-        PatientDAO patientDAO = new PatientDAO();
-        StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
-        TimeSlotDAO timeSlotDAO = new TimeSlotDAO();
-
-        String phone = request.getParameter("phone");
-        if (phone == null || phone.trim().isEmpty()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Phone number is required.");
-            return;
-        }
-
-        Patient patient = patientDAO.getPatientByPhone(phone);
-        if (patient == null) {
-            request.setAttribute("error", "Patient not found.");
-            request.getRequestDispatcher("/views/patient-appointments.jsp").forward(request, response);
-            return;
-        }
-
-        List<Appointment> appointments = appointmentDAO.getByPatientPhone(phone);
-
-        Map<Integer, StaffAccount> doctorMap = new HashMap<>();
-        Map<Integer, TimeSlot> slotMap = new HashMap<>();
-
-        for (Appointment appt : appointments) {
-            int doctorId = appt.getDoctorId();
-            int slotId = appt.getSlotId();
-
-            if (!doctorMap.containsKey(doctorId)) {
-                doctorMap.put(doctorId, staffAccountDAO.getStaffById(doctorId));
-            }
-
-            if (!slotMap.containsKey(slotId)) {
-                slotMap.put(slotId, timeSlotDAO.getTimeSlotById(slotId));
-            }
-        }
-
-        request.setAttribute("appointments", appointments);
-        request.setAttribute("doctorMap", doctorMap);
-        request.setAttribute("slotMap", slotMap);
-        request.setAttribute("patient", patient);  // Pass patient info to JSP if needed
-        request.getRequestDispatcher("/WEB-INF/jsp/patient/patientAppointmentList.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
     /**
@@ -121,7 +72,47 @@ public class GetPatientAppointmentsServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        String idParam = request.getParameter("id");
+
+        if (idParam == null || idParam.isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing appointment ID.");
+            return;
+        }
+
+        try {
+            int appointmentId = Integer.parseInt(idParam);
+            AppointmentDAO dao = new AppointmentDAO();
+            Appointment appointment = dao.getById(appointmentId);
+
+            if (appointment == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Appointment not found.");
+                return;
+            }
+
+            if (!"Pending".equalsIgnoreCase(appointment.getStatus())) {
+                request.setAttribute("error", "Only pending appointments can be canceled.");
+                // If needed, you can forward to a proper error page here
+                response.sendRedirect("PatientAppointmentsListServlet?error=Only%20pending%20appointments%20can%20be%20canceled");
+                return;
+            }
+
+            dao.delete(appointmentId);
+
+            String referer = request.getHeader("referer");
+            String successMessage = "Appointment canceled successfully";
+            String encodedMessage = URLEncoder.encode(successMessage, "UTF-8");
+
+            if (referer != null) {
+                String redirectUrl = referer.contains("message=") ? referer : (referer.contains("?") ? referer + "&message=" + encodedMessage : referer + "?message=" + encodedMessage);
+                response.sendRedirect(redirectUrl);
+            } else {
+                response.sendRedirect("PatientAppointmentsListServlet?message=" + encodedMessage);
+            }
+
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid appointment ID.");
+        }
     }
 
     /**
