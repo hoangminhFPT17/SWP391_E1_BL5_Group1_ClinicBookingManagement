@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.patient;
 
 import dal.AppointmentDAO;
 import dal.PatientDAO;
@@ -70,18 +70,22 @@ public class PatientAppointmentsListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        System.out.println("Appointment List doGet");
         AppointmentDAO appointmentDAO = new AppointmentDAO();
         PatientDAO patientDAO = new PatientDAO();
         StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
         TimeSlotDAO timeSlotDAO = new TimeSlotDAO();
         UserDAO userDAO = new UserDAO();
 
-        String phone = request.getParameter("phone");
-        if (phone == null || phone.isEmpty()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing phone number");
+        // Step 1: Get user from session
+        User loggedInUser = (User) request.getSession().getAttribute("user");
+        if (loggedInUser == null) {
+            response.sendRedirect("/SWP_BL5_TEAM1/login");
             return;
         }
+
+        // Step 2: Use user's phone
+        String phone = loggedInUser.getPhone();
 
         // Parse page number
         int page = 1;
@@ -156,8 +160,10 @@ public class PatientAppointmentsListServlet extends HttpServlet {
         // Time slot options
         List<TimeSlot> timeSlots = timeSlotDAO.getAllTimeSlots();
         request.setAttribute("timeSlots", timeSlots);
+        
 
         // Pass data to JSP
+        request.setAttribute("patient", patient);
         request.setAttribute("appointments", dtoList);
         request.setAttribute("totalAppointments", totalAppointments);
         request.setAttribute("currentPage", page);
@@ -182,7 +188,7 @@ public class PatientAppointmentsListServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        doGet(request, response);
     }
 
     /**
