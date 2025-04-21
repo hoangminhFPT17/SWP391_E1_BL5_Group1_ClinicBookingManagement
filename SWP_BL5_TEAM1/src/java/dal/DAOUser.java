@@ -96,7 +96,7 @@ public class DAOUser extends DBContext {
         User user = null;
         String hashedPassword = MD5Util.getMD5Hash(password); // Mã hóa mật khẩu nhập vào
         System.err.print(hashedPassword);
-        String sql = "SELECT * FROM User WHERE email= ? AND password_hash= ?";
+        String sql = "SELECT * FROM User WHERE email= ? AND password_hash= ?"; //bam o client
         try {
             PreparedStatement pre = connection.prepareStatement(sql);
             pre.setString(1, loginInput);
