@@ -97,12 +97,6 @@
                                         
                                         <div class="col-6 mt-3">
                                             <div class="d-grid">
-                                                <a href="#" class="btn btn-soft-primary"><i class="uil uil-facebook"></i> Facebook</a>
-                                            </div>
-                                        </div><!--end col-->
-                                        
-                                        <div class="col-6 mt-3">
-                                            <div class="d-grid">
                                                 <a href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=http://localhost:8080/SWP_BL5_TEAM1/login&response_type=code&client_id=1019052356272-nvvto028fvsehnrcro7kkso841n9pmrh.apps.googleusercontent.com&approval_prompt=force" class="btn btn-soft-primary"><i class="uil uil-google google"></i> Google</a>
                                             </div>
                                         </div><!--end col-->
