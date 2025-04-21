@@ -82,7 +82,7 @@ public class LoginServlet extends HttpServlet {
                     request.getRequestDispatcher("signup.jsp").forward(request, response);
                 } else if (user.isIsVerified() == false) {
 //                    handleDeactivatedAccount(user, request, response);
-                    return;
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
                 } else {
                     session.setAttribute("user", user);
                     session.setAttribute("userId", user.getUserId());
