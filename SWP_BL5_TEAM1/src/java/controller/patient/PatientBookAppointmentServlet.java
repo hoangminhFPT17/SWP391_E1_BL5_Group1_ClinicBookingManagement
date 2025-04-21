@@ -83,65 +83,93 @@ public class PatientBookAppointmentServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
 
-        request.setCharacterEncoding("UTF-8");
+    request.setCharacterEncoding("UTF-8");
 
-        // Collect form data
-        String fullName = request.getParameter("fullName");
-        String phone = request.getParameter("phone");
-        String email = request.getParameter("email");
-        String gender = request.getParameter("gender");
-        String dobStr = request.getParameter("dateOfBirth");
-        String doctorIdStr = request.getParameter("doctorId");
-        String slotIdStr = request.getParameter("slotId");
-        String appointmentDateStr = request.getParameter("appointmentDate");
+    // Collect form data
+    String fullName = request.getParameter("fullName");
+    String phone = request.getParameter("phone");
+    String email = request.getParameter("email");
+    String gender = request.getParameter("gender");
+    String dobStr = request.getParameter("dateOfBirth");
+    String doctorIdStr = request.getParameter("doctorId");
+    String slotIdStr = request.getParameter("slotId");
+    String appointmentDateStr = request.getParameter("appointmentDate");
 
-        // Parse types
-        Date dateOfBirth = (dobStr != null && !dobStr.isEmpty()) ? Date.valueOf(dobStr) : null;
-        int doctorId = Integer.parseInt(doctorIdStr);
-        int slotId = Integer.parseInt(slotIdStr);
-        Date appointmentDate = Date.valueOf(appointmentDateStr);
+    // Input validation
+    String errorMessage = null;
+    if (fullName == null || !fullName.matches("^[A-Za-z\\s]{3,50}$")) {
+        errorMessage = "Full name must be 3-50 characters long and contain only letters and spaces.";
+    } else if (phone == null || !phone.matches("^\\d{10,15}$")) {
+        errorMessage = "Phone number must be between 10 and 15 digits.";
+    } else if (email != null && !email.isEmpty() && !email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+        errorMessage = "Invalid email format.";
+    }
 
-        // Create DAOs
-        PatientDAO patientDAO = new PatientDAO();
-        AppointmentDAO appointmentDAO = new AppointmentDAO();
+    // If validation fails, forward back with error message
+    if (errorMessage != null) {
+        request.setAttribute("appointmentStatus", "fail");
+        request.setAttribute("errorMessage", errorMessage);
+        request.setAttribute("fullName", fullName);
+        request.setAttribute("phone", phone);
+        request.setAttribute("email", email);
+        request.setAttribute("gender", gender);
+        request.setAttribute("dateOfBirth", dobStr);
+        request.setAttribute("doctorId", doctorIdStr);
+        request.setAttribute("slotId", slotIdStr);
+        request.setAttribute("appointmentDate", appointmentDateStr);
+        request.getRequestDispatcher("/auth/patient/patientBookingAppointment.jsp").forward(request, response);
+        return;
+    }
 
+    // Parse types
+    Date dateOfBirth = (dobStr != null && !dobStr.isEmpty()) ? Date.valueOf(dobStr) : null;
+    int doctorId = Integer.parseInt(doctorIdStr);
+    int slotId = Integer.parseInt(slotIdStr);
+    Date appointmentDate = Date.valueOf(appointmentDateStr);
+
+    // Create DAOs
+    PatientDAO patientDAO = new PatientDAO();
+    AppointmentDAO appointmentDAO = new AppointmentDAO();
+
+    boolean success = false;
+
+    try {
         // Check if patient already exists
         Patient patient = patientDAO.getPatientByPhone(phone);
-        boolean success = false;
-
-        try {
-            if (patient == null) {
-                patient = new Patient();
-                patient.setPhone(phone);
-                patient.setFullName(fullName);
-                patient.setEmail(email);
-                patient.setGender(gender);
-                patient.setDateOfBirth(dateOfBirth);
-                patientDAO.insertPatient(patient);
-            }
-
-            Appointment appointment = new Appointment();
-            appointment.setPatientPhone(phone);
-            appointment.setDoctorId(doctorId);
-            appointment.setSlotId(slotId);
-            appointment.setAppointmentDate(appointmentDate);
-            appointment.setStatus("Pending");
-
-            appointmentDAO.insert(appointment);
-            success = true;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            success = false;
+        if (patient == null) {
+            patient = new Patient();
+            patient.setPhone(phone);
+            patient.setFullName(fullName);
+            patient.setEmail(email);
+            patient.setGender(gender);
+            patient.setDateOfBirth(dateOfBirth);
+            patientDAO.insertPatient(patient);
         }
 
-        // Redirect or forward to confirmation
-        request.setAttribute("appointmentStatus", success ? "success" : "fail");
-        request.getRequestDispatcher("/patientBookingAppointment.jsp").forward(request, response);
+        Appointment appointment = new Appointment();
+        appointment.setPatientPhone(phone);
+        appointment.setDoctorId(doctorId);
+        appointment.setSlotId(slotId);
+        appointment.setAppointmentDate(appointmentDate);
+        appointment.setStatus("Pending");
+
+        appointmentDAO.insert(appointment);
+        success = true;
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        success = false;
     }
+
+    if (success) {
+        response.sendRedirect(request.getContextPath() + "/PatientBookAppointmentServlet?status=success");
+    } else {
+        response.sendRedirect(request.getContextPath() + "/PatientBookAppointmentServlet?status=fail");
+    }
+}
 
     /**
      * Returns a short description of the servlet.
