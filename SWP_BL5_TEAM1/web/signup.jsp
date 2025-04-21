@@ -3,7 +3,7 @@
     Created on : Apr 20, 2025, 3:07:16 PM
     Author     : JackGarland
 --%>
-
+<%@page import="model.GoogleAccount"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,6 +32,9 @@
     </head>
 
     <body>
+        <%
+            GoogleAccount googleAccount = (GoogleAccount) session.getAttribute("googleAccount");
+        %>
         <!-- Loader -->
         <div id="preloader">
             <div id="status">
@@ -59,6 +62,7 @@
                                 <form action="User" method="POST" class="login-form mt-4" enctype="multipart/form-data">
                                     <input type="hidden" name="service" value="registerUser">
                                     <div class="row">
+                                        <% if (googleAccount==null) {%>
                                         <div class="col-md-6">
                                             <div class="mb-3">                                               
                                                 <label class="form-label">Your Email <span class="text-danger">*</span></label>
@@ -71,6 +75,20 @@
                                                 <input type="text" class="form-control" placeholder="JM DCB" name="FullName" required="">
                                             </div>
                                         </div>
+                                        <% } else { %>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">                                               
+                                                <label class="form-label">Your Email <span class="text-danger">*</span></label>
+                                                <input type="email" class="form-control" value="${sessionScope.googleAccount.getEmail()}" name="Email" required="" readonly="" >
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">                                                
+                                                <label class="form-label">Your Name <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" value="${sessionScope.googleAccount.getName()}" name="FullName" required="" readonly="">
+                                            </div>
+                                        </div>
+                                        <% }%>
                                         <div class="col-md-12">
                                             <div class="mb-3">
                                                 <label class="form-label">Your Phone <span class="text-danger">*</span></label>
