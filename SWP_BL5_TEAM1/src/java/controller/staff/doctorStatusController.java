@@ -24,19 +24,31 @@ public class doctorStatusController extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
 
-        PatientQueueDAO dao = new PatientQueueDAO();
+    PatientQueueDAO dao = new PatientQueueDAO();
 
-        // Auto‐assign button?
-        String autoId = request.getParameter("autoAssignDoctorId");
-        if (autoId != null) {
-            int docId = Integer.parseInt(autoId);
-            dao.autoAssignPatient(docId);
-            doGet(request, response);
-            return;
-        }
-        doGet(request, response);
+    // Auto‐assign button?
+    String autoId = request.getParameter("autoAssignDoctorId");
+    if (autoId != null) {
+        int docId = Integer.parseInt(autoId);
+        dao.autoAssignPatient(docId);
     }
+
+    // Manual‐assign button?
+    String manualId   = request.getParameter("manualAssignDoctorId");
+    String manualPrio = request.getParameter("manualPriority");
+    if (manualId != null && manualPrio != null) {
+        int docId = Integer.parseInt(manualId);
+        int prio  = Integer.parseInt(manualPrio);
+        dao.manualAssignPatient(docId, prio);
+    }
+
+    // Redirect to the GET URL so the browser's last action is a GET.
+    String context = request.getContextPath();                // e.g. "/yourapp"
+    String redirectUrl = context + "/staff/doctorStatus";      // matches @WebServlet
+    response.sendRedirect(redirectUrl);
+}
+
 }

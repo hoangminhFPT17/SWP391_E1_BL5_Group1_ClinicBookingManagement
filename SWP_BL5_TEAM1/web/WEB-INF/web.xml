@@ -2,27 +2,35 @@
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
     <servlet>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
-        <servlet-class>controller.PatientBookAppointmentServlet</servlet-class>
+        <servlet-class>controller.patient.PatientBookAppointmentServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>DoctorBySlotServlet</servlet-name>
-        <servlet-class>controller.DoctorBySlotServlet</servlet-class>
+        <servlet-class>controller.patient.DoctorBySlotServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>PatientAppointmentsListServlet</servlet-name>
-        <servlet-class>controller.PatientAppointmentsListServlet</servlet-class>
+        <servlet-class>controller.patient.PatientAppointmentsListServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>patientQueueManager</servlet-name>
-        <servlet-class>controller.staff.patientQueueManager</servlet-class>
+        <servlet-class>controller.patient.patientQueueManager</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>doctorStatusController</servlet-name>
-        <servlet-class>controller.staff.doctorStatusController</servlet-class>
+        <servlet-class>controller.patient.doctorStatusController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>DeleteAppointmentServlet</servlet-name>
-        <servlet-class>controller.DeleteAppointmentServlet</servlet-class>
+        <servlet-class>controller.patient.DeleteAppointmentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateAppointmentServlet</servlet-name>
+        <servlet-class>controller.patient.UpdateAppointmentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>queueRecordController</servlet-name>
+        <servlet-class>controller.staff.queueRecordController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
@@ -47,5 +55,11 @@
     <servlet-mapping>
         <servlet-name>DeleteAppointmentServlet</servlet-name>
         <url-pattern>/DeleteAppointmentServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateAppointmentServlet</servlet-name>
+        <url-pattern>/UpdateAppointmentServlet</url-pattern>
+        <servlet-name>queueRecordController</servlet-name>
+        <url-pattern>/queueRecordController</url-pattern>
     </servlet-mapping>
 </web-app>

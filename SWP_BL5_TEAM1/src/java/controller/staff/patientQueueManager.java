@@ -41,30 +41,30 @@ public class patientQueueManager extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    String docIdParam = request.getParameter("doctorId");
-    if (docIdParam == null) {
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing doctorId");
-        return;
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String docIdParam = request.getParameter("doctorId");
+        if (docIdParam == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing doctorId");
+            return;
+        }
+
+        int doctorId;
+        try {
+            doctorId = Integer.parseInt(docIdParam);
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid doctorId");
+            return;
+        }
+
+        PatientQueueDAO dao = new PatientQueueDAO();
+        List<PatientQueueDTO> activeAppointments = dao.getActiveAppointments(doctorId);
+
+        request.setAttribute("activeAppointments", activeAppointments);
+        request.setAttribute("doctorId", doctorId);  // so the view can re‑submit it
+        request.getRequestDispatcher("staff/patientQueueManager.jsp")
+                .forward(request, response);
     }
-
-    int doctorId;
-    try {
-        doctorId = Integer.parseInt(docIdParam);
-    } catch (NumberFormatException e) {
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid doctorId");
-        return;
-    }
-
-    PatientQueueDAO dao = new PatientQueueDAO();
-    List<PatientQueueDTO> activeAppointments = dao.getActiveAppointments(doctorId);
-
-    request.setAttribute("activeAppointments", activeAppointments);
-    request.setAttribute("doctorId", doctorId);  // so the view can re‑submit it
-    request.getRequestDispatcher("staff/patientQueueManager.jsp")
-           .forward(request, response);
-}
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -77,6 +77,23 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response)
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        PatientQueueDAO dao = new PatientQueueDAO();
+        String cancelIdParam = request.getParameter("cancelQueueId");
+        if (cancelIdParam != null) {
+            try {
+                int qid = Integer.parseInt(cancelIdParam);
+                dao.cancelQueue(qid);
+            } catch (NumberFormatException e) {
+                // invalid id—ignore or log
+            }
+            // Redirect to avoid repost on refresh
+            String doctorId = request.getParameter("doctorId");
+            String redirectUrl = request.getContextPath()
+                    + "/patientQueueManager?doctorId=" + doctorId;
+            response.sendRedirect(redirectUrl);
+            return;
+        }
+
         // Read the submitted parameters
         String[] idParams = request.getParameterValues("id");
         String[] priorityParams = request.getParameterValues("priority");
@@ -100,7 +117,6 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response)
         }
 
         // Perform the reorder in the database
-        PatientQueueDAO dao = new PatientQueueDAO();
         dao.reorderQueue(ids, prios);
 
         // Redirect back to the main patient queue page

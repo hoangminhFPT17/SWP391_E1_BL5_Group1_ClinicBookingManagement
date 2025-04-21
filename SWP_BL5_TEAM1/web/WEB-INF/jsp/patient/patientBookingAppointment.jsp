@@ -25,7 +25,11 @@
             </div>
         </div>
         <!-- Loader -->
-
+        <%
+            java.time.LocalDate today = java.time.LocalDate.now();
+            request.setAttribute("currentDate", today.toString());
+        %>
+        <c:set var="isLoggedIn" value="${not empty sessionScope.user}" />
         <jsp:include page="/WEB-INF/jsp/common/patientHeaderNav.jsp" />
 
         <!-- Start Hero -->
@@ -84,46 +88,53 @@
                                                     <label class="form-label">Full Name <span class="text-danger">*</span></label>
                                                     <input name="fullName" id="fullName" type="text" class="form-control"
                                                            placeholder="Patient Full Name :" required pattern="^[A-Za-z\s]{3,50}$"
-                                                           title="Full name must be 3-50 characters long and contain only letters and spaces.">
+                                                           title="Full name must be 3-50 characters long and contain only letters and spaces."
+                                                           value="${fullName}" <c:if test="${isLoggedIn}">readonly</c:if> />
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <!-- Phone -->
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Phone <span class="text-danger">*</span></label>
-                                                    <input name="phone" id="phone" type="tel" class="form-control"
-                                                           placeholder="Your Phone :" required pattern="^\d{10,15}$"
-                                                           title="Phone number must be between 10 to 15 digits.">                                                </div>
-                                            </div>
-
-                                            <!-- Email -->
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Email</label>
-                                                    <input name="email" id="email" type="email" class="form-control"
-                                                           placeholder="Your Email :" pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$"
-                                                           title="Enter a valid email address.">                                                </div>
-                                            </div>
-
-                                            <!-- Date of Birth -->
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Date of Birth</label>
-                                                    <input name="dateOfBirth" id="dateOfBirth" type="date" class="form-control">
+                                                <!-- Phone -->
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Phone <span class="text-danger">*</span></label>
+                                                        <input name="phone" id="phone" type="tel" class="form-control"
+                                                               placeholder="Your Phone :" required pattern="^\d{10,15}$"
+                                                               title="Phone number must be between 10 to 15 digits."
+                                                               value="${phone}" <c:if test="${isLoggedIn}">readonly</c:if> />
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <!-- Gender -->
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Gender</label>
-                                                    <select name="gender" class="form-control">
-                                                        <option value="">Select Gender</option>
-                                                        <option value="Male">Male</option>
-                                                        <option value="Female">Female</option>
-                                                        <option value="Other">Other</option>
+                                                <!-- Email -->
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Email</label>
+                                                        <input name="email" id="email" type="email" class="form-control"
+                                                               placeholder="Your Email :" pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$"
+                                                               title="Enter a valid email address."
+                                                               value="${email}" <c:if test="${isLoggedIn}">readonly</c:if> />
+                                                    </div>
+                                                </div>
+
+                                                <!-- Date of Birth -->
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Date of Birth</label>
+                                                        <input name="dateOfBirth" id="dateOfBirth" type="date" class="form-control"
+                                                               value="${dateOfBirth}" <c:if test="${isLoggedIn}">readonly</c:if> />
+
+                                                    </div>
+                                                </div>
+
+                                                <!-- Gender -->
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Gender</label>
+                                                        <select name="gender" class="form-control" <c:if test="${isLoggedIn}">disabled</c:if>>
+                                                            <option value="">Select Gender</option>
+                                                            <option value="Male" ${gender == 'Male' ? 'selected' : ''}>Male</option>
+                                                        <option value="Female" ${gender == 'Female' ? 'selected' : ''}>Female</option>
                                                     </select>
+
                                                 </div>
                                             </div>
 
@@ -142,7 +153,7 @@
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label">Appointment Date <span class="text-danger">*</span></label>
-                                                    <input name="appointmentDate" id="appointmentDate" type="date" class="form-control" required>
+                                                    <input name="appointmentDate" id="appointmentDate" type="date" class="form-control" required min="${currentDate}">
                                                 </div>
                                             </div>
 

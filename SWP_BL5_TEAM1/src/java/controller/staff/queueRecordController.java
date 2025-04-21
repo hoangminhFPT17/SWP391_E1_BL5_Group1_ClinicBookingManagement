@@ -2,29 +2,23 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.patient;
+package controller.staff;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import dal.DoctorTimeSlotDAO;
-import dal.StaffAccountDAO;
-import dal.UserDAO;
-import dto.DoctorDTO;
+import dal.PatientQueueDAO;
+import dto.PatientQueueDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
-import model.StaffAccount;
-import model.User;
 
 /**
  *
- * @author LENOVO
+ * @author Admin
  */
-public class DoctorBySlotServlet extends HttpServlet {
+public class queueRecordController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +37,10 @@ public class DoctorBySlotServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet DoctorBySlotServlet</title>");
+            out.println("<title>Servlet queueRecordCotroller</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet DoctorBySlotServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet queueRecordCotroller at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,50 +56,13 @@ public class DoctorBySlotServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-
-        try {
-            String slotIdStr = request.getParameter("slotId");
-
-            if (slotIdStr == null || slotIdStr.trim().isEmpty()) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().write("{\"error\": \"Missing or empty slotId\"}");
-                return;
-            }
-
-            int slotId = Integer.parseInt(slotIdStr);
-
-            DoctorTimeSlotDAO doctorTimeSlotDAO = new DoctorTimeSlotDAO();
-            StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
-            UserDAO userDAO = new UserDAO();
-
-            List<Integer> staffIds = doctorTimeSlotDAO.getDoctorIdsBySlotId(slotId);
-            List<StaffAccount> doctors = staffAccountDAO.getDoctorsByIds(staffIds);
-
-            List<DoctorDTO> enrichedDoctors = new ArrayList<>();
-            for (StaffAccount doc : doctors) {
-                User user = userDAO.getUserById(doc.getUserId());
-                if (user != null) {
-                    enrichedDoctors.add(new DoctorDTO(
-                            doc.getStaffId(),
-                            doc.getUserId(),
-                            user.getFullName(),
-                            doc.getRole(),
-                            doc.getDepartment()
-                    ));
-                }
-            }
-            //WARNING: IF MISSING THE 3 Jackson library, the UI wont able to get a json
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(response.getWriter(), enrichedDoctors);
-
-        } catch (Exception e) {
-            e.printStackTrace(); // Log the error to server logs
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("{\"error\": \"Server error: " + e.getMessage() + "\"}");
-        }
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        PatientQueueDAO dao = new PatientQueueDAO();
+        List<PatientQueueDTO> allQueues = dao.getAllQueues();      // or however you fetch them
+        request.setAttribute("patientQueueList", allQueues);
+        request.getRequestDispatcher("staff/queueRecord.jsp")
+                .forward(request, response);
     }
 
     /**
