@@ -24,6 +24,10 @@
         <servlet-name>DeleteAppointmentServlet</servlet-name>
         <servlet-class>controller.DeleteAppointmentServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>queueRecordController</servlet-name>
+        <servlet-class>controller.staff.queueRecordController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <url-pattern>/PatientBookAppointmentServlet</url-pattern>
@@ -47,5 +51,9 @@
     <servlet-mapping>
         <servlet-name>DeleteAppointmentServlet</servlet-name>
         <url-pattern>/DeleteAppointmentServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>queueRecordController</servlet-name>
+        <url-pattern>/queueRecordController</url-pattern>
     </servlet-mapping>
 </web-app>

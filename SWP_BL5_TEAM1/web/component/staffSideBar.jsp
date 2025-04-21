@@ -11,6 +11,7 @@
         </div>
 
         <ul class="sidebar-menu pt-3">
-            <li><a href="patientQueueManager"><i class="uil uil-dashboard me-2 d-inline-block"></i>Appointment Queue</a></li>
             <li><a href="doctorStatusController"><i class="uil uil-stethoscope me-2 d-inline-block"></i>Doctor status</a></li>
+            <li><a href="queueRecordController"><i class="uil uil-file me-2 d-inline-block"></i>Check up record</a></li>
+        </ul>
 </nav>
