@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
     <servlet>
-        <Servlet-name>MedicalRecordManager</Servlet-name>
-        <Servlet-class>controller.staff.MedicalRecordManager</Servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <servlet-class>controller.patient.PatientBookAppointmentServlet</servlet-class>
     </servlet>
@@ -66,9 +62,6 @@
         <servlet-name>queueRecordController</servlet-name>
         <url-pattern>/queueRecordController</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <Servlet-name>MedicalRecordManager</Servlet-name>
-        <url-pattern>/MedicalRecordManager</url-pattern>
-    </servlet-mapping>
+    
     
 </web-app>
