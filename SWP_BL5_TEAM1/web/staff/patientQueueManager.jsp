@@ -32,6 +32,14 @@
                                         <!-- single form for both drag-and-drop and manual moves -->
                                         <form id="reorderForm" action="patientQueueManager" method="post">
                                             <input type="hidden" name="doctorId" value="${doctorId}" />
+                                            <div class="row mb-3">
+                                                <div class="col-md-4">
+                                                    <input type="text"
+                                                           id="queueSearch"
+                                                           class="form-control"
+                                                           placeholder="Search by patient name or phone…">
+                                                </div>
+                                            </div>
                                             <table class="table table-bordered table-hover">
                                                 <thead class="thead-light">
                                                     <tr>
@@ -45,6 +53,7 @@
                                                         <th>Arrival Time</th>
                                                         <th>Created By</th>
                                                         <th>Move to</th>
+                                                        <th>Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="queueTableBody">
@@ -80,6 +89,16 @@
                                                                     </button>
                                                                 </div>
                                                             </td>
+                                                            <td>
+                                                                <form action="patientQueueManager" method="post" style="display:inline">
+                                                                    <input type="hidden" name="doctorId"      value="${doctorId}" />
+                                                                    <input type="hidden" name="cancelQueueId"  value="${dto.queueId}"  />
+                                                                    <button type="submit"
+                                                                            class="btn btn-sm btn-danger">
+                                                                        Cancel
+                                                                    </button>
+                                                                </form>
+                                                            </td>
                                                         </tr>
                                                     </c:forEach>
                                                 </tbody>
@@ -94,10 +113,24 @@
                         </div>
                     </div>
 
-                    
+
                 </div> <!-- /container-fluid -->
             </main>
         </div>
+        <script>
+            // When the user types, filter queue rows by patient name or phone
+            document.getElementById('queueSearch')
+                    .addEventListener('input', function () {
+                        const filter = this.value.trim().toLowerCase();
+                        const rows = document.querySelectorAll('#queueTableBody tr');
+                        rows.forEach(row => {
+                            const phone = row.cells[0].textContent.trim().toLowerCase();
+                            const name = row.cells[1].textContent.trim().toLowerCase();
+                            const match = phone.includes(filter) || name.includes(filter);
+                            row.style.display = match ? '' : 'none';
+                        });
+                    });
+        </script>
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {

@@ -143,7 +143,8 @@ public class PatientQueueDAO extends DBContext {
                    WHERE pq.doctor_id    = ?
                      AND (
                           (CURTIME() BETWEEN ts.start_time AND ts.end_time)
-                          OR pq.status = 'Waiting'
+                           AND CURDATE() = pq.queue_date 
+                          AND pq.status = 'Waiting'
                          )
                    ORDER BY pq.priority_number ASC""";
 
@@ -274,6 +275,71 @@ public class PatientQueueDAO extends DBContext {
             System.out.println("nextPriorityName: " + e.getMessage());
         }
         return null;
+    }
+
+    public void cancelQueue(int queueId) {
+        String sql = "UPDATE PatientQueue SET status = 'Canceled' WHERE queue_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, queueId);
+            int updated = ps.executeUpdate();
+            System.out.println("cancelQueue: rows updated = " + updated);
+        } catch (SQLException e) {
+            System.out.println("cancelQueue error: " + e.getMessage());
+        }
+    }
+
+    public List<PatientQueueDTO> getAllQueues() {
+        List<PatientQueueDTO> list = new ArrayList<>();
+        String sql
+                = """
+        SELECT 
+            pq.queue_id,
+            pq.patient_phone,
+            p.full_name        AS patient_name,
+            docUser.full_name  AS doctor_name,
+            ts.start_time,
+            ts.end_time,
+            pq.queue_date,
+            pq.priority_number,
+            pq.patient_type,
+            pq.status,
+            pq.arrival_time,
+            creator.full_name  AS created_by_name
+          FROM PatientQueue pq
+          JOIN Patient p         ON pq.patient_phone = p.phone
+          JOIN StaffAccount sa   ON pq.doctor_id     = sa.staff_id
+          JOIN User docUser      ON sa.user_id        = docUser.user_id
+          JOIN TimeSlot ts       ON pq.slot_id        = ts.slot_id
+          LEFT JOIN User creator ON pq.created_by     = creator.user_id
+         ORDER BY 
+            pq.queue_date   ASC,
+            ts.start_time   ASC
+        """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                PatientQueueDTO dto = new PatientQueueDTO(
+                        rs.getInt("queue_id"),
+                        rs.getString("patient_phone"),
+                        rs.getString("patient_name"),
+                        rs.getString("doctor_name"),
+                        rs.getTime("start_time"),
+                        rs.getTime("end_time"),
+                        rs.getDate("queue_date"),
+                        rs.getInt("priority_number"),
+                        rs.getString("patient_type"),
+                        rs.getString("status"),
+                        rs.getTimestamp("arrival_time"),
+                        rs.getString("created_by_name")
+                );
+                list.add(dto);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("getAllQueues: " + e.getMessage());
+        }
+        return list;
     }
 
 }

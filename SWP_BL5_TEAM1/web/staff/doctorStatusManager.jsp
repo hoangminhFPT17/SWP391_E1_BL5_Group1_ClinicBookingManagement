@@ -1,5 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,24 +12,36 @@
     <%@ include file="../component/staffSideBar.jsp" %>
     <main class="page-content bg-light">
         <%@ include file="../component/staffHeader.jsp" %>
+
         <div class="container-fluid py-4">
             <div class="row mt-4">
                 <div class="col text-center" style="margin-top:50px">
                     <h3>Doctor Availability</h3>
                 </div>
             </div>
+
             <div class="card shadow-sm mt-3">
                 <div class="card-header bg-primary text-white">All Doctors Status</div>
                 <div class="card-body">
+                    <!-- Search bar row -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <input type="text"
+                                   id="doctorSearch"
+                                   class="form-control"
+                                   placeholder="Search by doctor name…">
+                        </div>
+                    </div>
+
                     <div class="table-responsive">
-                        <table class="table table-bordered table-hover">
+                        <table class="table table-bordered table-hover" id="doctorStatusTable">
                             <thead class="thead-light">
                                 <tr>
                                     <th>Doctor Name</th>
                                     <th>Department</th>
                                     <th>Status</th>
-                                    <th>Current patient</th>
-                                    <th>Next patient</th>
+                                    <th>Current Patient</th>
+                                    <th>Next Patient</th>
                                     <th>Assign</th>
                                     <th>Details</th>
                                 </tr>
@@ -49,45 +61,35 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
-                                        <!-- Current Priority: only show when doctor is busy -->
                                         <td>
                                             <c:choose>
                                                 <c:when test="${!doc.free}">
                                                     ${doc.currentPatient}
                                                 </c:when>
-                                                <c:otherwise>
-                                                    &mdash;
-                                                </c:otherwise>
+                                                <c:otherwise>&mdash;</c:otherwise>
                                             </c:choose>
                                         </td>
-                                        <!-- Next Priority: always show if available -->
                                         <td>
                                             <c:choose>
                                                 <c:when test="${not empty doc.nextPatient}">
                                                     ${doc.nextPatient}
                                                 </c:when>
-                                                <c:otherwise>
-                                                    &mdash;
-                                                </c:otherwise>
+                                                <c:otherwise>&mdash;</c:otherwise>
                                             </c:choose>
                                         </td>
-                                        <!-- Auto Assign -->
                                         <td>
                                             <form action="doctorStatusController" method="post" style="display:inline">
-                                                <input type="hidden" name="autoAssignDoctorId" value="${doc.doctorId}" />
-                                                <button type="submit"
-                                                        class="btn btn-sm btn-success"
+                                                <input type="hidden" name="autoAssignDoctorId"
+                                                       value="${doc.doctorId}" />
+                                                <button type="submit" class="btn btn-sm btn-success"
                                                         <c:if test="${!doc.free}">disabled</c:if>>
                                                     Assign
                                                 </button>
                                             </form>
                                         </td>
-                                        <!-- Details Button -->
                                         <td>
                                             <a href="patientQueueManager?doctorId=${doc.doctorId}"
-                                               class="btn btn-sm btn-info">
-                                                Details
-                                            </a>
+                                               class="btn btn-sm btn-info">Details</a>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -102,5 +104,17 @@
         </div>
     </main>
 </div>
+
+<script>
+// Filter table rows based on the doctor name column (first <td>)
+document.getElementById('doctorSearch').addEventListener('input', function() {
+    var filter = this.value.trim().toLowerCase();
+    var rows   = document.querySelectorAll('#doctorStatusTable tbody tr');
+    rows.forEach(function(row) {
+        var name = row.cells[0].textContent.trim().toLowerCase();
+        row.style.display = name.indexOf(filter) !== -1 ? '' : 'none';
+    });
+});
+</script>
 </body>
 </html>
