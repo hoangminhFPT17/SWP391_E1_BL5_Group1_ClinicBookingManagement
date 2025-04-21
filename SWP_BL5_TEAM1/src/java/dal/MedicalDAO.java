@@ -1,6 +1,6 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nbfs://SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package dal;
 
@@ -144,12 +144,164 @@ public class MedicalDAO extends DBContext{
         
         return patientPhone;
     }
+
+    /**
+     * Retrieves a single medical record by its ID.
+     *
+     * @param recordId The ID of the medical record.
+     * @return The MedicalRecord object, or null if not found.
+     */
+    public MedicalRecord getRecordById(int recordId) {
+        MedicalRecord record = null;
+        try {
+            // Try with "MedicalRecord" table name first
+            String sql = "SELECT * FROM MedicalRecord WHERE record_id = ?";
+            
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, recordId);
+            ResultSet rs = st.executeQuery();
+            
+            if (rs.next()) {
+                record = new MedicalRecord();
+                record.setRecordId(rs.getInt("record_id"));
+                record.setPatientPhone(rs.getString("patient_phone"));
+                record.setDiagnosis(rs.getString("diagnosis"));
+                record.setPrescription(rs.getString("prescription"));
+                record.setNotes(rs.getString("notes"));
+                record.setCreatedAt(rs.getTimestamp("created_at"));
+                return record;
+            }
+            
+            // If not found, try with "MedicalRecords" table
+            System.out.println("No record found in MedicalRecord table, trying MedicalRecords table");
+            sql = "SELECT * FROM MedicalRecords WHERE record_id = ?";
+            
+            st = connection.prepareStatement(sql);
+            st.setInt(1, recordId);
+            rs = st.executeQuery();
+            
+            if (rs.next()) {
+                record = new MedicalRecord();
+                record.setRecordId(rs.getInt("record_id"));
+                record.setPatientPhone(rs.getString("patient_phone"));
+                record.setDiagnosis(rs.getString("diagnosis"));
+                record.setPrescription(rs.getString("prescription"));
+                record.setNotes(rs.getString("notes"));
+                record.setCreatedAt(rs.getTimestamp("created_at"));
+                return record;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving medical record with ID " + recordId + ": " + e.getMessage());
+        }
+        
+        return record;
+    }
+
+    /**
+     * Creates a new medical record in the database.
+     *
+     * @param record The MedicalRecord object to create.
+     */
+    public void createRecord(MedicalRecord record) {
+        try {
+            // Try with "MedicalRecords" table (assuming plural is standard)
+            String sql = "INSERT INTO MedicalRecords (patient_phone, diagnosis, prescription, notes, created_at) VALUES (?, ?, ?, ?, ?)";
+            
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, record.getPatientPhone());
+            st.setString(2, record.getDiagnosis());
+            st.setString(3, record.getPrescription());
+            st.setString(4, record.getNotes());
+            st.setTimestamp(5, record.getCreatedAt());
+            int rowsAffected = st.executeUpdate();
+            
+            if (rowsAffected == 0) {
+                // If insert failed, try with "MedicalRecord" table
+                System.out.println("Insert failed in MedicalRecords table, trying MedicalRecord table");
+                sql = "INSERT INTO MedicalRecord (patient_phone, diagnosis, prescription, notes, created_at) VALUES (?, ?, ?, ?, ?)";
+                
+                st = connection.prepareStatement(sql);
+                st.setString(1, record.getPatientPhone());
+                st.setString(2, record.getDiagnosis());
+                st.setString(3, record.getPrescription());
+                st.setString(4, record.getNotes());
+                st.setTimestamp(5, record.getCreatedAt());
+                st.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.out.println("Error creating medical record for patientPhone " + record.getPatientPhone() + ": " + e.getMessage());
+        }
+    }
+
+    /**
+     * Updates an existing medical record in the database.
+     *
+     * @param record The MedicalRecord object with updated values.
+     */
+    public void updateRecord(MedicalRecord record) {
+        try {
+            // Try with "MedicalRecords" table first
+            String sql = "UPDATE MedicalRecords SET patient_phone = ?, diagnosis = ?, prescription = ?, notes = ?, created_at = ? WHERE record_id = ?";
+            
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, record.getPatientPhone());
+            st.setString(2, record.getDiagnosis());
+            st.setString(3, record.getPrescription());
+            st.setString(4, record.getNotes());
+            st.setTimestamp(5, record.getCreatedAt());
+            st.setInt(6, record.getRecordId());
+            int rowsAffected = st.executeUpdate();
+            
+            if (rowsAffected == 0) {
+                // If update failed, try with "MedicalRecord" table
+                System.out.println("Update failed in MedicalRecords table, trying MedicalRecord table");
+                sql = "UPDATE MedicalRecord SET patient_phone = ?, diagnosis = ?, notes = ?, created_at = ? WHERE record_id = ?";
+                
+                st = connection.prepareStatement(sql);
+                st.setString(1, record.getPatientPhone());
+                st.setString(2, record.getDiagnosis());
+                st.setString(3, record.getPrescription());
+                st.setString(4, record.getNotes());
+                st.setTimestamp(5, record.getCreatedAt());
+                st.setInt(6, record.getRecordId());
+                st.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.out.println("Error updating medical record with ID " + record.getRecordId() + ": " + e.getMessage());
+        }
+    }
+
+    /**
+     * Deletes a medical record from the database.
+     *
+     * @param recordId The ID of the medical record to delete.
+     */
+    public void deleteRecord(int recordId) {
+        try {
+            // Try with "MedicalRecords" table first
+            String sql = "DELETE FROM MedicalRecords WHERE record_id = ?";
+            
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, recordId);
+            int rowsAffected = st.executeUpdate();
+            
+            if (rowsAffected == 0) {
+                // If delete failed, try with "MedicalRecord" table
+                System.out.println("Delete failed in MedicalRecords table, trying MedicalRecord table");
+                sql = "DELETE FROM MedicalRecord WHERE record_id = ?";
+                
+                st = connection.prepareStatement(sql);
+                st.setInt(1, recordId);
+                st.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.out.println("Error deleting medical record with ID " + recordId + ": " + e.getMessage());
+        }
+    }
     
     public static void main(String[] args) {
         MedicalDAO dao = new MedicalDAO();
         int userId = 4;
-
-        
 
         String patientPhone = dao.getPatientPhoneByUserId(userId);
         if (patientPhone == null) {
