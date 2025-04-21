@@ -115,22 +115,6 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-lg-12 mt-3 text-center">
-                                            <h6 class="text-muted">Or</h6>
-                                        </div><!--end col-->
-
-                                        <div class="col-6 mt-3">
-                                            <div class="d-grid">
-                                                <a href="javascript:void(0)" class="btn btn-soft-primary"><i class="uil uil-facebook"></i> Facebook</a>
-                                            </div>
-                                        </div><!--end col-->
-
-                                        <div class="col-6 mt-3">
-                                            <div class="d-grid">
-                                                <a href="javascript:void(0)" class="btn btn-soft-primary"><i class="uil uil-google"></i> Google</a>
-                                            </div>
-                                        </div><!--end col-->
-
                                         <div class="mx-auto">
                                             <p class="mb-0 mt-3"><small class="text-dark me-2">Already have an account ?</small> <a href="login.html" class="text-dark fw-bold">Sign in</a></p>
                                         </div>
