@@ -31,8 +31,6 @@ public class patientQueueManager extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -43,14 +41,30 @@ public class patientQueueManager extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        PatientQueueDAO dao = new PatientQueueDAO();
-        List<PatientQueueDTO> activeAppointments = dao.getActiveAppointments();
-        request.setAttribute("activeAppointments", activeAppointments);
-        request.getRequestDispatcher("staff/patientQueueManager.jsp")
-                .forward(request, response);
+protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    String docIdParam = request.getParameter("doctorId");
+    if (docIdParam == null) {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing doctorId");
+        return;
     }
+
+    int doctorId;
+    try {
+        doctorId = Integer.parseInt(docIdParam);
+    } catch (NumberFormatException e) {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid doctorId");
+        return;
+    }
+
+    PatientQueueDAO dao = new PatientQueueDAO();
+    List<PatientQueueDTO> activeAppointments = dao.getActiveAppointments(doctorId);
+
+    request.setAttribute("activeAppointments", activeAppointments);
+    request.setAttribute("doctorId", doctorId);  // so the view can re‑submit it
+    request.getRequestDispatcher("staff/patientQueueManager.jsp")
+           .forward(request, response);
+}
 
     /**
      * Handles the HTTP <code>POST</code> method.

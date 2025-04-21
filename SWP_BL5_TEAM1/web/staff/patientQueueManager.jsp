@@ -2,113 +2,160 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <title>Patient Queue Manager</title>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Patient Queue Manager</title>
+        <%@ include file="../assets/css/css-js.jsp" %>
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+    </head>
+    <body>
+        <div class="page-wrapper doctris-theme toggled">
+            <%@ include file="../component/staffSideBar.jsp" %>
 
-    <!-- Include Bootstrap, jQuery, and theme CSS/JS -->
-    <%@ include file="../assets/css/css-js.jsp" %>
-    <!-- SortableJS for drag-and-drop -->
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
-</head>
-<body>
-    <div class="page-wrapper doctris-theme toggled">
-        <%@ include file="../component/sideBar.jsp" %>
+            <main class="page-content bg-light">
+                <%@ include file="../component/staffHeader.jsp" %>
 
-        <main class="page-content bg-light">
-            <%@ include file="../component/header.jsp" %>
-
-            <div class="container-fluid py-4">
-                <div class="row mt-4" >
-                    <div class="col text-center" style="margin-top: 50px">
-                        <h3>Inbound Ticket</h3>
+                <div class="container-fluid py-4">
+                    <div class="row mt-4">
+                        <div class="col text-center" style="margin-top:50px">
+                            <h3>Patient Priority Queue</h3>
+                        </div>
                     </div>
-                </div>
-
-                <div class="row mt-3">
-                    <div class="col">
-                        <div class="card shadow-sm">
-                            <div class="card-header bg-primary text-white">
-                                Active Appointments (Drag rows to reorder priority)
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <!-- Form to post new priorities -->
-                                    <form id="reorderForm" action="patientQueueManager" method="post">
-                                        <table class="table table-bordered table-hover">
-                                            <thead class="thead-light">
-                                                <tr>
-                                                    <th>Patient Phone</th>
-                                                    <th>Patient Name</th>
-                                                    <th>Doctor</th>
-                                                    <th>Time Slot</th>
-                                                    <th>Queue Date</th>
-                                                    <th>Priority</th>
-                                                    <th>Status</th>
-                                                    <th>Arrival Time</th>
-                                                    <th>Created By</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="queueTableBody">
-                                                <c:forEach var="dto" items="${activeAppointments}">
-                                                    <tr data-queue-id="${dto.queueId}">
-                                                        <td>${dto.patientPhone}</td>
-                                                        <td>${dto.patientName}</td>
-                                                        <td>${dto.doctorName}</td>
-                                                        <td>${dto.startTime} - ${dto.endTime}</td>
-                                                        <td>${dto.queueDate}</td>
-                                                        <td class="priority-cell">${dto.priorityNumber}</td>
-                                                        <td>${dto.status}</td>
-                                                        <td>
-                                                            <c:choose>
-                                                                <c:when test="${not empty dto.arrivalTime}">
-                                                                    ${dto.arrivalTime}
-                                                                </c:when>
-                                                                <c:otherwise>N/A</c:otherwise>
-                                                            </c:choose>
-                                                        </td>
-                                                        <td>${dto.createdByName}</td>
-                                                        <!-- Hidden inputs for form submit -->
-                                                        <input type="hidden" name="id" value="${dto.queueId}" />
-                                                        <input type="hidden" name="priority" class="priority-input" value="${dto.priorityNumber}" />
+                    <div class="row mt-3">
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-primary text-white">
+                                    Active Appointments (Drag rows or use “Move to”)
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <!-- single form for both drag-and-drop and manual moves -->
+                                        <form id="reorderForm" action="patientQueueManager" method="post">
+                                            <input type="hidden" name="doctorId" value="${doctorId}" />
+                                            <table class="table table-bordered table-hover">
+                                                <thead class="thead-light">
+                                                    <tr>
+                                                        <th>Patient Phone</th>
+                                                        <th>Patient Name</th>
+                                                        <th>Doctor</th>
+                                                        <th>Time Slot</th>
+                                                        <th>Queue Date</th>
+                                                        <th>Status</th>
+                                                        <th>Type</th>
+                                                        <th>Arrival Time</th>
+                                                        <th>Created By</th>
+                                                        <th>Move to</th>
                                                     </tr>
-                                                </c:forEach>
-                                            </tbody>
-                                        </table>
-                                        <c:if test="${empty activeAppointments}">
-                                            <p class="text-center my-3">No active appointments at this time.</p>
-                                        </c:if>
-                                    </form>
+                                                </thead>
+                                                <tbody id="queueTableBody">
+                                                    <c:forEach var="dto" items="${activeAppointments}">
+                                                        <tr data-queue-id="${dto.queueId}">
+                                                            <td>${dto.patientPhone}</td>
+                                                            <td>${dto.patientName}</td>
+                                                            <td>${dto.doctorName}</td>
+                                                            <td>${dto.startTime} - ${dto.endTime}</td>
+                                                            <td>${dto.queueDate}</td>
+                                                            <td>${dto.status}</td>
+                                                            <td>${dto.patientType}</td>
+                                                            <td>
+                                                                <c:choose>
+                                                                    <c:when test="${not empty dto.arrivalTime}">
+                                                                        ${dto.arrivalTime}
+                                                                    </c:when>
+                                                                    <c:otherwise>N/A</c:otherwise>
+                                                                </c:choose>
+                                                            </td>
+                                                            <td>${dto.createdByName}</td>
+                                                            <!-- manual Move-to inputs -->
+                                                            <td>
+                                                                <div class="d-flex">
+                                                                    <input type="number"
+                                                                           min="1"
+                                                                           class="form-control form-control-sm move-input"
+                                                                           placeholder="#${dto.priorityNumber}"
+                                                                           style="width:70px;"/>
+                                                                    <button type="button"
+                                                                            class="btn btn-sm btn-primary move-btn ms-1">
+                                                                        Move
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </c:forEach>
+                                                </tbody>
+                                            </table>
+                                            <c:if test="${empty activeAppointments}">
+                                                <p class="text-center my-3">No active appointments at this time.</p>
+                                            </c:if>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </main>
-    </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var tbody = document.getElementById('queueTableBody');
-            var form = document.getElementById('reorderForm');
+                    
+                </div> <!-- /container-fluid -->
+            </main>
+        </div>
 
-            Sortable.create(tbody, {
-                animation: 150,
-                onEnd: function(evt) {
-                    // Recalculate priorities and update hidden inputs
-                    var rows = tbody.querySelectorAll('tr');
-                    rows.forEach(function(row, index) {
-                        var newPriority = index + 1; // Starting at 1
-                        row.querySelector('.priority-cell').textContent = newPriority;
-                        row.querySelector('.priority-input').value = newPriority;
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const tbody = document.getElementById('queueTableBody');
+                const form = document.getElementById('reorderForm');
+
+                // helper to clear old hidden inputs
+                function clearHidden() {
+                    form.querySelectorAll('input[name="id"], input[name="priority"]').forEach(i => i.remove());
+                }
+
+                // build hidden inputs & submit
+                function submitReorder(pairs) {
+                    clearHidden();
+                    // pairs: array of {id, priority}
+                    pairs.forEach(p => {
+                        let i1 = document.createElement('input');
+                        i1.type = 'hidden';
+                        i1.name = 'id';
+                        i1.value = p.id;
+                        let i2 = document.createElement('input');
+                        i2.type = 'hidden';
+                        i2.name = 'priority';
+                        i2.value = p.priority;
+                        form.appendChild(i1);
+                        form.appendChild(i2);
                     });
-
-                    // Submit the form to post updated priorities
                     form.submit();
                 }
+
+                // Sortable for drag-and-drop
+                Sortable.create(tbody, {
+                    animation: 150,
+                    onEnd: function () {
+                        const rows = Array.from(tbody.querySelectorAll('tr'));
+                        const pairs = rows.map((row, idx) => ({
+                                id: row.dataset.queueId,
+                                priority: idx + 1
+                            }));
+                        submitReorder(pairs);
+                    }
+                });
+
+                // Manual “Move” buttons
+                tbody.querySelectorAll('.move-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const row = btn.closest('tr');
+                        const id = row.dataset.queueId;
+                        const inp = row.querySelector('.move-input');
+                        const newPrio = parseInt(inp.value, 10);
+                        if (!newPrio || newPrio < 1) {
+                            alert('Please enter a valid priority (>= 1).');
+                            return;
+                        }
+                        submitReorder([{id: id, priority: newPrio}]);
+                    });
+                });
             });
-        });
-    </script>
-</body>
+        </script>
+    </body>
 </html>
