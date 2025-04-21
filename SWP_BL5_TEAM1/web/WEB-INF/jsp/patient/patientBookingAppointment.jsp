@@ -25,7 +25,11 @@
             </div>
         </div>
         <!-- Loader -->
-
+        <%
+            java.time.LocalDate today = java.time.LocalDate.now();
+            request.setAttribute("currentDate", today.toString());
+        %>
+        <c:set var="isLoggedIn" value="${not empty sessionScope.user}" />
         <jsp:include page="/WEB-INF/jsp/common/patientHeaderNav.jsp" />
 
         <!-- Start Hero -->
@@ -71,14 +75,6 @@
                                         </div>
                                     </a><!--end nav link-->
                                 </li><!--end nav item-->
-
-                                <li class="nav-item">
-                                    <a class="nav-link rounded-0" id="online-booking" data-bs-toggle="pill" href="#pills-online" role="tab" aria-controls="pills-online" aria-selected="false">
-                                        <div class="text-center pt-1 pb-1">
-                                            <h4 class="title fw-normal mb-0">Online Appointment</h4>
-                                        </div>
-                                    </a><!--end nav link-->
-                                </li><!--end nav item-->
                             </ul>
 
                             <div class="tab-content p-4" id="pills-tabContent">
@@ -90,44 +86,55 @@
                                             <div class="col-lg-12">
                                                 <div class="mb-3">
                                                     <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                                                    <input name="fullName" id="fullName" type="text" class="form-control" placeholder="Patient Full Name :" required>
+                                                    <input name="fullName" id="fullName" type="text" class="form-control"
+                                                           placeholder="Patient Full Name :" required pattern="^[A-Za-z\s]{3,50}$"
+                                                           title="Full name must be 3-50 characters long and contain only letters and spaces."
+                                                           value="${fullName}" <c:if test="${isLoggedIn}">readonly</c:if> />
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <!-- Phone -->
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Phone <span class="text-danger">*</span></label>
-                                                    <input name="phone" id="phone" type="tel" class="form-control" placeholder="Your Phone :" required>
+                                                <!-- Phone -->
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Phone <span class="text-danger">*</span></label>
+                                                        <input name="phone" id="phone" type="tel" class="form-control"
+                                                               placeholder="Your Phone :" required pattern="^\d{10,15}$"
+                                                               title="Phone number must be between 10 to 15 digits."
+                                                               value="${phone}" <c:if test="${isLoggedIn}">readonly</c:if> />
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <!-- Email -->
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Email</label>
-                                                    <input name="email" id="email" type="email" class="form-control" placeholder="Your Email :">
+                                                <!-- Email -->
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Email</label>
+                                                        <input name="email" id="email" type="email" class="form-control"
+                                                               placeholder="Your Email :" pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$"
+                                                               title="Enter a valid email address."
+                                                               value="${email}" <c:if test="${isLoggedIn}">readonly</c:if> />
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <!-- Date of Birth -->
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Date of Birth</label>
-                                                    <input name="dateOfBirth" id="dateOfBirth" type="date" class="form-control">
+                                                <!-- Date of Birth -->
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Date of Birth</label>
+                                                        <input name="dateOfBirth" id="dateOfBirth" type="date" class="form-control"
+                                                               value="${dateOfBirth}" <c:if test="${isLoggedIn}">readonly</c:if> />
+
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <!-- Gender -->
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Gender</label>
-                                                    <select name="gender" class="form-control">
-                                                        <option value="">Select Gender</option>
-                                                        <option value="Male">Male</option>
-                                                        <option value="Female">Female</option>
-                                                        <option value="Other">Other</option>
+                                                <!-- Gender -->
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Gender</label>
+                                                        <select name="gender" class="form-control" <c:if test="${isLoggedIn}">disabled</c:if>>
+                                                            <option value="">Select Gender</option>
+                                                            <option value="Male" ${gender == 'Male' ? 'selected' : ''}>Male</option>
+                                                        <option value="Female" ${gender == 'Female' ? 'selected' : ''}>Female</option>
                                                     </select>
+
                                                 </div>
                                             </div>
 
@@ -146,7 +153,7 @@
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label">Appointment Date <span class="text-danger">*</span></label>
-                                                    <input name="appointmentDate" id="appointmentDate" type="date" class="form-control" required>
+                                                    <input name="appointmentDate" id="appointmentDate" type="date" class="form-control" required min="${currentDate}">
                                                 </div>
                                             </div>
 
@@ -170,95 +177,7 @@
                                                     <button type="submit" class="btn btn-primary">Book Appointment</button>
                                                 </div>
                                             </div>
-
                                         </div>
-                                    </form>
-
-                                </div>
-
-                                <div class="tab-pane fade" id="pills-online" role="tabpanel" aria-labelledby="online-booking">
-                                    <form>
-                                        <div class="row">
-                                            <div class="col-lg-12">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Patient Name <span class="text-danger">*</span></label>
-                                                    <input name="name" id="name2" type="text" class="form-control" placeholder="Patient Name :">
-                                                </div>
-                                            </div><!--end col-->
-
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Departments</label>
-                                                    <select class="form-control department-name select2input">
-                                                        <option value="EY">Eye Care</option>
-                                                        <option value="GY">Gynecologist</option>
-                                                        <option value="PS">Psychotherapist</option>
-                                                        <option value="OR">Orthopedic</option>
-                                                        <option value="DE">Dentist</option>
-                                                        <option value="GA">Gastrologist</option>
-                                                        <option value="UR">Urologist</option>
-                                                        <option value="NE">Neurologist</option>
-                                                    </select>
-                                                </div>
-                                            </div><!--end col-->
-
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Doctor</label>
-                                                    <select class="form-control doctor-name select2input">
-                                                        <option value="CA">Dr. Calvin Carlo</option>
-                                                        <option value="CR">Dr. Cristino Murphy</option>
-                                                        <option value="AL">Dr. Alia Reddy</option>
-                                                        <option value="TO">Dr. Toni Kovar</option>
-                                                        <option value="JE">Dr. Jessica McFarlane</option>
-                                                        <option value="EL">Dr. Elsie Sherman</option>
-                                                        <option value="BE">Dr. Bertha Magers</option>
-                                                        <option value="LO">Dr. Louis Batey</option>
-                                                    </select>
-                                                </div>
-                                            </div><!--end col-->
-
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Your Email <span class="text-danger">*</span></label>
-                                                    <input name="email" id="email2" type="email" class="form-control" placeholder="Your email :">
-                                                </div> 
-                                            </div><!--end col-->
-
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Your Phone <span class="text-danger">*</span></label>
-                                                    <input name="phone" id="phone2" type="tel" class="form-control" placeholder="Your Phone :">
-                                                </div> 
-                                            </div><!--end col-->
-
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label"> Date : </label>
-                                                    <input name="date" type="text" class="flatpickr flatpickr-input form-control" id="checkin-date">
-                                                </div>
-                                            </div><!--end col-->
-
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label" for="input-time">Time : </label>
-                                                    <input name="time" type="text" class="form-control timepicker" id="input-time" placeholder="03:30 PM">
-                                                </div> 
-                                            </div><!--end col-->
-
-                                            <div class="col-lg-12">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Comments <span class="text-danger">*</span></label>
-                                                    <textarea name="comments" id="comments2" rows="4" class="form-control" placeholder="Your Message :"></textarea>
-                                                </div>
-                                            </div><!--end col-->
-
-                                            <div class="col-lg-12">
-                                                <div class="d-grid">
-                                                    <button type="submit" class="btn btn-primary">Book An Appointment</button>
-                                                </div>
-                                            </div><!--end col-->
-                                        </div><!--end row-->
                                     </form>
                                 </div>
                             </div>
@@ -432,7 +351,58 @@
                 </ul><!--end icon-->
             </div>
         </div>
-        <!-- Offcanvas End -->    
+        <!-- Offcanvas End -->
+
+        <!<!-- Toast notification -->
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div class="toast align-items-center text-white bg-success border-0 ${appointmentStatus == 'fail' ? 'd-none' : ''}" 
+                 id="successToast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        Appointment booked successfully!
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+
+            <div class="toast align-items-center text-white bg-danger border-0 ${appointmentStatus == 'success' ? 'd-none' : ''}" 
+                 id="failToast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        Failed to book appointment. Please try again.
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+        <%
+            String status = request.getParameter("status");
+        %>
+
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <% if ("success".equals(status)) { %>
+            <div class="toast align-items-center text-white bg-success border-0" 
+                 id="statusToast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        Appointment booked successfully!
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+            <% } else if ("fail".equals(status)) { %>
+            <div class="toast align-items-center text-white bg-danger border-0" 
+                 id="statusToast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        Failed to book appointment. Please try again.
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+            <% }%>
+        </div>
+
 
         <!-- javascript -->
         <script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
@@ -451,107 +421,79 @@
         <!-- Main Js -->
         <script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
 
-        <c:if test="${not empty appointmentStatus}">
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    const status = '${appointmentStatus}';
-                    if (status === 'success') {
-                        showToast("Appointment booked successfully!", "success");
-                    } else {
-                        showToast("Failed to book appointment. Please try again.", "error");
-                    }
-                });
-
-                function showToast(message, type) {
-                    const toast = document.createElement('div');
-                    toast.className = 'toast ' + type;
-                    toast.textContent = message;
-                    document.body.appendChild(toast);
-
-                    setTimeout(() => {
-                        toast.classList.add('show');
-                        setTimeout(() => {
-                            toast.classList.remove('show');
-                            setTimeout(() => toast.remove(), 500);
-                        }, 3000);
-                    }, 100);
-                }
-            </script>
-
-            <style>
-                .toast {
-                    position: fixed;
-                    bottom: 30px;
-                    right: 30px;
-                    padding: 15px 25px;
-                    color: #fff;
-                    background-color: #333;
-                    border-radius: 8px;
-                    opacity: 0;
-                    transition: all 0.5s ease;
-                    z-index: 9999;
-                }
-
-                .toast.success {
-                    background-color: #28a745;
-                }
-
-                .toast.error {
-                    background-color: #dc3545;
-                }
-
-                .toast.show {
-                    opacity: 1;
-                    transform: translateY(-10px);
-                }
-            </style>
-        </c:if>
-        
         <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const departmentSelect = document.querySelector('.department-name');
-            const doctorSelect = document.querySelector('#doctorSelect');
-            const allDoctors = Array.from(doctorSelect.options);
+                                        document.addEventListener('DOMContentLoaded', function () {
+                                            const toastEl = document.getElementById('statusToast');
+                                            if (toastEl) {
+                                                new bootstrap.Toast(toastEl).show();
+                                            }
+                                        });
+        </script>
 
-            departmentSelect.addEventListener('change', function () {
-                const selectedDept = departmentSelect.value;
+        <script>
+            document.querySelector('form').addEventListener('submit', function (e) {
+                const phone = document.getElementById('phone').value;
+                const email = document.getElementById('email').value;
 
-                // Clear current options
-                doctorSelect.innerHTML = '';
+                const phoneRegex = /^\d{10,15}$/;
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-                // Add matching options back
-                allDoctors.forEach(doctor => {
-                    if (doctor.dataset.department === selectedDept) {
-                        doctorSelect.appendChild(doctor);
-                    }
-                });
+                if (!phoneRegex.test(phone)) {
+                    alert("Please enter a valid phone number (10-15 digits).");
+                    e.preventDefault();
+                }
 
-                // Optional: reset selected value
-                doctorSelect.selectedIndex = 0;
+                if (email && !emailRegex.test(email)) {
+                    alert("Please enter a valid email address.");
+                    e.preventDefault();
+                }
             });
-        });
+        </script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const departmentSelect = document.querySelector('.department-name');
+                const doctorSelect = document.querySelector('#doctorSelect');
+                const allDoctors = Array.from(doctorSelect.options);
+
+                departmentSelect.addEventListener('change', function () {
+                    const selectedDept = departmentSelect.value;
+
+                    // Clear current options
+                    doctorSelect.innerHTML = '';
+
+                    // Add matching options back
+                    allDoctors.forEach(doctor => {
+                        if (doctor.dataset.department === selectedDept) {
+                            doctorSelect.appendChild(doctor);
+                        }
+                    });
+
+                    // Optional: reset selected value
+                    doctorSelect.selectedIndex = 0;
+                });
+            });
         </script>
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 const slotSelect = document.querySelector('select[name="slotId"]');
-                if (!slotSelect) {
-                    console.log('Dropdown not found!');
+                const doctorSelect = document.getElementById('doctorSelect');
+
+                if (!slotSelect || !doctorSelect) {
+                    console.log('Dropdowns not found!');
                     return;
                 }
 
-                slotSelect.addEventListener('change', function () {
-                    console.log('Slot dropdown changed!');
-                    const slotId = this.value;
-                    const doctorSelect = document.getElementById('doctorSelect');
-                    console.log('SLOT ID RIGHT NOW: ' + slotId);
+                function loadDoctors(slotId) {
+                    console.log('Loading doctors for slotId:', slotId);
 
                     fetch(`/SWP_BL5_TEAM1/doctor-by-slot?slotId=` + slotId)
                             .then(response => response.json())
                             .then(data => {
                                 console.log('Doctors fetched:', data);
-
                                 doctorSelect.innerHTML = '';
+
                                 if (data.length === 0) {
                                     const opt = document.createElement('option');
                                     opt.value = '';
@@ -561,7 +503,7 @@
                                     data.forEach(doctor => {
                                         const opt = document.createElement('option');
                                         opt.value = doctor.staffId;
-                                        opt.text = doctor.fullName; // <-- SHOW NAME INSTEAD
+                                        opt.text = doctor.fullName;
                                         doctorSelect.appendChild(opt);
                                     });
                                 }
@@ -571,9 +513,21 @@
                                 }
                             })
                             .catch(error => console.error('Error fetching doctors:', error));
+                }
+
+                // Run on slot select change
+                slotSelect.addEventListener('change', function () {
+                    const slotId = this.value;
+                    loadDoctors(slotId);
                 });
+
+                // Trigger initial load based on default selected slot
+                if (slotSelect.value) {
+                    loadDoctors(slotSelect.value);
+                }
             });
         </script>
+
 
 
         <!--        <script>

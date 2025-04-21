@@ -1,92 +1,54 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller.staff;
 
 import dal.PatientQueueDAO;
 import dto.DoctorStatusDTO;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.List;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 
-/**
- *
- * @author Admin
- */
+@WebServlet("/staff/doctorStatus")
 public class doctorStatusController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet doctorStatusController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet doctorStatusController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         PatientQueueDAO dao = new PatientQueueDAO();
-        List<DoctorStatusDTO> statusList = dao.getDoctorStatusList();
+        List<DoctorStatusDTO> statusList = dao.getDoctorStatusWithPriorities();
         request.setAttribute("doctorStatusList", statusList);
         request.getRequestDispatcher("staff/doctorStatusManager.jsp")
-                .forward(request, response);
+               .forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+    PatientQueueDAO dao = new PatientQueueDAO();
+
+    // Auto‐assign button?
+    String autoId = request.getParameter("autoAssignDoctorId");
+    if (autoId != null) {
+        int docId = Integer.parseInt(autoId);
+        dao.autoAssignPatient(docId);
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
+    // Manual‐assign button?
+    String manualId   = request.getParameter("manualAssignDoctorId");
+    String manualPrio = request.getParameter("manualPriority");
+    if (manualId != null && manualPrio != null) {
+        int docId = Integer.parseInt(manualId);
+        int prio  = Integer.parseInt(manualPrio);
+        dao.manualAssignPatient(docId, prio);
+    }
+
+    // Redirect to the GET URL so the browser's last action is a GET.
+    String context = request.getContextPath();                // e.g. "/yourapp"
+    String redirectUrl = context + "/staff/doctorStatus";      // matches @WebServlet
+    response.sendRedirect(redirectUrl);
+}
 
 }

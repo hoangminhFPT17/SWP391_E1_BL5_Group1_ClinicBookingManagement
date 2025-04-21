@@ -21,15 +21,15 @@ public class DBContext {
      // Configurable parameters
     private static final String DB_HOST = "localhost";
     private static final String DB_PORT = "3306";
-    private static final String DB_NAME = "swp_clinic";
+    private static final String DB_NAME = "swp_bl5_testing";
     private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "root"; // Update if needed
+    private static final String DB_PASSWORD = ""; // Update if needed
     private static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
     
     public DBContext() {
         try {
             Class.forName(DB_DRIVER);
-            String url = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME + "?useSSL=false&serverTimezone=UTC";
+            String url = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME + "?useSSL=false&allowPublicKeyRetrieval=TRUE&serverTimezone=UTC";
             connection = DriverManager.getConnection(url, DB_USER, DB_PASSWORD);
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);

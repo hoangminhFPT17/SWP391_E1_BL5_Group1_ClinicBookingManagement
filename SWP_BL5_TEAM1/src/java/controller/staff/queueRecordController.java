@@ -2,31 +2,23 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.staff;
 
-import dal.AppointmentDAO;
-import dal.PatientDAO;
-import dal.StaffAccountDAO;
-import dal.TimeSlotDAO;
+import dal.PatientQueueDAO;
+import dto.PatientQueueDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import model.Appointment;
-import model.Patient;
-import model.StaffAccount;
-import model.TimeSlot;
 
 /**
  *
- * @author LENOVO
+ * @author Admin
  */
-public class GetPatientAppointmentsServlet extends HttpServlet {
+public class queueRecordController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,10 +37,10 @@ public class GetPatientAppointmentsServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet GetPatientAppointmentsServlet</title>");
+            out.println("<title>Servlet queueRecordCotroller</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet GetPatientAppointmentsServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet queueRecordCotroller at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -66,48 +58,11 @@ public class GetPatientAppointmentsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        AppointmentDAO appointmentDAO = new AppointmentDAO();
-        PatientDAO patientDAO = new PatientDAO();
-        StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
-        TimeSlotDAO timeSlotDAO = new TimeSlotDAO();
-
-        String phone = request.getParameter("phone");
-        if (phone == null || phone.trim().isEmpty()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Phone number is required.");
-            return;
-        }
-
-        Patient patient = patientDAO.getPatientByPhone(phone);
-        if (patient == null) {
-            request.setAttribute("error", "Patient not found.");
-            request.getRequestDispatcher("/views/patient-appointments.jsp").forward(request, response);
-            return;
-        }
-
-        List<Appointment> appointments = appointmentDAO.getByPatientPhone(phone);
-
-        Map<Integer, StaffAccount> doctorMap = new HashMap<>();
-        Map<Integer, TimeSlot> slotMap = new HashMap<>();
-
-        for (Appointment appt : appointments) {
-            int doctorId = appt.getDoctorId();
-            int slotId = appt.getSlotId();
-
-            if (!doctorMap.containsKey(doctorId)) {
-                doctorMap.put(doctorId, staffAccountDAO.getStaffById(doctorId));
-            }
-
-            if (!slotMap.containsKey(slotId)) {
-                slotMap.put(slotId, timeSlotDAO.getTimeSlotById(slotId));
-            }
-        }
-
-        request.setAttribute("appointments", appointments);
-        request.setAttribute("doctorMap", doctorMap);
-        request.setAttribute("slotMap", slotMap);
-        request.setAttribute("patient", patient);  // Pass patient info to JSP if needed
-        request.getRequestDispatcher("/WEB-INF/jsp/patient/patientAppointmentList.jsp").forward(request, response);
+        PatientQueueDAO dao = new PatientQueueDAO();
+        List<PatientQueueDTO> allQueues = dao.getAllQueues();      // or however you fetch them
+        request.setAttribute("patientQueueList", allQueues);
+        request.getRequestDispatcher("staff/queueRecord.jsp")
+                .forward(request, response);
     }
 
     /**

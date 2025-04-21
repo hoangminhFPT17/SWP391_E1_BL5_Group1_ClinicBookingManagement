@@ -2,29 +2,23 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.patient;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import dal.DoctorTimeSlotDAO;
-import dal.StaffAccountDAO;
-import dal.UserDAO;
-import dto.DoctorDTO;
+import dal.AppointmentDAO;
+import dal.PatientDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import model.StaffAccount;
-import model.User;
+import model.Appointment;
 
 /**
  *
  * @author LENOVO
  */
-public class DoctorBySlotServlet extends HttpServlet {
+public class UpdateAppointmentServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +37,10 @@ public class DoctorBySlotServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet DoctorBySlotServlet</title>");
+            out.println("<title>Servlet UpdateAppointmentServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet DoctorBySlotServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UpdateAppointmentServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,48 +56,9 @@ public class DoctorBySlotServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String slotIdStr = request.getParameter("slotId");
-
-        if (slotIdStr == null || slotIdStr.trim().isEmpty()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing or empty slotId");
-            return;
-        }
-
-        int slotId;
-        try {
-            slotId = Integer.parseInt(slotIdStr);
-        } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid slotId");
-            return;
-        }
-
-        DoctorTimeSlotDAO doctorTimeSlotDAO = new DoctorTimeSlotDAO();
-        StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
-        UserDAO userDAO = new UserDAO(); // You need to create this if you don't have one yet
-
-        List<Integer> staffIds = doctorTimeSlotDAO.getDoctorIdsBySlotId(slotId);
-        List<StaffAccount> doctors = staffAccountDAO.getDoctorsByIds(staffIds);
-
-        List<DoctorDTO> enrichedDoctors = new ArrayList<>();
-        for (StaffAccount doc : doctors) {
-            User user = userDAO.getUserById(doc.getUserId());
-            if (user != null) {
-                enrichedDoctors.add(new DoctorDTO(
-                        doc.getStaffId(),
-                        doc.getUserId(),
-                        user.getFullName(),
-                        doc.getRole(),
-                        doc.getDepartment()
-                ));
-            }
-        }
-
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(response.getWriter(), enrichedDoctors);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     /**
@@ -117,7 +72,41 @@ public class DoctorBySlotServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
+        String fullName = request.getParameter("fullName");
+        String phone = request.getParameter("phone");
+        String email = request.getParameter("email");
+        String dob = request.getParameter("dateOfBirth");
+        String gender = request.getParameter("gender");
+        int doctorId = Integer.parseInt(request.getParameter("doctorId"));
+        String appointmentDateStr = request.getParameter("appointmentDate");
+        java.sql.Date appointmentDate = java.sql.Date.valueOf(appointmentDateStr);
+        int slotId = Integer.parseInt(request.getParameter("slotId"));
+
+        java.sql.Date today = java.sql.Date.valueOf(java.time.LocalDate.now());
+
+        if (!appointmentDate.after(today)) {
+            // Fail: appointment date is not in the future
+            request.setAttribute("toastMessage", "Appointment date must be in the future!");
+            request.setAttribute("toastType", "danger");
+            request.getRequestDispatcher("PatientAppointmentsListServlet").forward(request, response);
+            return;
+        }
+
+        Appointment appointment = new Appointment();
+        appointment.setAppointmentId(appointmentId);
+        appointment.setPatientPhone(phone);
+        appointment.setDoctorId(doctorId);
+        appointment.setSlotId(slotId);
+        appointment.setAppointmentDate(appointmentDate);
+        appointment.setStatus("Pending");
+
+        new AppointmentDAO().update(appointment);
+
+        // Success
+        request.setAttribute("toastMessage", "Appointment updated successfully!");
+        request.setAttribute("toastType", "success");
+        response.sendRedirect("PatientAppointmentsListServlet");
     }
 
     /**

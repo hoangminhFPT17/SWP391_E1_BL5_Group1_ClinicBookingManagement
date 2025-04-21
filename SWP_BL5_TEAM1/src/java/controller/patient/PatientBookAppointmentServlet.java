@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.patient;
 
 import dal.AppointmentDAO;
 import dal.PatientDAO;
@@ -13,6 +13,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.sql.Date;
@@ -21,6 +22,7 @@ import java.util.List;
 import model.Appointment;
 import model.Patient;
 import model.TimeSlot;
+import model.User;
 
 /**
  *
@@ -66,10 +68,27 @@ public class PatientBookAppointmentServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         TimeSlotDAO timeSlotDAO = new TimeSlotDAO();
         List<TimeSlot> timeSlots = timeSlotDAO.getAllTimeSlots();
-
         request.setAttribute("timeSlots", timeSlots);
+
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            User user = (User) session.getAttribute("user");
+            if (user != null) {
+                PatientDAO patientDAO = new PatientDAO();
+                Patient patient = patientDAO.getPatientByPhone(user.getPhone()); // assuming username is phone
+                if (patient != null) {
+                    request.setAttribute("fullName", patient.getFullName());
+                    request.setAttribute("phone", patient.getPhone());
+                    request.setAttribute("email", patient.getEmail());
+                    request.setAttribute("gender", patient.getGender());
+                    request.setAttribute("dateOfBirth", patient.getDateOfBirth());
+                }
+            }
+        }
+
         request.getRequestDispatcher("/WEB-INF/jsp/patient/patientBookingAppointment.jsp")
                 .forward(request, response);
     }
@@ -98,6 +117,32 @@ public class PatientBookAppointmentServlet extends HttpServlet {
         String slotIdStr = request.getParameter("slotId");
         String appointmentDateStr = request.getParameter("appointmentDate");
 
+        // Input validation
+        String errorMessage = null;
+        if (fullName == null || !fullName.matches("^[A-Za-z\\s]{3,50}$")) {
+            errorMessage = "Full name must be 3-50 characters long and contain only letters and spaces.";
+        } else if (phone == null || !phone.matches("^\\d{10,15}$")) {
+            errorMessage = "Phone number must be between 10 and 15 digits.";
+        } else if (email != null && !email.isEmpty() && !email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+            errorMessage = "Invalid email format.";
+        }
+
+        // If validation fails, forward back with error message
+        if (errorMessage != null) {
+            request.setAttribute("appointmentStatus", "fail");
+            request.setAttribute("errorMessage", errorMessage);
+            request.setAttribute("fullName", fullName);
+            request.setAttribute("phone", phone);
+            request.setAttribute("email", email);
+            request.setAttribute("gender", gender);
+            request.setAttribute("dateOfBirth", dobStr);
+            request.setAttribute("doctorId", doctorIdStr);
+            request.setAttribute("slotId", slotIdStr);
+            request.setAttribute("appointmentDate", appointmentDateStr);
+            request.getRequestDispatcher("/auth/patient/patientBookingAppointment.jsp").forward(request, response);
+            return;
+        }
+
         // Parse types
         Date dateOfBirth = (dobStr != null && !dobStr.isEmpty()) ? Date.valueOf(dobStr) : null;
         int doctorId = Integer.parseInt(doctorIdStr);
@@ -108,11 +153,11 @@ public class PatientBookAppointmentServlet extends HttpServlet {
         PatientDAO patientDAO = new PatientDAO();
         AppointmentDAO appointmentDAO = new AppointmentDAO();
 
-        // Check if patient already exists
-        Patient patient = patientDAO.getPatientByPhone(phone);
         boolean success = false;
 
         try {
+            // Check if patient already exists
+            Patient patient = patientDAO.getPatientByPhone(phone);
             if (patient == null) {
                 patient = new Patient();
                 patient.setPhone(phone);
@@ -138,9 +183,11 @@ public class PatientBookAppointmentServlet extends HttpServlet {
             success = false;
         }
 
-        // Redirect or forward to confirmation
-        request.setAttribute("appointmentStatus", success ? "success" : "fail");
-        request.getRequestDispatcher("/patientBookingAppointment.jsp").forward(request, response);
+        if (success) {
+            response.sendRedirect(request.getContextPath() + "/PatientBookAppointmentServlet?status=success");
+        } else {
+            response.sendRedirect(request.getContextPath() + "/PatientBookAppointmentServlet?status=fail");
+        }
     }
 
     /**
