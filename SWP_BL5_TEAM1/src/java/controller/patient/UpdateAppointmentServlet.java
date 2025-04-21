@@ -5,20 +5,20 @@
 package controller.patient;
 
 import dal.AppointmentDAO;
+import dal.PatientDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.net.URLEncoder;
 import model.Appointment;
 
 /**
  *
  * @author LENOVO
  */
-public class DeleteAppointmentServlet extends HttpServlet {
+public class UpdateAppointmentServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,10 +37,10 @@ public class DeleteAppointmentServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet DeleteAppointmentServlet</title>");
+            out.println("<title>Servlet UpdateAppointmentServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet DeleteAppointmentServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UpdateAppointmentServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -72,47 +72,41 @@ public class DeleteAppointmentServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
+        String fullName = request.getParameter("fullName");
+        String phone = request.getParameter("phone");
+        String email = request.getParameter("email");
+        String dob = request.getParameter("dateOfBirth");
+        String gender = request.getParameter("gender");
+        int doctorId = Integer.parseInt(request.getParameter("doctorId"));
+        String appointmentDateStr = request.getParameter("appointmentDate");
+        java.sql.Date appointmentDate = java.sql.Date.valueOf(appointmentDateStr);
+        int slotId = Integer.parseInt(request.getParameter("slotId"));
 
-        String idParam = request.getParameter("id");
+        java.sql.Date today = java.sql.Date.valueOf(java.time.LocalDate.now());
 
-        if (idParam == null || idParam.isEmpty()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing appointment ID.");
+        if (!appointmentDate.after(today)) {
+            // Fail: appointment date is not in the future
+            request.setAttribute("toastMessage", "Appointment date must be in the future!");
+            request.setAttribute("toastType", "danger");
+            request.getRequestDispatcher("PatientAppointmentsListServlet").forward(request, response);
             return;
         }
 
-        try {
-            int appointmentId = Integer.parseInt(idParam);
-            AppointmentDAO dao = new AppointmentDAO();
-            Appointment appointment = dao.getById(appointmentId);
+        Appointment appointment = new Appointment();
+        appointment.setAppointmentId(appointmentId);
+        appointment.setPatientPhone(phone);
+        appointment.setDoctorId(doctorId);
+        appointment.setSlotId(slotId);
+        appointment.setAppointmentDate(appointmentDate);
+        appointment.setStatus("Pending");
 
-            if (appointment == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Appointment not found.");
-                return;
-            }
+        new AppointmentDAO().update(appointment);
 
-            if (!"Pending".equalsIgnoreCase(appointment.getStatus())) {
-                request.setAttribute("error", "Only pending appointments can be canceled.");
-                // If needed, you can forward to a proper error page here
-                response.sendRedirect("PatientAppointmentsListServlet?error=Only%20pending%20appointments%20can%20be%20canceled");
-                return;
-            }
-
-            dao.delete(appointmentId);
-
-            String referer = request.getHeader("referer");
-            String successMessage = "Appointment canceled successfully";
-            String encodedMessage = URLEncoder.encode(successMessage, "UTF-8");
-
-            if (referer != null) {
-                String redirectUrl = referer.contains("message=") ? referer : (referer.contains("?") ? referer + "&message=" + encodedMessage : referer + "?message=" + encodedMessage);
-                response.sendRedirect(redirectUrl);
-            } else {
-                response.sendRedirect("PatientAppointmentsListServlet?message=" + encodedMessage);
-            }
-
-        } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid appointment ID.");
-        }
+        // Success
+        request.setAttribute("toastMessage", "Appointment updated successfully!");
+        request.setAttribute("toastType", "success");
+        response.sendRedirect("PatientAppointmentsListServlet");
     }
 
     /**

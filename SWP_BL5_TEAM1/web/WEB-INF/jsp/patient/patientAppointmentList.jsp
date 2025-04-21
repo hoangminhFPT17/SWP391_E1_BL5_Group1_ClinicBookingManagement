@@ -17,6 +17,11 @@
     </head>
     <body>
 
+        <%
+            java.time.LocalDate today = java.time.LocalDate.now();
+            request.setAttribute("currentDate", today.toString());
+        %>
+        <jsp:useBean id="now" class="java.util.Date" scope="page" />
         <jsp:include page="/WEB-INF/jsp/common/patientHeaderNav.jsp" />
 
         <!-- Start Hero -->
@@ -24,7 +29,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12 mt-4 pt-2 mt-sm-0 pt-sm-0">
-                        <form method="get" action="PatientAppointmentsListServlet">
+                        <form method="post" action="PatientAppointmentsListServlet">
                             <div class="row mb-3">
                                 <div class="col-xl-6 col-lg-6 col-md-4">
                                     <h5 class="mb-0">Your List Of Appointment</h5>
@@ -33,7 +38,6 @@
                             <div class="row align-items-end">
                                 <!-- LEFT HALF: Filters and Search -->
                                 <div class="col-md-6">
-                                    <input type="hidden" name="phone" value="${phone}" />
                                     <input type="hidden" name="page" id="pageInput" value="${param.page != null ? param.page : 1}" />
                                     <div class="row g-3">
                                         <!-- Time Slot -->
@@ -146,11 +150,34 @@
                                                                     </c:choose>
                                                                 </td>
                                                                 <td class="text-start p-3">
-                                                                    <a href="#" class="btn btn-icon btn-pills btn-soft-primary" data-bs-toggle="modal" data-bs-target="#viewappointment"><i class="uil uil-eye"></i></a>
-                                                                    <a href="#" class="btn btn-icon btn-pills btn-soft-success" data-bs-toggle="modal" data-bs-target="#editAppointmentModal"><i class="uil uil-edit"></i></a>
-                                                                        <c:if test="${dto.status == 'Pending'}">
-                                                                        <a href="#" class="btn btn-icon btn-pills btn-soft-danger" data-bs-toggle="modal" data-bs-target="#cancelappointment" data-appointment-id="${dto.appointmentId}"><i class="uil uil-times-circle"></i></a>
-                                                                        </c:if>
+                                                                    <a href="#" class="btn btn-icon btn-pills btn-soft-primary" data-bs-toggle="modal" data-bs-target="#viewappointment">
+                                                                        <i class="uil uil-eye"></i>
+                                                                    </a>
+
+                                                                    <c:if test="${dto.appointmentDate.time > now.time}">
+                                                                        <a href="#" 
+                                                                           class="btn btn-icon btn-pills btn-soft-success"
+                                                                           data-bs-toggle="modal" 
+                                                                           data-bs-target="#editAppointmentModal"
+                                                                           onclick="fillEditModal(this)"
+                                                                           data-id="${dto.appointmentId}"
+                                                                           data-fullname="${patient.fullName}"
+                                                                           data-phone="${phone}"
+                                                                           data-email="${user.email}"
+                                                                           data-dob="${patient.dateOfBirth}"
+                                                                           data-gender="${patient.gender}"
+                                                                           data-doctorid="${appointment.doctorId}"
+                                                                           data-date="${appointment.appointmentDate}"
+                                                                           data-slotid="${appointment.slotId}">
+                                                                            <i class="uil uil-edit"></i>
+                                                                        </a>
+                                                                    </c:if>
+
+                                                                    <c:if test="${dto.status == 'Pending'}">
+                                                                        <a href="#" class="btn btn-icon btn-pills btn-soft-danger" data-bs-toggle="modal" data-bs-target="#cancelappointment" data-appointment-id="${dto.appointmentId}">
+                                                                            <i class="uil uil-times-circle"></i>
+                                                                        </a>
+                                                                    </c:if>
                                                                 </td>
                                                             </tr>
                                                         </c:forEach>
@@ -235,104 +262,6 @@
         <!-- End Hero -->
 
         <!-- Modal start -->
-        <!-- Add New Appointment Start -->
-        <div class="modal fade" id="appointmentform" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header border-bottom p-3">
-                        <h5 class="modal-title" id="exampleModalLabel">Book an Appointment</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body p-3 pt-4">
-                        <form>
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">Patient Name <span class="text-danger">*</span></label>
-                                        <input name="name" id="name" type="text" class="form-control" placeholder="Patient Name :">
-                                    </div>
-                                </div><!--end col-->
-
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Departments</label>
-                                        <select class="form-control department-name select2input">
-                                            <option value="EY">Eye Care</option>
-                                            <option value="GY">Gynecologist</option>
-                                            <option value="PS">Psychotherapist</option>
-                                            <option value="OR">Orthopedic</option>
-                                            <option value="DE">Dentist</option>
-                                            <option value="GA">Gastrologist</option>
-                                            <option value="UR">Urologist</option>
-                                            <option value="NE">Neurologist</option>
-                                        </select>
-                                    </div>
-                                </div><!--end col-->
-
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Doctor</label>
-                                        <select class="form-control doctor-name select2input">
-                                            <option value="CA">Dr. Calvin Carlo</option>
-                                            <option value="CR">Dr. Cristino Murphy</option>
-                                            <option value="AL">Dr. Alia Reddy</option>
-                                            <option value="TO">Dr. Toni Kovar</option>
-                                            <option value="JE">Dr. Jessica McFarlane</option>
-                                            <option value="EL">Dr. Elsie Sherman</option>
-                                            <option value="BE">Dr. Bertha Magers</option>
-                                            <option value="LO">Dr. Louis Batey</option>
-                                        </select>
-                                    </div>
-                                </div><!--end col-->
-
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Your Email <span class="text-danger">*</span></label>
-                                        <input name="email" id="email" type="email" class="form-control" placeholder="Your email :">
-                                    </div> 
-                                </div><!--end col-->
-
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Your Phone <span class="text-danger">*</span></label>
-                                        <input name="phone" id="phone" type="tel" class="form-control" placeholder="Your Phone :">
-                                    </div> 
-                                </div><!--end col-->
-
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label"> Date : </label>
-                                        <input name="date" type="text" class="flatpickr flatpickr-input form-control" id="checkin-date">
-                                    </div>
-                                </div><!--end col-->
-
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label" for="input-time">Time : </label>
-                                        <input name="time" type="text" class="form-control timepicker" id="input-time" placeholder="03:30 PM">
-                                    </div> 
-                                </div><!--end col-->
-
-                                <div class="col-lg-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">Comments <span class="text-danger">*</span></label>
-                                        <textarea name="comments" id="comments" rows="4" class="form-control" placeholder="Your Message :"></textarea>
-                                    </div>
-                                </div><!--end col-->
-
-                                <div class="col-lg-12">
-                                    <div class="d-grid">
-                                        <button type="submit" class="btn btn-primary">Book An Appointment</button>
-                                    </div>
-                                </div><!--end col-->
-                            </div><!--end row-->
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Add New Appointment End -->
-
         <!-- View Appintment Start -->
         <div class="modal fade" id="viewappointment" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -409,33 +338,32 @@
                                 <div class="form-group mb-3">
                                     <input type="text" class="form-control" name="fullName" id="editFullName"
                                            placeholder="Full Name" required pattern="^[A-Za-z\s]{3,50}$"
-                                           title="Full name must be 3-50 characters long and contain only letters and spaces.">
+                                           title="Full name must be 3-50 characters long and contain only letters and spaces." readonly>
                                 </div>
 
                                 <div class="form-group mb-3">
                                     <input type="tel" class="form-control" name="phone" id="editPhone"
                                            placeholder="Phone" required pattern="^\d{10,15}$"
-                                           title="Phone number must be between 10 to 15 digits.">
+                                           title="Phone number must be between 10 to 15 digits." readonly>
                                 </div>
 
                                 <div class="form-group mb-3">
                                     <input type="email" class="form-control" name="email" id="editEmail"
                                            placeholder="Email" pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$"
-                                           title="Enter a valid email address.">
+                                           title="Enter a valid email address." readonly>
                                 </div>
 
                                 <div class="row">
                                     <div class="form-group mb-3 col-md-6">
                                         <label class="form-label">Date of Birth</label>
-                                        <input type="date" class="form-control" name="dateOfBirth" id="editDateOfBirth">
+                                        <input type="date" class="form-control" name="dateOfBirth" id="editDateOfBirth" readonly>
                                     </div>
                                     <div class="form-group mb-3 col-md-6">
                                         <label class="form-label">Gender</label>
-                                        <select name="gender" id="editGender" class="form-control">
+                                        <select name="gender" id="editGender" class="form-control" disabled>
                                             <option value="">Select Gender</option>
                                             <option value="Male">Male</option>
                                             <option value="Female">Female</option>
-                                            <option value="Other">Other</option>
                                         </select>
                                     </div>
                                 </div>
@@ -443,15 +371,14 @@
                                 <div class="row">
                                     <div class="form-group mb-3 col-md-6">
                                         <label class="form-label">Doctor</label>
-                                        <select name="doctorId" id="editDoctorId" class="form-control" required>
-                                            <c:forEach var="doctor" items="${doctors}">
-                                                <option value="${doctor.doctorId}">${doctor.fullName}</option>
-                                            </c:forEach>
+                                        <select name="doctorId" id="editDoctorId" class="form-control" required data-selected-id="${selectedDoctorId}">
+                                            <!-- Options will be loaded dynamically -->
                                         </select>
+
                                     </div>
                                     <div class="form-group mb-3 col-md-6">
                                         <label class="form-label">Appointment Date</label>
-                                        <input type="date" class="form-control" name="appointmentDate" id="editAppointmentDate" required>
+                                        <input type="date" class="form-control" name="appointmentDate" id="editAppointmentDate" required min="${currentDate}">
                                     </div>
                                 </div>
 
@@ -585,6 +512,129 @@
         </div>
         <!-- Offcanvas End -->
 
+        <c:if test="${not empty toastMessage}">
+            <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                <div class="toast align-items-center text-white bg-${toastType} border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            ${toastMessage}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+            <script>
+                const toastEl = document.querySelector('.toast');
+                const bsToast = new bootstrap.Toast(toastEl);
+                bsToast.show();
+            </script>
+        </c:if>
+
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const slotSelectModal = document.getElementById('editSlotId');
+                const doctorSelectModal = document.getElementById('editDoctorId');
+
+                if (!slotSelectModal || !doctorSelectModal) {
+                    console.log('Edit modal dropdowns not found!');
+                    return;
+                }
+
+                function loadDoctorsForModal(slotId, selectedDoctorId = null) {
+                    console.log('Loading doctors for slotId (modal):', slotId);
+
+                    fetch(`/SWP_BL5_TEAM1/doctor-by-slot?slotId=` + slotId)
+                            .then(response => response.json())
+                            .then(data => {
+                                doctorSelectModal.innerHTML = '';
+
+                                if (data.length === 0) {
+                                    const opt = document.createElement('option');
+                                    opt.value = '';
+                                    opt.text = 'No doctors on duty';
+                                    doctorSelectModal.appendChild(opt);
+                                } else {
+                                    data.forEach(doctor => {
+                                        const opt = document.createElement('option');
+                                        opt.value = doctor.staffId;
+                                        opt.text = doctor.fullName;
+                                        if (selectedDoctorId && parseInt(selectedDoctorId) === doctor.staffId) {
+                                            opt.selected = true;
+                                        }
+                                        doctorSelectModal.appendChild(opt);
+                                    });
+                                }
+
+                                if ($(doctorSelectModal).hasClass('select2')) {
+                                    $(doctorSelectModal).trigger('change.select2');
+                                }
+                            })
+                            .catch(error => console.error('Error fetching doctors (modal):', error));
+                }
+
+                // Load doctors when slot changes in modal
+                slotSelectModal.addEventListener('change', function () {
+                    const slotId = this.value;
+                    loadDoctorsForModal(slotId);
+                });
+
+                // Optional: When the modal opens, load doctors based on current slot & doctor
+                const editModal = document.getElementById('editAppointmentModal');
+                editModal.addEventListener('show.bs.modal', function () {
+                    const slotId = slotSelectModal.value;
+                    const selectedDoctorId = doctorSelectModal.getAttribute('data-selected-id');
+                    if (slotId) {
+                        loadDoctorsForModal(slotId, selectedDoctorId);
+                    }
+                });
+            });
+        </script>
+
+        <script>
+            function fillEditModal(button) {
+                document.getElementById("editAppointmentId").value = button.getAttribute("data-id");
+                document.getElementById("editFullName").value = button.getAttribute("data-fullname");
+                document.getElementById("editPhone").value = button.getAttribute("data-phone");
+                document.getElementById("editEmail").value = button.getAttribute("data-email");
+                document.getElementById("editDateOfBirth").value = button.getAttribute("data-dob");
+                document.getElementById("editGender").value = button.getAttribute("data-gender");
+                document.getElementById("editDoctorId").value = button.getAttribute("data-doctorid");
+                document.getElementById("editAppointmentDate").value = button.getAttribute("data-date");
+                document.getElementById("editSlotId").value = button.getAttribute("data-slotid");
+            }
+        </script>
+
+        <script>
+            const cancelModal = document.getElementById('cancelappointment');
+            cancelModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const appointmentId = button.getAttribute('data-appointment-id');
+                const inputField = cancelModal.querySelector('#cancelAppointmentId');
+                inputField.value = appointmentId;
+            });
+        </script>
+
+        <script>
+            document.querySelector('form').addEventListener('submit', function () {
+                // Reset to page 1 if user changes filter/search
+                const keyword = document.querySelector('input[name="keyword"]').value;
+                const status = document.querySelector('select[name="status"]').value;
+                const slot = document.querySelector('select[name="slotId"]').value;
+
+                // If any filter was changed manually (not just pagination), reset page to 1
+                if (keyword || status || slot) {
+                    document.getElementById('pageInput').value = 1;
+                }
+            });
+
+            // Still handle pageSize change separately
+            document.getElementById("pageSize").addEventListener("change", function () {
+                document.getElementById("pageInput").value = 1;
+                this.form.submit();
+            });
+        </script>
+
         <%
             String message = request.getParameter("message");
         %>
@@ -634,16 +684,6 @@
         <script src="${pageContext.request.contextPath}/assets/js/feather.min.js"></script>
         <!-- Main Js -->
         <script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
-
-        <script>
-            const cancelModal = document.getElementById('cancelappointment');
-            cancelModal.addEventListener('show.bs.modal', function (event) {
-                const button = event.relatedTarget;
-                const appointmentId = button.getAttribute('data-appointment-id');
-                const hiddenInput = cancelModal.querySelector('#cancelAppointmentId');
-                hiddenInput.value = appointmentId;
-            });
-        </script>
 
     </body>
 </html>
