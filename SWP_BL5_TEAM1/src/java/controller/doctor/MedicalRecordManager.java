@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
@@ -46,7 +47,8 @@ public class MedicalRecordManager extends HttpServlet {
             List<MedicalRecord> records = dao.getMedicalRecordsByPatientPhone(patientPhone);
             request.setAttribute("records", records);
             request.setAttribute("patientPhone", patientPhone);
-            request.getRequestDispatcher("staff/listMedicalRecords.jsp").forward(request, response);
+            request.setAttribute("action", "list");
+            request.getRequestDispatcher("doctor/MedicalRecordManagement.jsp").forward(request, response);
         } else if (action.equals("view")) {
             // View a single record
             String recordIdParam = request.getParameter("recordId");
@@ -62,7 +64,8 @@ public class MedicalRecordManager extends HttpServlet {
                     return;
                 }
                 request.setAttribute("record", record);
-                request.getRequestDispatcher("staff/viewMedicalRecord.jsp").forward(request, response);
+                request.setAttribute("action", "view");
+                request.getRequestDispatcher("doctor/MedicalRecordManagement.jsp").forward(request, response);
             } catch (NumberFormatException e) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid recordId");
             }
@@ -73,7 +76,8 @@ public class MedicalRecordManager extends HttpServlet {
                 return;
             }
             request.setAttribute("patientPhone", patientPhone);
-            request.getRequestDispatcher("staff/createMedicalRecord.jsp").forward(request, response);
+            request.setAttribute("action", "create");
+            request.getRequestDispatcher("doctor/MedicalRecordManagement.jsp").forward(request, response);
         } else if (action.equals("edit")) {
             // Show edit form
             String recordIdParam = request.getParameter("recordId");
@@ -89,7 +93,8 @@ public class MedicalRecordManager extends HttpServlet {
                     return;
                 }
                 request.setAttribute("record", record);
-                request.getRequestDispatcher("staff/editMedicalRecord.jsp").forward(request, response);
+                request.setAttribute("action", "edit");
+                request.getRequestDispatcher("doctor/MedicalRecordManagement.jsp").forward(request, response);
             } catch (NumberFormatException e) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid recordId");
             }
@@ -139,7 +144,7 @@ public class MedicalRecordManager extends HttpServlet {
 
             dao.createRecord(record);
 
-            // Redirect to the list of records for the patient
+            // Redirect to the list of records
             response.sendRedirect("MedicalRecordManager?patientPhone=" + patientPhone);
         } else if (action.equals("update")) {
             // Update an existing medical record
@@ -166,7 +171,7 @@ public class MedicalRecordManager extends HttpServlet {
 
                 dao.updateRecord(record);
 
-                // Redirect to the list of records for the patient
+                // Redirect to the list of records
                 response.sendRedirect("MedicalRecordManager?patientPhone=" + patientPhone);
             } catch (NumberFormatException e) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid recordId");
@@ -185,7 +190,7 @@ public class MedicalRecordManager extends HttpServlet {
                 int recordId = Integer.parseInt(recordIdParam);
                 dao.deleteRecord(recordId);
 
-                // Redirect to the list of records for the patient
+                // Redirect to the list of records
                 response.sendRedirect("MedicalRecordManager?patientPhone=" + patientPhone);
             } catch (NumberFormatException e) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid recordId");
