@@ -17,8 +17,10 @@ public class Appointment {
     private int doctorId;
     private int slotId;
     private java.sql.Date appointmentDate;
-    private String status; // 'Pending', 'Approved', etc.
+    private String status;
     private java.sql.Timestamp createdAt;
+    private String description;
+    private Integer packageId;
 
     public Appointment() {
     }
@@ -31,6 +33,18 @@ public class Appointment {
         this.appointmentDate = appointmentDate;
         this.status = status;
         this.createdAt = createdAt;
+    }
+
+    public Appointment(int appointmentId, String patientPhone, int doctorId, int slotId, Date appointmentDate, String status, Timestamp createdAt, String description, Integer packageId) {
+        this.appointmentId = appointmentId;
+        this.patientPhone = patientPhone;
+        this.doctorId = doctorId;
+        this.slotId = slotId;
+        this.appointmentDate = appointmentDate;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.description = description;
+        this.packageId = packageId;
     }
 
     public int getAppointmentId() {
@@ -88,9 +102,25 @@ public class Appointment {
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
+    
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getPackageId() {
+        return packageId;
+    }
+
+    public void setPackageId(Integer packageId) {
+        this.packageId = packageId;
+    }
 
     @Override
     public String toString() {
-        return "Appointment{" + "appointmentId=" + appointmentId + ", patientPhone=" + patientPhone + ", doctorId=" + doctorId + ", slotId=" + slotId + ", appointmentDate=" + appointmentDate + ", status=" + status + ", createdAt=" + createdAt + '}';
+        return "Appointment{" + "appointmentId=" + appointmentId + ", patientPhone=" + patientPhone + ", doctorId=" + doctorId + ", slotId=" + slotId + ", appointmentDate=" + appointmentDate + ", status=" + status + ", createdAt=" + createdAt + ", description=" + description + ", packageId=" + packageId + '}';
     }
 }

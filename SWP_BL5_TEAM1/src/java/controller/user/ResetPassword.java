@@ -69,10 +69,10 @@ public class ResetPassword extends HttpServlet {
             throws ServletException, IOException {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-        String confirmPassword = request.getParameter("confirm_password");
+        String confirmPassword = request.getParameter("confirm-password");
 
         if (!password.equals(confirmPassword)) {
-            request.setAttribute("mess", "Confirm password must match the password");
+            request.setAttribute("mess", "Confirm password must match the password"+password+confirmPassword);
             request.setAttribute("email", email);
             request.getRequestDispatcher("resetPassword.jsp").forward(request, response);
             return;

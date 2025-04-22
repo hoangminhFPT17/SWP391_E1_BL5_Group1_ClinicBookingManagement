@@ -3,13 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/admin/Documents/GitHub/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/WEB-INF/web.xml</file>
-            <file>file:/C:/Users/admin/Documents/GitHub/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/doctor/editMedicalRecord.jsp</file>
-            <file>file:/C:/Users/admin/Documents/GitHub/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/dal/MedicalDAO.java</file>
-            <file>file:/C:/Users/admin/Documents/GitHub/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/doctor/MedicalRecordManagement.jsp</file>
-            <file>file:/C:/Users/admin/Documents/GitHub/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/doctor/viewMedicalRecord.jsp</file>
-            <file>file:/C:/Users/admin/Documents/GitHub/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/controller/doctor/MedicalRecordManager.java</file>
-            <file>file:/C:/Users/admin/Documents/GitHub/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/doctor/createMedicalRecord.jsp</file>
+            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/signup.jsp</file>
+            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/home.jsp</file>
+            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/login.jsp</file>
+            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/resetPassword.jsp</file>
+            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/forgotPassword.jsp</file>
+            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/profile_user.jsp</file>
+            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/controller/user/ProfileServlet.java</file>
         </group>
     </open-files>
 </project-private>

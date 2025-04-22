@@ -43,11 +43,8 @@
         </div>
         <!-- Loader -->
 
-        <div class="back-to-home rounded d-none d-sm-block">
-            <a href="index.html" class="btn btn-icon btn-primary"><i data-feather="home" class="icons"></i></a>
-        </div>
-
         <!-- Hero Start -->
+        <jsp:include page="/WEB-INF/jsp/common/header.jsp" />
         <section class="bg-home d-flex bg-light align-items-center" style="background: url('${pageContext.request.contextPath}/assets/images/bg/bg-lines-one.png') center;">
             <div class="container">
                 <div class="row justify-content-center">
@@ -69,7 +66,8 @@
                                                 <p class="text-muted">Please enter your new password</p>
                                                 <div class="mb-3">
                                                     <label class="form-label">Password<span class="text-danger">*</span></label>
-                                                    <input name="password" type="password" class="form-control" placeholder="Enter Your Password" required="">
+                                                    <input name="password" id="password" type="password" class="form-control" placeholder="Enter Your Password" required="">
+                                                    <input type="hidden" name="hide" id="hide" />
                                                 </div>                                           
                                             </div>
                                             <div class="col-lg-12">
@@ -77,13 +75,13 @@
                                                     <p class="text-muted">Please re-enter your new password</p>
                                                     <div class="mb-3">
                                                         <label class="form-label">Password<span class="text-danger">*</span></label>
-                                                        <input name="confirm-password" type="password" class="form-control" placeholder="Enter Your Password" required="">
+                                                        <input name="confirm-password" id="confirm-password" type="password" class="form-control" placeholder="Enter Your Password" required="">
                                                     </div>
                                                      <p class="text-danger">${mess}</p>
                                                 </div>
                                                 <div class="col-lg-12">
                                                     <div class="d-grid">
-                                                        <button type="submit" class="btn btn-primary">Send</button>
+                                                        <button type="submit" onclick="return encryptForPassForgot()" class="btn btn-primary">Send</button>
                                                     </div>
                                                 </div>
                                             </div>

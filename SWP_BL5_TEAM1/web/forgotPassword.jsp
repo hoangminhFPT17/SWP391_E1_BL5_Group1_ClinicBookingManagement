@@ -42,12 +42,9 @@
             </div>
         </div>
         <!-- Loader -->
-        
-        <div class="back-to-home rounded d-none d-sm-block">
-            <a href="index.html" class="btn btn-icon btn-primary"><i data-feather="home" class="icons"></i></a>
-        </div>
 
         <!-- Hero Start -->
+        <jsp:include page="/WEB-INF/jsp/common/header.jsp" />
         <section class="bg-home d-flex bg-light align-items-center" style="background: url('${pageContext.request.contextPath}/assets/images/bg/bg-lines-one.png') center;">
             <div class="container">
                 <div class="row justify-content-center">
