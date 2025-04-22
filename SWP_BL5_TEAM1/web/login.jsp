@@ -29,7 +29,7 @@
         <!-- Css -->
         <link href="${pageContext.request.contextPath}/assets/css/style.min.css" rel="stylesheet" type="text/css" id="theme-opt" />
         <!-- Scripts -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+<!--        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
         <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js"></script>
         <script>
             function encrypt()
@@ -48,7 +48,7 @@
                     return true;
                 }
             }
-        </script>
+        </script>-->
 
     </head>
 
@@ -64,9 +64,6 @@
         </div>
         <!-- Loader -->
 
-        <div class="back-to-home rounded d-none d-sm-block">
-            <a href="home.jsp" class="btn btn-icon btn-primary"><i data-feather="home" class="icons"></i></a>
-        </div>
 
         <!-- Hero Start -->
         <jsp:include page="/WEB-INF/jsp/common/header.jsp" />

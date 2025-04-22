@@ -8,6 +8,72 @@
 <%
     User user = (User) session.getAttribute("user");
 %>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js"></script>
+<script>
+    function encrypt()
+    {
+        var pass = document.getElementById('password').value;
+        var hide = document.getElementById('hide').value;
+        if (pass == "")
+        {
+            document.getElementById('err').innerHTML = 'Error:Password is missing';
+            return false;
+        } else
+        {
+            document.getElementById("hide").value = document.getElementById("password").value;
+            var hash = CryptoJS.MD5(pass);
+            document.getElementById('password').value = hash;
+            return true;
+        }
+    }
+</script>
+<script>
+    function encryptForPassChange()
+    {
+        var curPass = document.getElementById('currentPassword').value;
+        var newPass = document.getElementById('newPassword').value;
+        var confirmPass = document.getElementById('confirmPassword').value;
+        var hide = document.getElementById('hide').value;
+        if (curPass == "")
+        {
+            document.getElementById('err').innerHTML = 'Error:Password is missing';
+            return false;
+        } else
+        {
+            document.getElementById("hide").value = document.getElementById("currentPassword").value;
+            var hashOld = CryptoJS.MD5(curPass);
+            var hashNew = CryptoJS.MD5(newPass);
+            var hashConfirm = CryptoJS.MD5(confirmPass);
+            document.getElementById('currentPassword').value = hashOld;
+            document.getElementById('newPassword').value = hashNew;
+            document.getElementById('confirmPassword').value = hashConfirm;
+            return true;
+        }
+    }
+</script>
+<script>
+    function encryptForPassForgot()
+    {
+        var newPass = document.getElementById('password').value;
+        var confirmPass = document.getElementById('confirm-password').value;
+        var hide = document.getElementById('hide').value;
+        if (newPass == "")
+        {
+            document.getElementById('err').innerHTML = 'Error:Password is missing';
+            return false;
+        } else
+        {
+            document.getElementById("hide").value = document.getElementById("password").value;
+            var hashNew = CryptoJS.MD5(newPass);
+            var hashConfirm = CryptoJS.MD5(confirmPass);
+            document.getElementById('password').value = hashNew;
+            document.getElementById('confirm-password').value = hashConfirm;
+            return true;
+        }
+    }
+</script>
 <!-- Navbar STart -->
 <header id="topnav" class="navigation sticky">
     <div class="container">
@@ -55,8 +121,8 @@
 
             <li class="list-inline-item mb-0 ms-1">
                 <% if (user == null) { %>
-                <a href="login.jsp" class="sub-menu-item" style="color: rgba(255, 255, 255, 0.5) !important;">Login</a>
-                <a href="User?service=registerUser" class="sub-menu-item" style="color: rgba(255, 255, 255, 0.5) !important;">Register</a>
+                <!--                <a href="login.jsp" class="sub-menu-item" style="color: rgba(255, 255, 255, 0.5) !important;">Login</a>
+                                <a href="User?service=registerUser" class="sub-menu-item" style="color: rgba(255, 255, 255, 0.5) !important;">Register</a>-->
                 <% } else {%>
                 <div class="dropdown dropdown-primary">
                     <button type="button" class="btn btn-pills btn-soft-primary dropdown-toggle p-0" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="${pageContext.request.contextPath}/assets/images/doctors/01.jpg" class="avatar avatar-ex-small rounded-circle" alt=""></button>

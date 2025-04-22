@@ -34,9 +34,7 @@ public class DAOUser extends DBContext {
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, user.getEmail());
-            stmt.setString(2, MD5Util.getMD5Hash(user.getPasswordHash()));
-//            System.err.print(user.getPassword());
-//            System.err.print(MD5Util.getMD5Hash(user.getPassword()));
+            stmt.setString(2, user.getPasswordHash());
             stmt.setString(3, user.getPhone());
             stmt.setString(4, user.getFullName());
             stmt.setBoolean(5, false);
@@ -94,8 +92,7 @@ public class DAOUser extends DBContext {
 // Phương thức đăng nhập (hỗ trợ cả email và username)
     public User Login(String loginInput, String password) {
         User user = null;
-        String hashedPassword = MD5Util.getMD5Hash(password); // Mã hóa mật khẩu nhập vào
-        System.err.print(hashedPassword);
+        String hashedPassword = password;
         String sql = "SELECT * FROM User WHERE email= ? AND password_hash= ?"; //bam o client
         try {
             PreparedStatement pre = connection.prepareStatement(sql);
@@ -169,7 +166,7 @@ public class DAOUser extends DBContext {
             Logger.getLogger(DAOUser.class.getName()).log(Level.SEVERE, "Database connectionection is null");
             return;
         }
-        String hashedPassword = MD5Util.getMD5Hash(password); // Mã hóa mật khẩu
+        String hashedPassword = password; // Mã hóa mật khẩu
         String sql = "UPDATE user SET password_hash = ? WHERE email = ?";
         try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setString(1, hashedPassword);
@@ -201,7 +198,7 @@ public class DAOUser extends DBContext {
             Logger.getLogger(DAOUser.class.getName()).log(Level.SEVERE, "Database connectionection is null");
             return;
         }
-        String hashedPassword = MD5Util.getMD5Hash(password); // Mã hóa mật khẩu
+        String hashedPassword = password; // Mã hóa mật khẩu
         String sql = "UPDATE User SET Password = ? WHERE Email = ?";
         try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setString(1, hashedPassword);
@@ -235,8 +232,8 @@ public class DAOUser extends DBContext {
             Logger.getLogger(DAOUser.class.getName()).log(Level.SEVERE, "Database connectionection is null");
             return false;
         }
-        String hashedOldPassword = MD5Util.getMD5Hash(oldPassword); // Mã hóa mật khẩu cũ
-        String hashedNewPassword = MD5Util.getMD5Hash(newPassword); // Mã hóa mật khẩu mới
+        String hashedOldPassword = oldPassword; // Mã hóa mật khẩu cũ
+        String hashedNewPassword = newPassword; // Mã hóa mật khẩu mới
         String sql = "UPDATE User SET Password = ? WHERE UserName = ? AND Password = ?";
         try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setString(1, hashedNewPassword);
@@ -269,7 +266,7 @@ public class DAOUser extends DBContext {
                 + "WHERE `user_id` = ?;";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, user.getEmail());
-            ps.setString(2, MD5Util.getMD5Hash(user.getPasswordHash()));
+            ps.setString(2, user.getPasswordHash());
             ps.setString(3, user.getPhone());
             ps.setString(4, user.getFullName());
             ps.setBoolean(5, user.isIsVerified());
