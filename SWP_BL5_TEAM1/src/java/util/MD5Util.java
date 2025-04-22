@@ -34,6 +34,6 @@ public class MD5Util {
     
     
      public static void main(String[] args) {
-     System.err.print(getMD5Hash("1234567890"));
+     System.err.print(getMD5Hash("12345678"));
      }
 }

@@ -28,6 +28,10 @@
         <servlet-name>UpdateAppointmentServlet</servlet-name>
         <servlet-class>controller.patient.UpdateAppointmentServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>queueRecordController</servlet-name>
+        <servlet-class>controller.staff.queueRecordController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <url-pattern>/PatientBookAppointmentServlet</url-pattern>
@@ -55,5 +59,7 @@
     <servlet-mapping>
         <servlet-name>UpdateAppointmentServlet</servlet-name>
         <url-pattern>/UpdateAppointmentServlet</url-pattern>
+        <servlet-name>queueRecordController</servlet-name>
+        <url-pattern>/queueRecordController</url-pattern>
     </servlet-mapping>
 </web-app>

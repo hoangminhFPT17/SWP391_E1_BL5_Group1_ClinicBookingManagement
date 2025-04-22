@@ -78,10 +78,11 @@ public class LoginServlet extends HttpServlet {
 
                 if (user == null) {
                     request.setAttribute("error", "Tài khoản Google chưa được đăng ký trong hệ thống.");
-                    request.getRequestDispatcher("register.jsp").forward(request, response);
+                    session.setAttribute("googleAccount", googleAccount);
+                    request.getRequestDispatcher("signup.jsp").forward(request, response);
                 } else if (user.isIsVerified() == false) {
 //                    handleDeactivatedAccount(user, request, response);
-                    return;
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
                 } else {
                     session.setAttribute("user", user);
                     session.setAttribute("userId", user.getUserId());

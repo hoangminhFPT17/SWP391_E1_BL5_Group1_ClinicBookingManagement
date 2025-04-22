@@ -6,7 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-    <html lang="en">
+<html lang="en">
 
     <head>
         <meta charset="utf-8" />
@@ -28,6 +28,27 @@
         <link href="https://unicons.iconscout.com/release/v3.0.6/css/line.css"  rel="stylesheet">
         <!-- Css -->
         <link href="${pageContext.request.contextPath}/assets/css/style.min.css" rel="stylesheet" type="text/css" id="theme-opt" />
+        <!-- Scripts -->
+<!--        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+        <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js"></script>
+        <script>
+            function encrypt()
+            {
+                var pass = document.getElementById('password').value;
+                var hide = document.getElementById('hide').value;
+                if (pass == "")
+                {
+                    document.getElementById('err').innerHTML = 'Error:Password is missing';
+                    return false;
+                } else
+                {
+                    document.getElementById("hide").value = document.getElementById("password").value;
+                    var hash = CryptoJS.MD5(pass);
+                    document.getElementById('password').value = hash;
+                    return true;
+                }
+            }
+        </script>-->
 
     </head>
 
@@ -42,12 +63,10 @@
             </div>
         </div>
         <!-- Loader -->
-        
-        <div class="back-to-home rounded d-none d-sm-block">
-            <a href="home.jsp" class="btn btn-icon btn-primary"><i data-feather="home" class="icons"></i></a>
-        </div>
+
 
         <!-- Hero Start -->
+        <jsp:include page="/WEB-INF/jsp/common/header.jsp" />
         <section class="bg-home d-flex bg-light align-items-center" style="background: url('${pageContext.request.contextPath}/assets/images/bg/bg-lines-one.png') center;">
             <div class="container">
                 <div class="row justify-content-center">
@@ -70,7 +89,8 @@
                                         <div class="col-lg-12">
                                             <div class="mb-3">
                                                 <label class="form-label">Password <span class="text-danger">*</span></label>
-                                                <input name="password" type="password" class="form-control" placeholder="Password" required="">
+                                                <input name="password" id="password" type="password" class="form-control" placeholder="Password" required="">
+                                                <input type="hidden" name="hide" id="hide" />
                                             </div>
                                         </div>
 
@@ -87,20 +107,14 @@
                                         </div>
                                         <div class="col-lg-12 mb-0">
                                             <div class="d-grid">
-                                                <button name="submit" type="submit" value="Submit" class="btn btn-primary">Sign in</button>
+                                                <button name="submit" type="submit" value="Submit" onclick="return encrypt()" class="btn btn-primary">Sign in</button>
                                             </div>
                                         </div>
 
                                         <div class="col-lg-12 mt-3 text-center">
                                             <h6 class="text-muted">Or</h6>
                                         </div><!--end col-->
-                                        
-                                        <div class="col-6 mt-3">
-                                            <div class="d-grid">
-                                                <a href="#" class="btn btn-soft-primary"><i class="uil uil-facebook"></i> Facebook</a>
-                                            </div>
-                                        </div><!--end col-->
-                                        
+
                                         <div class="col-6 mt-3">
                                             <div class="d-grid">
                                                 <a href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=http://localhost:8080/SWP_BL5_TEAM1/login&response_type=code&client_id=1019052356272-nvvto028fvsehnrcro7kkso841n9pmrh.apps.googleusercontent.com&approval_prompt=force" class="btn btn-soft-primary"><i class="uil uil-google google"></i> Google</a>
@@ -119,14 +133,14 @@
             </div> <!--end container-->
         </section><!--end section-->
         <!-- Hero End -->
-        
+
         <!-- javascript -->
         <script src="${pageContext.request.contextPath}/assets/js/bootstrap.bundle.min.js"></script>
         <!-- Icons -->
         <script src="${pageContext.request.contextPath}/assets/js/feather.min.js"></script>
         <!-- Main Js -->
         <script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
-        
+
     </body>
 
 </html>
