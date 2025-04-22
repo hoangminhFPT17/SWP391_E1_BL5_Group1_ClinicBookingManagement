@@ -29,6 +29,7 @@
         <!-- Css -->
         <link href="${pageContext.request.contextPath}/assets/css/style.min.css" rel="stylesheet" type="text/css" id="theme-opt" />
 
+
     </head>
 
     <body>
@@ -46,10 +47,6 @@
         </div>
         <!-- Loader -->
 
-        <div class="back-to-home rounded d-none d-sm-block">
-            <a href="index.html" class="btn btn-icon btn-primary"><i data-feather="home" class="icons"></i></a>
-        </div>
-
         <!-- Hero Start -->
         <jsp:include page="/WEB-INF/jsp/common/header.jsp" />
         <section class="bg-half-150 d-table w-100 bg-light" style="background: url('${pageContext.request.contextPath}/assets/images/bg/bg-lines-one.png') center;">
@@ -62,8 +59,9 @@
                                 <h4 class="text-center">Sign Up</h4>  
                                 <form action="User" method="POST" class="login-form mt-4" enctype="multipart/form-data">
                                     <input type="hidden" name="service" value="registerUser">
+                                    <input type="hidden" name="hide" id="hide" />
                                     <div class="row">
-                                        <% if (googleAccount==null) {%>
+                                        <% if (googleAccount == null) {%>
                                         <div class="col-md-6">
                                             <div class="mb-3">                                               
                                                 <label class="form-label">Your Email <span class="text-danger">*</span></label>
@@ -99,7 +97,7 @@
                                         <div class="col-md-12">
                                             <div class="mb-3">
                                                 <label class="form-label">Password <span class="text-danger">*</span></label>
-                                                <input type="password" name="Password" class="form-control" placeholder="Password" required="">
+                                                <input name="Password" id="password" type="text" class="form-control" placeholder="Password" required="">
                                             </div>
                                         </div>
                                         <div class="col-md-12">
@@ -112,7 +110,7 @@
                                         </div>
                                         <div class="col-md-12">
                                             <div class="d-grid">
-                                                <button class="btn btn-primary" type="submit" name="submit" value="registerUser">Register</button>
+                                                <button class="btn btn-primary" type="submit" onclick="return encrypt()" name="submit" value="registerUser">Register</button>
                                             </div>
                                         </div>
 
