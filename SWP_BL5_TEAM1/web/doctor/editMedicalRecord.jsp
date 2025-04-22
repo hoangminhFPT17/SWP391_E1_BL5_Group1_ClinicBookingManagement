@@ -1,4 +1,4 @@
-<%-- web/staff/editMedicalRecord.jsp --%>
+<!-- <%-- web/staff/editMedicalRecord.jsp --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
@@ -37,4 +37,4 @@
                 <div class="mb-3">
                     <label for="notes" class="form-label">Notes</label>
                     <textarea class="form-control" id="notes" name="notes">${record.notes}</textarea>
-                </div>
+                </div> -->
