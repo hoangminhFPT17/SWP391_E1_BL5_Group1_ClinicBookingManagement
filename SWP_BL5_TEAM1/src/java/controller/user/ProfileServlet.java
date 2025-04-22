@@ -81,9 +81,9 @@ public class ProfileServlet extends HttpServlet {
 
         try {
       
-            String encryptedCurrentPassword = util.MD5Util.getMD5Hash(currentPassword);
+            String encryptedCurrentPassword = currentPassword;
             if (!currentUser.getPasswordHash().equals(encryptedCurrentPassword)) {
-                response.sendRedirect("profile-alt?error=" + URLEncoder.encode("Mật khẩu hiện tại không đúng.", "UTF-8"));
+                response.sendRedirect("profile-alt?error=" + URLEncoder.encode("Mật khẩu hiện tại không đúng."+currentPassword+"  "+currentUser.getPasswordHash()+"  "+newPassword+confirmPassword, "UTF-8"));
                 return;
             }
 

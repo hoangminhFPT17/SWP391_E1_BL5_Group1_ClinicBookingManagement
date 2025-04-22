@@ -80,8 +80,7 @@ public class RegisterUser extends HttpServlet {
         String otpCode = "123456";
         Timestamp createAt = new Timestamp(System.currentTimeMillis());
         Timestamp otpExpiry = new Timestamp(System.currentTimeMillis());
-         // Giữ plaintext
-
+        // Giữ plaintext
 
         try {
             String error = validateInput(dao, email, fullName, phone, password);
@@ -114,7 +113,7 @@ public class RegisterUser extends HttpServlet {
                 }
 
                 // Gửi email kích hoạt
-                String activationLink = "http://localhost:8080/SWP_BL5_TEAM1/activate?token="+token;
+                String activationLink = "http://localhost:8080/SWP_BL5_TEAM1/activate?token=" + token;
                 boolean isEmailSent = resetSvc.sendActivationEmail(email, activationLink, fullName);
 
                 if (!isEmailSent) {

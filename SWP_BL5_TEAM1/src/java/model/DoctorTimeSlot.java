@@ -13,6 +13,7 @@ public class DoctorTimeSlot {
     private int staffId;
     private int slotId;
     private String dayOfWeek; // Monday to Sunday
+    private int maxAppointments;
 
     public DoctorTimeSlot() {
     }
@@ -22,6 +23,14 @@ public class DoctorTimeSlot {
         this.staffId = staffId;
         this.slotId = slotId;
         this.dayOfWeek = dayOfWeek;
+    }
+
+    public DoctorTimeSlot(int id, int staffId, int slotId, String dayOfWeek, int maxAppointments) {
+        this.id = id;
+        this.staffId = staffId;
+        this.slotId = slotId;
+        this.dayOfWeek = dayOfWeek;
+        this.maxAppointments = maxAppointments;
     }
 
     public int getId() {
@@ -56,8 +65,16 @@ public class DoctorTimeSlot {
         this.dayOfWeek = dayOfWeek;
     }
 
+    public int getMaxAppointments() {
+        return maxAppointments;
+    }
+
+    public void setMaxAppointments(int maxAppointments) {
+        this.maxAppointments = maxAppointments;
+    }
+
     @Override
     public String toString() {
-        return "DoctorTimeSlot{" + "id=" + id + ", staffId=" + staffId + ", slotId=" + slotId + ", dayOfWeek=" + dayOfWeek + '}';
+        return "DoctorTimeSlot{" + "id=" + id + ", staffId=" + staffId + ", slotId=" + slotId + ", dayOfWeek=" + dayOfWeek + ", maxAppointments=" + maxAppointments + '}';
     }
 }
