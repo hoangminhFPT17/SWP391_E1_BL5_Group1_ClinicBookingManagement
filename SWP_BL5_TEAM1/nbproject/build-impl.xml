@@ -1094,9 +1094,8 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.jackson-databind-2.18.3.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.jackson-databind-2.19.0-rc2.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.jakarta.jakartaee-api-8.0.0.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${file.reference.com.fasterxml.jackson.core.jar.zip}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${file.reference.com.fasterxml.jackson.core.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.com.fasterxml.jackson.databind.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${file.reference.com.fasterxml.jackson.databind.jar.zip}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.commons-fileupload2-core-2.0.0-M2.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.commons-logging-1.2.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.core-3.4.1.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
@@ -1121,7 +1120,6 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.javax.activation-1.2.0.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.javax.mail-1.6.2.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.javax.mail-api-1.6.2.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${file.reference.javax.mail.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.javax.servlet-api-3.0.1.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.jaxb-api-2.1.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.jaxb-api-2.3.1.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
@@ -1133,7 +1131,6 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.poi-ooxml-schemas-3.16.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.mysql-connector-java-8.0.17.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.smtp-1.6.2.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${file.reference.sqljdbc42.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
     </target>
     <target depends="init" if="dist.ear.dir" name="-clean-webinf-lib">
         <delete dir="${build.web.dir}/WEB-INF/lib"/>
