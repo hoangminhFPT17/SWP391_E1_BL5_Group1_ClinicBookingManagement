@@ -4,6 +4,7 @@
  */
 package controller.manager;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dal.DoctorTimeSlotDAO;
 import dal.TimeSlotDAO;
 import dto.AssignedDoctorDTO;
@@ -15,7 +16,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import model.TimeSlot;
 
 /**
@@ -115,8 +118,10 @@ public class ManagerTimeSlotListServlet extends HttpServlet {
         // Build DTOs for each TimeSlot; include assigned doctor info filtered by day
         List<TimeSlotDTO> timeSlotdtos = new ArrayList<>();
         int index = offset + 1;
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<Integer, String> assignedDoctorsJsonMap = new HashMap<>();
+
         for (TimeSlot slot : slots) {
-            // Only fetch doctors assigned for the selected day
             List<AssignedDoctorDTO> doctors = doctorTimeSlotDAO.getAssignedDoctorsBySlotIdAndDay(slot.getSlotId(), selectedDay);
 
             TimeSlotDTO dto = new TimeSlotDTO();
@@ -126,12 +131,17 @@ public class ManagerTimeSlotListServlet extends HttpServlet {
             dto.setStartTime(slot.getStartTime());
             dto.setEndTime(slot.getEndTime());
             dto.setIsActive(slot.isIsActive());
-            dto.setAssignedDoctors(doctors); // List<AssignedDoctorDTO>
+            dto.setAssignedDoctors(doctors);
 
             timeSlotdtos.add(dto);
+
+            // Serialize assigned doctors into JSON
+            String json = objectMapper.writeValueAsString(doctors);
+            assignedDoctorsJsonMap.put(slot.getSlotId(), json);
         }
 
         // Pass data to JSP
+        request.setAttribute("assignedDoctorsJsonMap", assignedDoctorsJsonMap);
         request.setAttribute("timeSlotList", timeSlotdtos);
         request.setAttribute("currentPage", page);
         request.setAttribute("pageSize", pageSize);

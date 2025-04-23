@@ -56,4 +56,8 @@
         <servlet-name>queueRecordController</servlet-name>
         <url-pattern>/queueRecordController</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManagerTimeSlotListServlet</servlet-name>
+        <url-pattern>/ManagerTimeSlotListServlet</url-pattern>
+    </servlet-mapping>
 </web-app>

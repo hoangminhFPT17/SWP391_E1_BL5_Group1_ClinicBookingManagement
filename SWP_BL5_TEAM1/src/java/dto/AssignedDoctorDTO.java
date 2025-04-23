@@ -9,15 +9,25 @@ package dto;
  * @author LENOVO
  */
 public class AssignedDoctorDTO {
+    private int doctorId;
     private String fullName;
     private int maxAppointments;
 
     public AssignedDoctorDTO() {
     }
 
-    public AssignedDoctorDTO(String fullName, int maxAppointments) {
+    public AssignedDoctorDTO(int doctorId, String fullName, int maxAppointments) {
+        this.doctorId = doctorId;
         this.fullName = fullName;
         this.maxAppointments = maxAppointments;
+    }
+
+    public int getDoctorId() {
+        return doctorId;
+    }
+
+    public void setDoctorId(int doctorId) {
+        this.doctorId = doctorId;
     }
 
     public String getFullName() {

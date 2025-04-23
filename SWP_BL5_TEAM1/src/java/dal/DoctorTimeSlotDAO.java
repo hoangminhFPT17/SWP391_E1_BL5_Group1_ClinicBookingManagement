@@ -140,7 +140,7 @@ public class DoctorTimeSlotDAO extends DBContext {
     public List<AssignedDoctorDTO> getAssignedDoctorsBySlotIdAndDay(int slotId, String dayOfWeek) {
         List<AssignedDoctorDTO> list = new ArrayList<>();
         String sql = """
-        SELECT u.full_name, dts.max_appointments
+        SELECT dts.staff_id, u.full_name, dts.max_appointments
         FROM DoctorTimeSlot dts
         JOIN StaffAccount sa ON dts.staff_id = sa.staff_id
         JOIN `User` u ON sa.user_id = u.user_id
@@ -152,9 +152,10 @@ public class DoctorTimeSlotDAO extends DBContext {
             ps.setString(2, dayOfWeek); // e.g., "Monday"
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
+                int doctorId = rs.getInt("staff_id");
                 String fullName = rs.getString("full_name");
                 int max = rs.getInt("max_appointments");
-                list.add(new AssignedDoctorDTO(fullName, max));
+                list.add(new AssignedDoctorDTO(doctorId, fullName, max));
             }
         } catch (SQLException e) {
             e.printStackTrace();
