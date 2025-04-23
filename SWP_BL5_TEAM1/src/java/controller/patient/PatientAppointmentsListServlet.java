@@ -174,7 +174,7 @@ public class PatientAppointmentsListServlet extends HttpServlet {
         request.setAttribute("status", status);
         request.setAttribute("slotId", slotId);
 
-        request.getRequestDispatcher("/WEB-INF/jsp/patient/patientAppointmentList.jsp").forward(request, response);
+        request.getRequestDispatcher("/patient/patientAppointmentList.jsp").forward(request, response);
     }
 
     /**

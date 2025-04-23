@@ -13,14 +13,6 @@
         <servlet-class>controller.patient.PatientAppointmentsListServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>patientQueueManager</servlet-name>
-        <servlet-class>controller.patient.patientQueueManager</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>doctorStatusController</servlet-name>
-        <servlet-class>controller.patient.doctorStatusController</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>DeleteAppointmentServlet</servlet-name>
         <servlet-class>controller.patient.DeleteAppointmentServlet</servlet-class>
     </servlet>
@@ -31,6 +23,10 @@
     <servlet>
         <servlet-name>queueRecordController</servlet-name>
         <servlet-class>controller.staff.queueRecordController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ExaminationPackageManager</servlet-name>
+        <servlet-class>controller.staff.ExaminationPackageManager</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
@@ -45,21 +41,19 @@
         <url-pattern>/PatientAppointmentsListServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>patientQueueManager</servlet-name>
-        <url-pattern>/patientQueueManager</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>doctorStatusController</servlet-name>
-        <url-pattern>/doctorStatusController</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>DeleteAppointmentServlet</servlet-name>
         <url-pattern>/DeleteAppointmentServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>UpdateAppointmentServlet</servlet-name>
         <url-pattern>/UpdateAppointmentServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>queueRecordController</servlet-name>
         <url-pattern>/queueRecordController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ExaminationPackageManager</servlet-name>
+        <url-pattern>/ExaminationPackageManager</url-pattern>
     </servlet-mapping>
 </web-app>
