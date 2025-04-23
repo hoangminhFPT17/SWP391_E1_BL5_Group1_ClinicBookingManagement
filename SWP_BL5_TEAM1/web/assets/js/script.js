@@ -1,13 +1,4 @@
-/**
- Responsive HTML Table With Pure CSS - Web Design/UI Design
- 
- Code written by:
- 👨🏻‍⚕️ @Coding Design (Jeet Saru)
- 
- > You can do whatever you want with the code. However if you love my content, you can **SUBSCRIBED** my YouTube Channel.
- 
- 🌎link: www.youtube.com/codingdesign 
- */
+
 
 const search = document.querySelector('.input-group input'),
         table_rows = document.querySelectorAll('tbody tr'),
@@ -22,7 +13,7 @@ function searchTable() {
         let table_data = row.textContent.toLowerCase(),
                 search_data = search.value.toLowerCase();
 
-        row.classList.toggle('hide', table_data.indexOf(search_data) < 0);
+        row.classList.toggle('hide', table_data.indexOf(search_data) < 0); //non-matched data is < 0
         row.style.setProperty('--delay', i / 25 + 's');
     })
 
