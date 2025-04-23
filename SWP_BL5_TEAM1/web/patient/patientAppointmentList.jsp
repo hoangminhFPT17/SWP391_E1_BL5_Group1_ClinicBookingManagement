@@ -12,7 +12,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <jsp:include page="/WEB-INF/jsp/includes/patientHead.jsp" />
+        <jsp:include page="/includes/patientHead.jsp" />
         <title>JSP Page</title>
     </head>
     <body>
@@ -22,7 +22,7 @@
             request.setAttribute("currentDate", today.toString());
         %>
         <jsp:useBean id="now" class="java.util.Date" scope="page" />
-        <jsp:include page="/WEB-INF/jsp/common/patientHeaderNav.jsp" />
+        <jsp:include page="/common/patientHeaderNav.jsp" />
 
         <!-- Start Hero -->
         <section class="bg-dashboard">

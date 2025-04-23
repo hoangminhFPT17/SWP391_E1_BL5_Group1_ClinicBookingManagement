@@ -11,7 +11,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <jsp:include page="/WEB-INF/jsp/includes/patientHead.jsp" />
+        <jsp:include page="/includes/patientHead.jsp" />
         <title>JSP Page</title>
     </head>
     <body>
@@ -30,7 +30,7 @@
             request.setAttribute("currentDate", today.toString());
         %>
         <c:set var="isLoggedIn" value="${not empty sessionScope.user}" />
-        <jsp:include page="/WEB-INF/jsp/common/patientHeaderNav.jsp" />
+        <jsp:include page="/common/patientHeaderNav.jsp" />
 
         <!-- Start Hero -->
         <section class="bg-half-70 d-table w-100 bg-light">
