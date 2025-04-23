@@ -109,12 +109,14 @@
                                         <div class="col-md-12">
                                             <div class="mb-3">
                                                 <label class="form-label">Password <span class="text-danger">*</span></label>
+
                                                 <input name="Password" id="password" type="password" 
                                                        class="form-control" placeholder="Password" required 
                                                        minlength="8"
                                                        pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
                                                        title="Password must be at least 8 characters long and include both letters and numbers">
                                                 <small class="form-text text-muted">Minimum 8 characters, must include letters and numbers</small>
+
                                             </div>
                                         </div>
                                         <div class="col-md-12">
