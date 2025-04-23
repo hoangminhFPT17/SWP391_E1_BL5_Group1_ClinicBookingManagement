@@ -65,13 +65,21 @@
                                         <div class="col-md-6">
                                             <div class="mb-3">                                               
                                                 <label class="form-label">Your Email <span class="text-danger">*</span></label>
-                                                <input type="email" class="form-control" placeholder="User1@gmail.com" name="Email" required="">
+                                                <input type="email" class="form-control" placeholder="example@email.com" 
+                                                       name="Email" required 
+                                                       pattern="^[A-Za-z0-9+_.-]+@(.+)$" 
+                                                       title="Please enter a valid email address">
+                                                <small class="form-text text-muted">Enter a valid email address</small>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">                                                
                                                 <label class="form-label">Your Name <span class="text-danger">*</span></label>
-                                                <input type="text" class="form-control" placeholder="JM DCB" name="FullName" required="">
+                                                <input type="text" class="form-control" placeholder="Full Name" 
+                                                       name="FullName" required 
+                                                       pattern="^[A-Za-z\s]{3,50}$"
+                                                       title="Name must be 3-50 characters long and contain only letters and spaces">
+                                                <small class="form-text text-muted">3-50 characters, letters only</small>
                                             </div>
                                         </div>
                                         <% } else { %>
@@ -91,31 +99,40 @@
                                         <div class="col-md-12">
                                             <div class="mb-3">
                                                 <label class="form-label">Your Phone <span class="text-danger">*</span></label>
-                                                <input type="text" class="form-control" placeholder="099211822" name="Phone" required="">
+                                                <input type="tel" class="form-control" placeholder="0123456789" 
+                                                       name="Phone" required 
+                                                       pattern="\d{10}"
+                                                       title="Phone number must be exactly 10 digits">
+                                                <small class="form-text text-muted">10 digits number</small>
                                             </div>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="mb-3">
                                                 <label class="form-label">Password <span class="text-danger">*</span></label>
-                                                <input name="Password" id="password" type="text" class="form-control" placeholder="Password" required="">
+                                                <input name="Password" id="password" type="password" 
+                                                       class="form-control" placeholder="Password" required 
+                                                       minlength="8"
+                                                       pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
+                                                       title="Password must be at least 8 characters long and include both letters and numbers">
+                                                <small class="form-text text-muted">Minimum 8 characters, must include letters and numbers</small>
                                             </div>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="mb-3">
-                                                <div class="form-check">
-                                                    <input class="form-check-input align-middle" type="checkbox" value="" id="accept-tnc-check" required>
-                                                    <label class="form-check-label" for="accept-tnc-check">I Accept <a href="#" class="text-primary">Terms And Condition</a></label>
-                                                </div>
+                                                <label class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                                                <input name="ConfirmPassword" id="confirmPassword" type="password" 
+                                                       class="form-control" placeholder="Confirm Password" required>
+                                                <small class="form-text text-muted">Re-enter your password</small>
                                             </div>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="d-grid">
-                                                <button class="btn btn-primary" type="submit" onclick="return encrypt()" name="submit" value="registerUser">Register</button>
+                                                <button class="btn btn-primary" type="submit" name="submit" value="registerUser">Register</button>
                                             </div>
                                         </div>
 
                                         <div class="mx-auto">
-                                            <p class="mb-0 mt-3"><small class="text-dark me-2">Already have an account ?</small> <a href="login.html" class="text-dark fw-bold">Sign in</a></p>
+                                            <p class="mb-0 mt-3"><small class="text-dark me-2">Already have an account?</small> <a href="login.jsp" class="text-dark fw-bold">Sign in</a></p>
                                         </div>
 
                                         <c:if test="${not empty requestScope.error}">
