@@ -29,7 +29,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12 mt-4 pt-2 mt-sm-0 pt-sm-0">
-                        <form method="post" action="PatientAppointmentsListServlet">
+                        <form method="get" action="ManagerTimeSlotListServlet">
                             <div class="row mb-3">
                                 <div class="col-xl-6 col-lg-6 col-md-4">
                                     <h5 class="mb-0">Assign Doctor To Time Slot</h5>
@@ -45,8 +45,8 @@
                                             <label class="form-label">Status</label>
                                             <select name="status" class="form-control select2input" style="min-width: 100%;">
                                                 <option value="">All</option>
-                                                <option value="true" ${param.status == true ? 'selected' : ''}>Active</option>
-                                                <option value="false" ${param.status == false ? 'selected' : ''}>Disable</option>
+                                                <option value="true" ${param.status == 'true' ? 'selected' : ''}>Active</option>
+                                                <option value="false" ${param.status == 'false' ? 'selected' : ''}>Disabled</option>
                                             </select>
                                         </div>
 
@@ -67,7 +67,6 @@
                                     <a href="/SWP_BL5_TEAM1/PatientBookAppointmentServlet" class="btn btn-success">+ Time Slot</a>
                                 </div>  
                             </div>
-
                             <div class="row m-4 ms-5 me-5">
                                 <ul class="nav nav-pills nav-justified flex-column flex-sm-row rounded gap-2" id="pills-tab" role="tablist">
                                     <c:set var="daysOfWeek" value="Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday" />
@@ -82,6 +81,7 @@
                                         </li>
                                     </c:forEach>
                                 </ul>
+                                <input type="hidden" name="dayOfTheWeek" value="${selectedDay}" />
                             </div>
                             <div class="row">
                                 <div class="col-12 mt-4">
@@ -157,12 +157,11 @@
                                             <label for="pageSize" class="me-2 text-muted">Showing</label>
                                             <select name="pageSize" id="pageSize" class="form-select form-select-sm me-2" style="width: auto;"
                                                     onchange="this.form.submit()">
-                                                <option value="3" ${param.pageSize == '3' ? 'selected' : ''}>3</option>
                                                 <option value="5" ${param.pageSize == '5' ? 'selected' : ''}>5</option>
                                                 <option value="10" ${param.pageSize == '10' ? 'selected' : ''}>10</option>
                                                 <option value="20" ${param.pageSize == '20' ? 'selected' : ''}>20</option>
                                             </select>
-                                            <span class="text-muted">out of ${totalAppointments} total records</span>
+                                            <span class="text-muted">out of ${totalRecords} total records</span>
                                         </div>
 
 
@@ -210,7 +209,6 @@
                                     </div>
                                 </div>
                             </div><!--end row-->
-
                         </form>
                     </div><!--end col-->
                 </div><!--end row-->

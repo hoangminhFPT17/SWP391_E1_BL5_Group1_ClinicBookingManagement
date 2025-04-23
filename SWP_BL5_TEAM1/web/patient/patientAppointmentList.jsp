@@ -200,7 +200,6 @@
                                             <label for="pageSize" class="me-2 text-muted">Showing</label>
                                             <select name="pageSize" id="pageSize" class="form-select form-select-sm me-2" style="width: auto;"
                                                     onchange="this.form.submit()">
-                                                <option value="3" ${param.pageSize == '3' ? 'selected' : ''}>3</option>
                                                 <option value="5" ${param.pageSize == '5' ? 'selected' : ''}>5</option>
                                                 <option value="10" ${param.pageSize == '10' ? 'selected' : ''}>10</option>
                                                 <option value="20" ${param.pageSize == '20' ? 'selected' : ''}>20</option>

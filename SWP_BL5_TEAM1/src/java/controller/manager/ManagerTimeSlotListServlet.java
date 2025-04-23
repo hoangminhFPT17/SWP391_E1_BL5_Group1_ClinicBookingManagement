@@ -65,25 +65,23 @@ public class ManagerTimeSlotListServlet extends HttpServlet {
 
         TimeSlotDAO timeSlotDAO = new TimeSlotDAO();
         DoctorTimeSlotDAO doctorTimeSlotDAO = new DoctorTimeSlotDAO();
-        
-        //request.setAttribute("daysOfWeek", List.of("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"));
 
+        // Get filters from parameters
         String keyword = request.getParameter("keyword");
         String statusParam = request.getParameter("status");
-        String selectedDay = request.getParameter("dayOfTheWeek"); // "Monday", "Tuesday"
+        String selectedDay = request.getParameter("dayOfTheWeek"); // e.g., "Monday", "Tuesday"
         if (selectedDay == null || selectedDay.isEmpty()) {
-            selectedDay = "Monday";
+            selectedDay = "Monday"; // default day
         }
-        
-        // Add selectedDay to request scope
         request.setAttribute("selectedDay", selectedDay);
 
         Boolean isActive = null;
         if (statusParam != null && !statusParam.trim().isEmpty()) {
-            isActive = statusParam.equalsIgnoreCase("active");
+            // Expecting 'true' or 'false' as strings
+            isActive = statusParam.equalsIgnoreCase("true");
         }
 
-        // Parse page number
+        // Parse pagination parameters
         int page = 1;
         try {
             page = Integer.parseInt(request.getParameter("page"));
@@ -93,8 +91,7 @@ public class ManagerTimeSlotListServlet extends HttpServlet {
         } catch (NumberFormatException ignored) {
         }
 
-        // Parse page size (limit)
-        int pageSize = 5; // default value
+        int pageSize = 5; // default page size
         try {
             String pageSizeParam = request.getParameter("pageSize");
             if (pageSizeParam != null && !pageSizeParam.isEmpty()) {
@@ -108,13 +105,18 @@ public class ManagerTimeSlotListServlet extends HttpServlet {
 
         int offset = (page - 1) * pageSize;
 
-        // Fetch filtered and paginated time slots
-        List<TimeSlot> slots = timeSlotDAO.searchTimeSlots(keyword, isActive, offset, pageSize);
+        // Get total number of matching records and compute total pages
+        int totalRecords = timeSlotDAO.countTimeSlots(keyword, isActive);
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
 
-        // Get DTOs
+        // Fetch paginated time slots by day of the week
+        List<TimeSlot> slots = timeSlotDAO.searchTimeSlots(keyword, isActive, offset, pageSize, selectedDay);
+
+        // Build DTOs for each TimeSlot; include assigned doctor info filtered by day
         List<TimeSlotDTO> timeSlotdtos = new ArrayList<>();
         int index = offset + 1;
         for (TimeSlot slot : slots) {
+            // Only fetch doctors assigned for the selected day
             List<AssignedDoctorDTO> doctors = doctorTimeSlotDAO.getAssignedDoctorsBySlotIdAndDay(slot.getSlotId(), selectedDay);
 
             TimeSlotDTO dto = new TimeSlotDTO();
@@ -124,15 +126,17 @@ public class ManagerTimeSlotListServlet extends HttpServlet {
             dto.setStartTime(slot.getStartTime());
             dto.setEndTime(slot.getEndTime());
             dto.setIsActive(slot.isIsActive());
-            dto.setAssignedDoctors(doctors); // update the field in DTO to match
+            dto.setAssignedDoctors(doctors); // List<AssignedDoctorDTO>
 
             timeSlotdtos.add(dto);
         }
 
-        // Send to JSP
+        // Pass data to JSP
         request.setAttribute("timeSlotList", timeSlotdtos);
         request.setAttribute("currentPage", page);
         request.setAttribute("pageSize", pageSize);
+        request.setAttribute("totalRecords", totalRecords);
+        request.setAttribute("totalPages", totalPages);
         request.setAttribute("keyword", keyword);
         request.setAttribute("status", statusParam);
 

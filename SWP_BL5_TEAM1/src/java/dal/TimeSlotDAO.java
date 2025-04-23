@@ -85,7 +85,7 @@ public class TimeSlotDAO extends DBContext {
         return false;
     }
 
-    public List<TimeSlot> searchTimeSlots(String keyword, Boolean isActive, int offset, int limit) {
+    public List<TimeSlot> searchTimeSlots(String keyword, Boolean isActive, int offset, int limit, String dayOfWeek) {
         List<TimeSlot> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "SELECT DISTINCT ts.* FROM TimeSlot ts "
@@ -96,7 +96,7 @@ public class TimeSlotDAO extends DBContext {
         );
 
         if (keyword != null && !keyword.trim().isEmpty()) {
-            sql.append("AND (ts.name LIKE ? OR u.full_name LIKE ?) ");
+            sql.append("AND (ts.name LIKE ? OR (u.full_name LIKE ? AND dts.day_of_week = ?)) ");
         }
 
         if (isActive != null) {
@@ -112,6 +112,7 @@ public class TimeSlotDAO extends DBContext {
                 String likeKeyword = "%" + keyword.trim() + "%";
                 ps.setString(paramIndex++, likeKeyword); // ts.name
                 ps.setString(paramIndex++, likeKeyword); // u.full_name
+                ps.setString(paramIndex++, dayOfWeek);   // filter doctor only on selected day
             }
 
             if (isActive != null) {
@@ -132,6 +133,48 @@ public class TimeSlotDAO extends DBContext {
         return list;
     }
 
+    public int countTimeSlots(String keyword, Boolean isActive) {
+        int count = 0;
+        StringBuilder sql = new StringBuilder(
+                "SELECT COUNT(DISTINCT ts.slot_id) "
+                + "FROM TimeSlot ts "
+                + "LEFT JOIN DoctorTimeSlot dts ON ts.slot_id = dts.slot_id "
+                + "LEFT JOIN StaffAccount sa ON dts.staff_id = sa.staff_id "
+                + "LEFT JOIN `User` u ON sa.user_id = u.user_id "
+                + "WHERE 1 = 1 "
+        );
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append("AND (ts.name LIKE ? OR u.full_name LIKE ?) ");
+        }
+
+        if (isActive != null) {
+            sql.append("AND ts.is_active = ? ");
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String likeKeyword = "%" + keyword.trim() + "%";
+                ps.setString(paramIndex++, likeKeyword);
+                ps.setString(paramIndex++, likeKeyword);
+            }
+
+            if (isActive != null) {
+                ps.setBoolean(paramIndex++, isActive);
+            }
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TimeSlotDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return count;
+    }
+
     private TimeSlot mapToTimeSlot(ResultSet rs) throws SQLException {
         TimeSlot slot = new TimeSlot();
         slot.setSlotId(rs.getInt("slot_id"));
@@ -147,12 +190,13 @@ public class TimeSlotDAO extends DBContext {
         TimeSlotDAO dao = new TimeSlotDAO();
 
         // Example parameters
-        String keyword = "morning";     // can also test with "Dr. Smith"
-        Boolean isActive = true;        // or null if you don't want to filter by status
+        String keyword = "";     // can also test with "Dr. Smith"
+        Boolean isActive = null;        // or null if you don't want to filter by status
         int offset = 0;
         int limit = 10;
+        String day = "Monday";
 
-        List<TimeSlot> results = dao.searchTimeSlots(keyword, isActive, offset, limit);
+        List<TimeSlot> results = dao.searchTimeSlots(keyword, isActive, offset, limit, day);
 
         // Print results
         for (TimeSlot ts : results) {
