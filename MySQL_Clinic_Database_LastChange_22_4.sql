@@ -179,3 +179,22 @@ CREATE TABLE token (
 	userId int NOT NULL,
 PRIMARY KEY CLUSTERED (id ASC)
 );
+
+CREATE TABLE invoice (
+    invoice_id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_phone VARCHAR(20) NOT NULL,
+    appointment_id INT NOT NULL,
+    payment_method VARCHAR(50),
+    generate_date DATETIME,
+    status ENUM('Processing', 'Completed', 'Failed') DEFAULT 'Processing',
+    
+    FOREIGN KEY (patient_phone) REFERENCES Patient(phone),
+    FOREIGN KEY (appointment_id) REFERENCES Appointment(appointment_id)
+);
+
+CREATE TABLE invoiceCharge (
+    charge_id INT AUTO_INCREMENT PRIMARY KEY,
+    appointment_id INT NOT NULL,
+    amount VARCHAR(50)
+
+);
