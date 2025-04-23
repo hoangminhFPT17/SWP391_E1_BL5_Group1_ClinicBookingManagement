@@ -97,7 +97,7 @@
                                         <div class="col-md-12">
                                             <div class="mb-3">
                                                 <label class="form-label">Password <span class="text-danger">*</span></label>
-                                                <input name="Password" id="password" type="text" class="form-control" placeholder="Password" required="">
+                                                <input name="Password" id="password" type="password" class="form-control" placeholder="Password" required="">
                                             </div>
                                         </div>
                                         <div class="col-md-12">

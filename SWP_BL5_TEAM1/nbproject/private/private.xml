@@ -6,10 +6,10 @@
             <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/signup.jsp</file>
             <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/home.jsp</file>
             <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/login.jsp</file>
-            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/resetPassword.jsp</file>
-            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/forgotPassword.jsp</file>
             <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/profile_user.jsp</file>
-            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/controller/user/ProfileServlet.java</file>
+            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/WEB-INF/jsp/common/header.jsp</file>
+            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/PatientInvoice.jsp</file>
+            <file>file:/E:/Repos/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/model/GoogleAccount.java</file>
         </group>
     </open-files>
 </project-private>
