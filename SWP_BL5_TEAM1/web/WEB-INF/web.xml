@@ -26,7 +26,11 @@
     </servlet>
     <servlet>
         <servlet-name>ExaminationPackageManager</servlet-name>
-        <servlet-class>controller.staff.ExaminationPackageManager</servlet-class>
+        <servlet-class>controller.manager.ExaminationPackageManager</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ManagerTimeSlotListServlet</servlet-name>
+        <servlet-class>controller.manager.ManagerTimeSlotListServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
