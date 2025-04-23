@@ -115,27 +115,25 @@
                     <div class="col-xl-9 col-lg-8 col-md-7 mt-4 pt-2 mt-sm-0 pt-sm-0">
                         <main class="table" id="customers_table">
                             <section class="table__header">
-                                <h1>Customer's Orders</h1>
+<!--                                <h1>Customer's Orders</h1>-->
                                 <div class="input-group">
                                     <input type="search" placeholder="Search Data...">
-                                    <img src="images/search.png" alt="">
+                                    <img src="assets/images/searchFunc/search.png" alt="">
                                 </div>
                                 <div class="export__file">
                                     <label for="export-file" class="export__file-btn" title="Export File"></label>
-                                    <input type="checkbox" id="export-file">
+<!--                                    <input type="checkbox" id="export-file">-->
                                     <div class="export__file-options">
-                                        <label>Export As &nbsp; &#10140;</label>
-                                        <label for="export-file" id="toPDF">PDF <img src="images/pdf.png" alt=""></label>
-                                        <label for="export-file" id="toJSON">JSON <img src="images/json.png" alt=""></label>
-                                        <label for="export-file" id="toCSV">CSV <img src="images/csv.png" alt=""></label>
-                                        <label for="export-file" id="toEXCEL">EXCEL <img src="images/excel.png" alt=""></label>
+<!--                                        <label>Export As &nbsp; &#10140;</label>
+                                        <label for="export-file" id="toPDF">PDF <img src="/assets/images/searchFunc/pdf.png" alt=""></label>
+                                        <label for="export-file" id="toJSON">JSON <img src="/assets/images/searchFunc/json.png" alt=""></label>
+                                        <label for="export-file" id="toCSV">CSV <img src="/assets/images/searchFunc/csv.png" alt=""></label>
+                                        <label for="export-file" id="toEXCEL">EXCEL <img src="/assets/images/searchFunc/excel.png" alt=""></label>-->
                                     </div>
                                 </div>
 
                             </section>
                             <section class="table__body">
-                                <!--                                <div class="col-xl-9 col-lg-8 col-md-7 mt-4 pt-2 mt-sm-0 pt-sm-0">-->
-
                                     <table class="table table-center bg-white mb-0">
                                         <thead>
                                             <tr class="bg-info">
