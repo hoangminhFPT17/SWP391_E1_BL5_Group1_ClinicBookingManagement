@@ -60,13 +60,13 @@ public class ProfileControllers extends HttpServlet {
             request.setAttribute("user", user);
             
             // Get patient info if this is a patient account
-//            if (user.getRole().equals("Patient")) {
-//                PatientDAO patientDAO = new PatientDAO();
-//                Patient patient = patientDAO.getPatientByUserId(user.getUserId());
-//                if (patient != null) {
-//                    request.setAttribute("patient", patient);
-//                }
-//            }
+            if (user.getRole().equals("Patient")) {
+                PatientDAO patientDAO = new PatientDAO();
+                Patient patient = patientDAO.getPatientByUserId(user.getUserId());
+                if (patient != null) {
+                    request.setAttribute("patient", patient);
+                }
+            }
         } else {
             // If can't get from DB, use session data
             request.setAttribute("user", sessionUser);

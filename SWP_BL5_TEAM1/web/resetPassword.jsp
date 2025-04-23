@@ -77,7 +77,7 @@
                                                         <label class="form-label">Password<span class="text-danger">*</span></label>
                                                         <input name="confirm-password" id="confirm-password" type="password" class="form-control" placeholder="Enter Your Password" required="">
                                                     </div>
-                                                    <p class="text-danger">${mess}</p>
+                                                     <p class="text-danger">${mess}</p>
                                                 </div>
                                                 <div class="col-lg-12">
                                                     <div class="d-grid">

@@ -82,12 +82,10 @@ public class StaffAccountDAO extends DBContext {
         }
         return false;
     }
-
+    
     public List<StaffAccount> getDoctorsByIds(List<Integer> ids) {
         List<StaffAccount> doctors = new ArrayList<>();
-        if (ids == null || ids.isEmpty()) {
-            return doctors;
-        }
+        if (ids == null || ids.isEmpty()) return doctors;
 
         // Build SQL placeholders (?, ?, ?) based on list size
         String placeholders = ids.stream().map(id -> "?").collect(Collectors.joining(","));
@@ -108,19 +106,6 @@ public class StaffAccountDAO extends DBContext {
         return doctors;
     }
 
-    public StaffAccount getDoctorById(int id) {
-        String query = "SELECT * FROM StaffAccount WHERE staff_id = ? AND role = 'Doctor'";
-        try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return mapToStaffAccount(rs);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(StaffAccountDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
 
     private StaffAccount mapToStaffAccount(ResultSet rs) throws SQLException {
         StaffAccount staff = new StaffAccount();
@@ -131,3 +116,4 @@ public class StaffAccountDAO extends DBContext {
         return staff;
     }
 }
+
