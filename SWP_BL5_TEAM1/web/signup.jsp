@@ -48,7 +48,7 @@
         <!-- Loader -->
 
         <!-- Hero Start -->
-        <jsp:include page="/WEB-INF/jsp/common/header.jsp" />
+        <jsp:include page="/common/header.jsp" />
         <section class="bg-half-150 d-table w-100 bg-light" style="background: url('${pageContext.request.contextPath}/assets/images/bg/bg-lines-one.png') center;">
             <div class="container">
                 <div class="row justify-content-center">

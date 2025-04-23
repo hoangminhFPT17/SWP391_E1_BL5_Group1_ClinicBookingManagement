@@ -45,7 +45,7 @@ CREATE TABLE Patient (
     patient_account_id INT UNIQUE, -- Nullable for walk-ins
     full_name VARCHAR(100) NOT NULL,
     date_of_birth DATE,
-    gender ENUM('Male', 'Female', 'Other'),
+    gender ENUM('Male', 'Female'),
     email VARCHAR(255),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (patient_account_id) REFERENCES PatientAccount(patient_account_id)
@@ -59,6 +59,28 @@ CREATE TABLE TimeSlot (
     is_active BOOLEAN DEFAULT TRUE
 );
 
+CREATE TABLE Specialty (
+    specialty_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE DoctorSpecialty (
+    staff_id INT NOT NULL,
+    specialty_id INT NOT NULL,
+    FOREIGN KEY (staff_id) REFERENCES StaffAccount(staff_id),
+    FOREIGN KEY (specialty_id) REFERENCES Specialty(specialty_id),
+    PRIMARY KEY (staff_id, specialty_id)
+);
+
+CREATE TABLE ExaminationPackage (
+    package_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    price DECIMAL(10, 2),
+    specialty_id INT NOT NULL,
+    FOREIGN KEY (specialty_id) REFERENCES Specialty(specialty_id)
+);
+
 -- ✅ Use patient phone as FK
 CREATE TABLE Appointment (
     appointment_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -66,18 +88,24 @@ CREATE TABLE Appointment (
     doctor_id INT NOT NULL,
     slot_id INT NOT NULL,
     appointment_date DATE NOT NULL,
-    status ENUM('Pending', 'Approved', 'Cancelled', 'Completed') DEFAULT 'Pending',
+    status ENUM('Pending', 'Approved', 'Cancelled', 'Completed', 'No-show') DEFAULT 'Pending',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (patient_phone) REFERENCES Patient(phone),
     FOREIGN KEY (doctor_id) REFERENCES StaffAccount(staff_id),
     FOREIGN KEY (slot_id) REFERENCES TimeSlot(slot_id)
 );
+-- Inter2 change business rules on Appointment
+ALTER TABLE Appointment ADD COLUMN description TEXT;
+ALTER TABLE Appointment ADD COLUMN package_id INT;
+ALTER TABLE Appointment ADD FOREIGN KEY (package_id) REFERENCES ExaminationPackage(package_id);
 
 CREATE TABLE DoctorTimeSlot (
     id INT AUTO_INCREMENT PRIMARY KEY,
     staff_id INT NOT NULL,
     slot_id INT NOT NULL,
     day_of_week ENUM('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday') NOT NULL,
+    max_appointments INT DEFAULT 10, -- ✅ New field
+
     FOREIGN KEY (staff_id) REFERENCES StaffAccount(staff_id),
     FOREIGN KEY (slot_id) REFERENCES TimeSlot(slot_id),
     UNIQUE (staff_id, slot_id, day_of_week)
@@ -94,27 +122,27 @@ CREATE TABLE MedicalRecord (
     FOREIGN KEY (patient_phone) REFERENCES Patient(phone)
 );
 
-CREATE TABLE PatientQueue (
-    queue_id INT AUTO_INCREMENT PRIMARY KEY,
-    patient_phone VARCHAR(20) NOT NULL,
-    doctor_id INT NOT NULL,
-    slot_id INT NOT NULL,
-    queue_date DATE NOT NULL,
+-- CREATE TABLE PatientQueue (
+--     queue_id INT AUTO_INCREMENT PRIMARY KEY,
+--     patient_phone VARCHAR(20) NOT NULL,
+--     doctor_id INT NOT NULL,
+--     slot_id INT NOT NULL,
+--     queue_date DATE NOT NULL,
 
-    priority_number INT NOT NULL, -- e.g., order of arrival or custom priority
-    patient_type ENUM('Appointment', 'Walk-in') NOT NULL,
-    status ENUM('Hasn\'t Arrived', 'Waiting', 'In Progress', 'Completed') DEFAULT 'Hasn\'t Arrived',
+--     priority_number INT NOT NULL, -- e.g., order of arrival or custom priority
+--     patient_type ENUM('Appointment', 'Walk-in') NOT NULL,
+--     status ENUM('Hasn\'t Arrived', 'Waiting', 'In Progress', 'Completed') DEFAULT 'Hasn\'t Arrived',
 
-    arrival_time DATETIME, -- only set when patient shows up (not when receptionist adds them)
-    created_by INT, -- user_id of receptionist who added the patient
+--     arrival_time DATETIME, -- only set when patient shows up (not when receptionist adds them)
+--     created_by INT, -- user_id of receptionist who added the patient
 
-    FOREIGN KEY (patient_phone) REFERENCES Patient(phone),
-    FOREIGN KEY (doctor_id) REFERENCES StaffAccount(staff_id),
-    FOREIGN KEY (slot_id) REFERENCES TimeSlot(slot_id),
-    FOREIGN KEY (created_by) REFERENCES User(user_id),
+--     FOREIGN KEY (patient_phone) REFERENCES Patient(phone),
+--     FOREIGN KEY (doctor_id) REFERENCES StaffAccount(staff_id),
+--     FOREIGN KEY (slot_id) REFERENCES TimeSlot(slot_id),
+--     FOREIGN KEY (created_by) REFERENCES User(user_id),
 
-    UNIQUE (patient_phone, doctor_id, queue_date) -- optional: prevent duplicates
-);
+--     UNIQUE (patient_phone, doctor_id, queue_date) -- optional: prevent duplicates
+-- );
 
 CREATE TABLE DoctorUnavailability (
     unavailability_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -129,6 +157,20 @@ CREATE TABLE DoctorUnavailability (
     UNIQUE (staff_id, slot_id, unavailable_date) -- Prevent duplicates
 );
 
+CREATE TABLE DoctorHandoff (
+    handoff_id INT AUTO_INCREMENT PRIMARY KEY,
+    from_doctor_id INT NOT NULL,
+    to_doctor_id INT NOT NULL,
+    appointment_id INT NOT NULL,
+    reason TEXT,
+    status ENUM('Pending', 'Received', 'Completed') DEFAULT 'Pending',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (from_doctor_id) REFERENCES StaffAccount(staff_id),
+    FOREIGN KEY (to_doctor_id) REFERENCES StaffAccount(staff_id),
+    FOREIGN KEY (appointment_id) REFERENCES Appointment(appointment_id)
+);
+
 CREATE TABLE token (
 	id int AUTO_INCREMENT NOT NULL,
 	token varchar(255) NOT NULL,
@@ -137,4 +179,3 @@ CREATE TABLE token (
 	userId int NOT NULL,
 PRIMARY KEY CLUSTERED (id ASC)
 );
-
