@@ -89,7 +89,7 @@ public class PatientBookAppointmentServlet extends HttpServlet {
             }
         }
 
-        request.getRequestDispatcher("/WEB-INF/jsp/patient/patientBookingAppointment.jsp")
+        request.getRequestDispatcher("/patient/patientBookingAppointment.jsp")
                 .forward(request, response);
     }
 
@@ -139,7 +139,7 @@ public class PatientBookAppointmentServlet extends HttpServlet {
             request.setAttribute("doctorId", doctorIdStr);
             request.setAttribute("slotId", slotIdStr);
             request.setAttribute("appointmentDate", appointmentDateStr);
-            request.getRequestDispatcher("/auth/patient/patientBookingAppointment.jsp").forward(request, response);
+            request.getRequestDispatcher("/patient/patientBookingAppointment.jsp").forward(request, response);
             return;
         }
 

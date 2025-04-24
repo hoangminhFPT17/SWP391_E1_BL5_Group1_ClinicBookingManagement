@@ -44,7 +44,7 @@
         <!-- Loader -->
 
         <!-- Hero Start -->
-        <jsp:include page="/WEB-INF/jsp/common/header.jsp" />
+        <jsp:include page="/common/header.jsp" />
         <section class="bg-home d-flex bg-light align-items-center" style="background: url('${pageContext.request.contextPath}/assets/images/bg/bg-lines-one.png') center;">
             <div class="container">
                 <div class="row justify-content-center">
@@ -77,7 +77,7 @@
                                                         <label class="form-label">Password<span class="text-danger">*</span></label>
                                                         <input name="confirm-password" id="confirm-password" type="password" class="form-control" placeholder="Enter Your Password" required="">
                                                     </div>
-                                                     <p class="text-danger">${mess}</p>
+                                                    <p class="text-danger">${mess}</p>
                                                 </div>
                                                 <div class="col-lg-12">
                                                     <div class="d-grid">

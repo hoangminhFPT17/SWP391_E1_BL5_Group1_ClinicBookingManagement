@@ -8,6 +8,7 @@ package dal;
  *
  * @author LENOVO
  */
+import dto.AssignedDoctorDTO;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +98,7 @@ public class DoctorTimeSlotDAO extends DBContext {
         }
         return false;
     }
-    
+
     public List<Integer> getDoctorIdsBySlotId(int slotId) {
         List<Integer> doctorIds = new ArrayList<>();
         String query = "SELECT DISTINCT staff_id FROM DoctorTimeSlot WHERE slot_id = ?";
@@ -113,6 +114,54 @@ public class DoctorTimeSlotDAO extends DBContext {
         return doctorIds;
     }
 
+    public List<String> getDoctorNamesBySlotId(int slotId) {
+        List<String> doctorNames = new ArrayList<>();
+        String sql = """
+        SELECT u.full_name
+        FROM DoctorTimeSlot dts
+        JOIN StaffAccount sa ON dts.staff_id = sa.staff_id
+        JOIN `User` u ON sa.user_id = u.user_id
+        WHERE dts.slot_id = ?
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, slotId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                doctorNames.add(rs.getString("full_name"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return doctorNames;
+    }
+
+    public List<AssignedDoctorDTO> getAssignedDoctorsBySlotIdAndDay(int slotId, String dayOfWeek) {
+        List<AssignedDoctorDTO> list = new ArrayList<>();
+        String sql = """
+        SELECT u.full_name, dts.max_appointments
+        FROM DoctorTimeSlot dts
+        JOIN StaffAccount sa ON dts.staff_id = sa.staff_id
+        JOIN `User` u ON sa.user_id = u.user_id
+        WHERE dts.slot_id = ? AND dts.day_of_week = ?
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, slotId);
+            ps.setString(2, dayOfWeek); // e.g., "Monday"
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                String fullName = rs.getString("full_name");
+                int max = rs.getInt("max_appointments");
+                list.add(new AssignedDoctorDTO(fullName, max));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
 
     private DoctorTimeSlot mapToDoctorTimeSlot(ResultSet rs) throws SQLException {
         DoctorTimeSlot dts = new DoctorTimeSlot();
@@ -123,4 +172,3 @@ public class DoctorTimeSlotDAO extends DBContext {
         return dts;
     }
 }
-
