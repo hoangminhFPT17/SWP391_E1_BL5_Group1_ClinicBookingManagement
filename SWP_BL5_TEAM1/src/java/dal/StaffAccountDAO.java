@@ -8,6 +8,7 @@ package dal;
  *
  * @author LENOVO
  */
+import dto.DoctorAssignDTO;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,10 +83,12 @@ public class StaffAccountDAO extends DBContext {
         }
         return false;
     }
-    
+
     public List<StaffAccount> getDoctorsByIds(List<Integer> ids) {
         List<StaffAccount> doctors = new ArrayList<>();
-        if (ids == null || ids.isEmpty()) return doctors;
+        if (ids == null || ids.isEmpty()) {
+            return doctors;
+        }
 
         // Build SQL placeholders (?, ?, ?) based on list size
         String placeholders = ids.stream().map(id -> "?").collect(Collectors.joining(","));
@@ -106,6 +109,29 @@ public class StaffAccountDAO extends DBContext {
         return doctors;
     }
 
+    public List<DoctorAssignDTO> getAllDoctors() {
+        List<DoctorAssignDTO> list = new ArrayList<>();
+        String sql = """
+        SELECT sa.staff_id, u.full_name, sa.department
+        FROM StaffAccount sa
+        JOIN `User` u ON sa.user_id = u.user_id
+        WHERE sa.role = 'Doctor'
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int doctorId = rs.getInt("staff_id");
+                String fullName = rs.getString("full_name");
+                String department = rs.getString("department");
+                list.add(new DoctorAssignDTO(doctorId, fullName, department));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
 
     private StaffAccount mapToStaffAccount(ResultSet rs) throws SQLException {
         StaffAccount staff = new StaffAccount();
@@ -116,4 +142,3 @@ public class StaffAccountDAO extends DBContext {
         return staff;
     }
 }
-

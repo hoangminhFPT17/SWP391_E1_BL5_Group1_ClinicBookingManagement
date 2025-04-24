@@ -32,6 +32,18 @@
         <servlet-name>ManagerTimeSlotListServlet</servlet-name>
         <servlet-class>controller.manager.ManagerTimeSlotListServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UpdateDoctorAssignmentServlet</servlet-name>
+        <servlet-class>controller.manager.UpdateDoctorAssignmentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteDoctorAssignmentServlet</servlet-name>
+        <servlet-class>controller.manager.DeleteDoctorAssignmentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>InsertDoctorAssignmentServlet</servlet-name>
+        <servlet-class>controller.manager.InsertDoctorAssignmentServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <url-pattern>/PatientBookAppointmentServlet</url-pattern>
@@ -59,5 +71,17 @@
     <servlet-mapping>
         <servlet-name>ManagerTimeSlotListServlet</servlet-name>
         <url-pattern>/ManagerTimeSlotListServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateDoctorAssignmentServlet</servlet-name>
+        <url-pattern>/UpdateDoctorAssignmentServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteDoctorAssignmentServlet</servlet-name>
+        <url-pattern>/DeleteDoctorAssignmentServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InsertDoctorAssignmentServlet</servlet-name>
+        <url-pattern>/InsertDoctorAssignmentServlet</url-pattern>
     </servlet-mapping>
 </web-app>

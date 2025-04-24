@@ -6,8 +6,10 @@ package controller.manager;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dal.DoctorTimeSlotDAO;
+import dal.StaffAccountDAO;
 import dal.TimeSlotDAO;
 import dto.AssignedDoctorDTO;
+import dto.DoctorAssignDTO;
 import dto.TimeSlotDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -68,6 +70,7 @@ public class ManagerTimeSlotListServlet extends HttpServlet {
 
         TimeSlotDAO timeSlotDAO = new TimeSlotDAO();
         DoctorTimeSlotDAO doctorTimeSlotDAO = new DoctorTimeSlotDAO();
+        StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
 
         // Get filters from parameters
         String keyword = request.getParameter("keyword");
@@ -139,6 +142,10 @@ public class ManagerTimeSlotListServlet extends HttpServlet {
             String json = objectMapper.writeValueAsString(doctors);
             assignedDoctorsJsonMap.put(slot.getSlotId(), json);
         }
+        
+        List<DoctorAssignDTO> doctorAssignDTOs = staffAccountDAO.getAllDoctors();
+        String doctorAssignDTOsJson = objectMapper.writeValueAsString(doctorAssignDTOs);
+        request.setAttribute("doctorAssignDTOsJson", doctorAssignDTOsJson);
 
         // Pass data to JSP
         request.setAttribute("assignedDoctorsJsonMap", assignedDoctorsJsonMap);

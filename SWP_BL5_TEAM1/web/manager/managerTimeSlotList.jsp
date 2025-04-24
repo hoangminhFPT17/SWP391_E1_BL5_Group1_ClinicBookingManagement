@@ -132,11 +132,11 @@
                                                         <td class="p-3">
                                                             <c:set var="json" value="${assignedDoctorsJsonMap[timeSlot.slotId]}" />
                                                             <a
-                                                               class="btn btn-icon btn-pills btn-soft-primary"
-                                                               data-bs-toggle="modal"
-                                                               data-bs-target="#assignDoctorModal"
-                                                               data-slot-id="${timeSlot.slotId}"
-                                                               data-doctors='${fn:escapeXml(json)}'>
+                                                                class="btn btn-icon btn-pills btn-soft-primary open-assign-modal"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#assignDoctorModal"
+                                                                data-slot-id="${timeSlot.slotId}"
+                                                                data-doctors='${fn:escapeXml(json)}'>
                                                                 <i class="uil uil-cog"></i>
                                                             </a>
                                                         </td>
@@ -222,56 +222,39 @@
         <!-- Assign Doctors Modal -->
         <div class="modal fade" id="assignDoctorModal" tabindex="-1" aria-labelledby="assignDoctorModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
-                <form method="post" action="AssignDoctorServlet"> <!-- update this to your servlet path -->
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="assignDoctorModalLabel">Assign Doctors to Time Slot</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-
-                        <div class="modal-body">
-                            <p>${selectedDay}: Time Slot ${selectedTimeSlot.name}</p>
-
-                            <table class="table table-bordered text-center align-middle">
-                                <thead class="table-secondary">
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Doctor</th>
-                                        <th>Patient Limit</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="doctorAssignTableBody">
-
-                                    <!-- Add new assignment row -->
-                                    <tr>
-                                        <td>${assignments.size() + 1}</td>
-                                        <td>
-                                            <select class="form-select" name="doctorId" required>
-                                                <option value="">-- Select Doctor --</option>
-                                                <c:forEach var="doctor" items="${doctorList}">
-                                                    <option value="${doctor.id}">${doctor.fullName}</option>
-                                                </c:forEach>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control" name="patientLimit" min="1" required />
-                                        </td>
-                                        <td>
-                                            <button type="submit" class="btn btn-sm btn-success">Add</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                            <input type="hidden" name="timeSlotId" value="${selectedTimeSlot.id}" />
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        </div>
+                <!-- update this to your servlet path -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="assignDoctorModalLabel">Assign Doctors to Time Slot</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                </form>
+
+                    <div class="modal-body">
+                        <p>${selectedDay}: Time Slot ${selectedTimeSlot.name}</p>
+
+                        <table class="table table-bordered text-center align-middle">
+                            <thead class="table-secondary">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Doctor</th>
+                                    <th>Patient Limit</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="doctorAssignTableBody">
+                                <!-- Row will be generated with js script -->
+                            </tbody>
+                        </table>
+
+                        <button type="button" id="addDoctorBtn" class="btn btn-primary">Add Doctor to Time Slot</button>
+
+                        <input type="hidden" name="timeSlotId" value="${selectedTimeSlot.id}" />
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -367,7 +350,7 @@
                 bsToast.show();
             </script>
         </c:if>
-            
+
         <%
             String message = request.getParameter("message");
         %>
@@ -383,44 +366,297 @@
                 </div>
             </div>
             <% }%>
-        </div>    
+        </div>
 
         <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const modal = document.getElementById("assignDoctorModal");
-                            
-                modal.addEventListener('show.bs.modal', function (event) {
-                    event.stopPropagation(); // Stop event from bubbling
-                    const button = event.relatedTarget;
-                    const doctorsJson = button.getAttribute("data-doctors");
+            document.querySelectorAll('[data-bs-target="#assignDoctorModal"]').forEach(button => {
+                button.addEventListener('click', function () {
+                    const doctorAssignDTOs = ${doctorAssignDTOsJson};
+                    const doctorsData = JSON.parse(this.getAttribute('data-doctors') || '[]');
+                    const slotId = this.getAttribute('data-slot-id');
+                    currentSlotId = parseInt(slotId);
+                    const currentDayOfWeek = document.querySelector('input[name="dayOfTheWeek"]').value;
+                    const tableBody = document.getElementById('doctorAssignTableBody');
+                    tableBody.innerHTML = '';
 
-                    // Log the assignedDoctorsJsonMap to the console
-                    //console.log("Assigned Doctors JSON:", doctorsJson);
+                    doctorsData.forEach((doc, index) => {
+                        const row = document.createElement('tr');
 
-                    const doctors = JSON.parse(doctorsJson || "[]");
-                    console.log("Parsed Doctors:", doctors); // Should show the array of doctors
+                        const indexTd = document.createElement('td');
+                        indexTd.textContent = index + 1;
+                        row.appendChild(indexTd);
 
-                    const tableBody = modal.querySelector("#doctorAssignTableBody");
-                    tableBody.innerHTML = "";
+                        const nameTd = document.createElement('td');
+                        nameTd.textContent = doc.fullName;
 
-                    doctors.forEach((doc, i) => {
-                        console.log("Doctor:", doc); // Check each doctor object
-                        const row = document.createElement("tr");
+                        const limitTd = document.createElement('td');
+                        limitTd.textContent = doc.maxAppointments;
 
-                        row.innerHTML = `
-                <td>${i + 1}</td>
-                <td>${doc.fullName}</td>
-                <td>${doc.maxAppointments}</td>
-                <td>
-                    <a href="UpdateAssignmentServlet?id=${doc.id}" class="btn btn-sm btn-outline-primary">Update</a>
-                    <a href="RemoveAssignmentServlet?id=${doc.id}" class="btn btn-sm btn-outline-danger">Remove</a>
-                </td>
-            `;
+                        const actionsTd = document.createElement('td');
 
+                        const updateBtn = document.createElement('button');
+                        updateBtn.className = 'btn btn-sm btn-outline-primary me-1';
+                        updateBtn.textContent = 'Update';
+
+                        const removeBtn = document.createElement('button'); // Changed to button for consistency
+                        removeBtn.className = 'btn btn-sm btn-outline-danger';
+                        removeBtn.textContent = 'Remove';
+                        removeBtn.addEventListener('click', () => {
+                            // Construct the request body
+                            const requestBody = new URLSearchParams({
+                                doctorId: doc.doctorId,
+                                slotId: currentSlotId,
+                                dayOfWeek: currentDayOfWeek
+                            });
+
+                            // Debug: log the request body
+                            console.log("Sending delete request with body:", requestBody.toString());
+
+                            // Send the delete request to the server
+                            fetch('DeleteDoctorAssignmentServlet', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                },
+                                body: requestBody
+                            })
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            // Remove the row from the table if successful
+                                            row.remove();
+                                            // Call updateLocation to include query params in the URL
+                                            redirectToManagerTimeSlotList();
+                                        } else {
+                                            alert("Failed to remove assignment.");
+                                        }
+                                    })
+                                    .catch(err => console.error("Fetch error:", err));
+                        });
+
+                        // Handle update -> edit mode
+                        updateBtn.addEventListener('click', () => {
+                            // Create select dropdown for doctor
+                            const select = document.createElement('select');
+                            select.className = 'form-select';
+                            doctorAssignDTOs.forEach(d => {
+                                const option = document.createElement('option');
+                                option.value = d.doctorId;
+                                option.textContent = d.fullName;
+                                if (d.doctorId === doc.doctorId) {
+                                    option.selected = true;
+                                }
+                                select.appendChild(option);
+                            });
+                            nameTd.innerHTML = '';
+                            nameTd.appendChild(select);
+
+                            // Create input for patient limit
+                            const input = document.createElement('input');
+                            input.type = 'number';
+                            input.min = 1;
+                            input.className = 'form-control';
+                            input.value = doc.maxAppointments;
+                            limitTd.innerHTML = '';
+                            limitTd.appendChild(input);
+
+                            // Change actions to Save
+                            actionsTd.innerHTML = '';
+                            const saveBtn = document.createElement('button');
+                            saveBtn.className = 'btn btn-sm btn-success';
+                            saveBtn.textContent = 'Save';
+                            actionsTd.appendChild(saveBtn);
+
+                            saveBtn.addEventListener('click', () => {
+                                const selectedDoctorId = parseInt(select.value);
+                                const newLimit = parseInt(input.value);
+                                const selectedDoctor = doctorAssignDTOs.find(d => d.doctorId === selectedDoctorId);
+
+                                // Send the update to server
+                                // Construct the request body
+                                const requestBody = new URLSearchParams({
+                                    oldDoctorId: doc.doctorId,
+                                    newDoctorId: selectedDoctorId,
+                                    slotId: currentSlotId,
+                                    dayOfWeek: currentDayOfWeek,
+                                    maxAppointments: newLimit
+                                });
+
+                                // Debug: log the full request body
+                                console.log("Sending update request with body:", requestBody.toString());
+
+                                // Send the update to the server
+                                fetch('UpdateDoctorAssignmentServlet', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded'
+                                    },
+                                    body: requestBody
+                                })
+                                        .then(res => res.json())
+                                        .then(data => {
+                                            if (data.success) {
+                                                // Update local object
+                                                doc.doctorId = selectedDoctorId;
+                                                doc.fullName = selectedDoctor.fullName;
+                                                doc.maxAppointments = newLimit;
+
+                                                // Update UI
+                                                nameTd.textContent = selectedDoctor.fullName;
+                                                limitTd.textContent = newLimit;
+
+                                                actionsTd.innerHTML = '';
+                                                actionsTd.appendChild(updateBtn);
+                                                actionsTd.appendChild(removeBtn);
+
+                                                // Call updateLocation to include query params in the URL
+                                                redirectToManagerTimeSlotList();
+                                            } else {
+                                                alert("Update failed!: Update assignment must not be clash with already existing assignment");
+                                            }
+                                        })
+                                        .catch(err => console.error("Fetch error:", err));
+                            });
+                        });
+
+                        actionsTd.appendChild(updateBtn);
+                        actionsTd.appendChild(removeBtn);
+
+                        row.appendChild(nameTd);
+                        row.appendChild(limitTd);
+                        row.appendChild(actionsTd);
                         tableBody.appendChild(row);
                     });
                 });
             });
+            
+            document.querySelector('#addDoctorBtn').addEventListener('click', function () {
+                // Get the table body element
+                const tableBody = document.getElementById('doctorAssignTableBody');
+
+                // Create a new row
+                const row = document.createElement('tr');
+
+                // Create the index column
+                const indexTd = document.createElement('td');
+                indexTd.textContent = tableBody.rows.length + 1;  // Index for new row
+                row.appendChild(indexTd);
+
+                // Create the doctor selection column (dropdown)
+                const doctorTd = document.createElement('td');
+                const select = document.createElement('select');
+                const doctorAssignDTOs = ${doctorAssignDTOsJson};
+                const currentDayOfWeek = document.querySelector('input[name="dayOfTheWeek"]').value;
+                select.className = 'form-select';
+                doctorAssignDTOs.forEach(doc => {
+                    const option = document.createElement('option');
+                    option.value = doc.doctorId;
+                    option.textContent = doc.fullName;
+                    select.appendChild(option);
+                });
+                doctorTd.appendChild(select);
+                row.appendChild(doctorTd);
+
+                // Create the patient limit column (input)
+                const limitTd = document.createElement('td');
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.min = 1;
+                input.className = 'form-control';
+                input.value = 1;  // Default value for patient limit
+                limitTd.appendChild(input);
+                row.appendChild(limitTd);
+
+                // Create the actions column (Save button)
+                const actionsTd = document.createElement('td');
+                const saveBtn = document.createElement('button');
+                saveBtn.className = 'btn btn-sm btn-success';
+                saveBtn.textContent = 'Save';
+
+                // Handle the save action for the new doctor assignment
+                saveBtn.addEventListener('click', () => {
+                    const selectedDoctorId = parseInt(select.value);
+                    const newLimit = parseInt(input.value);
+                    const timeSlotId = document.querySelector('input[name="timeSlotId"]').value;
+
+                    // Construct the request body to send to the server
+                    const requestBody = new URLSearchParams({
+                        doctorId: selectedDoctorId,
+                        slotId: timeSlotId,
+                        dayOfWeek: currentDayOfWeek,
+                        maxAppointments: newLimit
+                    });
+
+                    // Send the request to insert the new doctor assignment
+                    fetch('InsertDoctorAssignmentServlet', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: requestBody
+                    })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Add the new doctor assignment to the table
+                                    alert("Doctor assigned successfully!");
+                                    redirectToManagerTimeSlotList();
+                                } else {
+                                    alert("Failed to assign doctor.");
+                                }
+                            })
+                            .catch(err => console.error("Error:", err));
+                });
+
+                actionsTd.appendChild(saveBtn);
+                row.appendChild(actionsTd);
+
+                // Append the new row to the table body
+                tableBody.appendChild(row);
+            });
+
+            // Function to get query parameters from the current URL
+            function getQueryParams() {
+                const params = new URLSearchParams(window.location.search);
+
+                // Log the full query string for debugging
+                console.log("Current URL search params:", window.location.search);
+
+                // Retrieve query parameters with proper fallbacks if not found
+                const page = params.get('page') || '1';  // Default to page 1 if not present
+                const status = params.get('status') || '';
+                const keyword = params.get('keyword') || '';
+                const dayOfTheWeek = params.get('dayOfTheWeek') || '';  // Do not default to 'Wednesday'
+                const pageSize = params.get('pageSize') || '5';  // Default to pageSize 5 if not present
+
+                // Log each retrieved parameter for debugging
+                console.log("Retrieved Parameters:");
+                console.log("page:", page);
+                console.log("status:", status);
+                console.log("keyword:", keyword);
+                console.log("dayOfTheWeek:", dayOfTheWeek);
+                console.log("pageSize:", pageSize);
+
+                return {page, status, keyword, dayOfTheWeek, pageSize};
+            }
+
+
+            function redirectToManagerTimeSlotList() {
+                const queryParams = getQueryParams();
+                const baseUrl = '/SWP_BL5_TEAM1/ManagerTimeSlotListServlet'; // Adjust the path if needed
+                const url = new URL(baseUrl, window.location.origin); // Use URL constructor for proper encoding
+
+                // Append parameters to the URL
+                url.searchParams.append('page', queryParams.page);
+                url.searchParams.append('status', queryParams.status);
+                url.searchParams.append('keyword', queryParams.keyword);
+                url.searchParams.append('dayOfTheWeek', queryParams.dayOfTheWeek);
+                url.searchParams.append('pageSize', queryParams.pageSize);
+
+                console.log("New URL:", url);
+                // Redirect to the new URL
+                window.location.href = url.toString();
+            }
         </script>
 
         <script>

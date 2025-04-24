@@ -61,42 +61,53 @@ public class DoctorTimeSlotDAO extends DBContext {
         return list;
     }
 
-    public boolean insert(DoctorTimeSlot dts) {
-        String query = "INSERT INTO DoctorTimeSlot (staff_id, slot_id, day_of_week) VALUES (?, ?, ?)";
+    public boolean insert(DoctorTimeSlot slot) {
+        String query = "INSERT INTO DoctorTimeSlot (staff_id, slot_id, day_of_week, max_appointments) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setInt(1, dts.getStaffId());
-            ps.setInt(2, dts.getSlotId());
-            ps.setString(3, dts.getDayOfWeek());
-            return ps.executeUpdate() > 0;
+            ps.setInt(1, slot.getStaffId());
+            ps.setInt(2, slot.getSlotId());
+            ps.setString(3, slot.getDayOfWeek());
+            ps.setInt(4, slot.getMaxAppointments());
+
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
         } catch (SQLException ex) {
             Logger.getLogger(DoctorTimeSlotDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }
 
-    public boolean update(DoctorTimeSlot dts) {
-        String query = "UPDATE DoctorTimeSlot SET staff_id = ?, slot_id = ?, day_of_week = ? WHERE id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setInt(1, dts.getStaffId());
-            ps.setInt(2, dts.getSlotId());
-            ps.setString(3, dts.getDayOfWeek());
-            ps.setInt(4, dts.getId());
+    public boolean updateAssignment(int oldDoctorId, int newDoctorId, int slotId, String dayOfWeek, int maxAppointments) {
+        String sql = "UPDATE DoctorTimeSlot "
+                + "SET staff_id = ?, max_appointments = ? "
+                + "WHERE staff_id = ? AND slot_id = ? AND day_of_week = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, newDoctorId);      // new doctor
+            ps.setInt(2, maxAppointments);  // new limit
+            ps.setInt(3, oldDoctorId);      // locate existing row
+            ps.setInt(4, slotId);
+            ps.setString(5, dayOfWeek);
+
             return ps.executeUpdate() > 0;
-        } catch (SQLException ex) {
-            Logger.getLogger(DoctorTimeSlotDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
-    public boolean delete(int id) {
-        String query = "DELETE FROM DoctorTimeSlot WHERE id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException ex) {
-            Logger.getLogger(DoctorTimeSlotDAO.class.getName()).log(Level.SEVERE, null, ex);
+    public boolean deleteAssignment(int doctorId, int slotId, String dayOfWeek) {
+        String sql = "DELETE FROM DoctorTimeSlot WHERE staff_id = ? AND slot_id = ? AND day_of_week = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, doctorId);
+            ps.setInt(2, slotId);
+            ps.setString(3, dayOfWeek);
+
+            return ps.executeUpdate() > 0;  // Returns true if the delete operation was successful
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
     public List<Integer> getDoctorIdsBySlotId(int slotId) {
@@ -144,8 +155,8 @@ public class DoctorTimeSlotDAO extends DBContext {
         FROM DoctorTimeSlot dts
         JOIN StaffAccount sa ON dts.staff_id = sa.staff_id
         JOIN `User` u ON sa.user_id = u.user_id
-        WHERE dts.slot_id = ? AND dts.day_of_week = ?
-    """;
+        WHERE dts.slot_id = ? AND dts.day_of_week = ? AND sa.role = 'Doctor'
+        """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, slotId);
@@ -162,6 +173,22 @@ public class DoctorTimeSlotDAO extends DBContext {
         }
 
         return list;
+    }
+
+    public boolean exists(int doctorId, int slotId, String dayOfWeek) {
+        String sql = "SELECT 1 FROM DoctorTimeSlot WHERE staff_id = ? AND slot_id = ? AND day_of_week = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, doctorId);
+            ps.setInt(2, slotId);
+            ps.setString(3, dayOfWeek);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next(); // already exists
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private DoctorTimeSlot mapToDoctorTimeSlot(ResultSet rs) throws SQLException {
