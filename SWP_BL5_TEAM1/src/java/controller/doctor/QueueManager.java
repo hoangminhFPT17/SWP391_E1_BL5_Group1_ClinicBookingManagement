@@ -70,7 +70,7 @@ public class QueueManager extends HttpServlet {
 
         // 3) Push into request & forward
         request.setAttribute("appointments", appointments);
-        request.getRequestDispatcher("/doctor/queueManager.jsp")
+        request.getRequestDispatcher("/doctor/QueueManager.jsp")
                 .forward(request, response);
     }
 

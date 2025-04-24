@@ -18,7 +18,7 @@
   <div class="page-wrapper doctris-theme toggled">
     <%@ include file="../component/doctorSideBar.jsp" %>
     <main class="page-content bg-light">
-      <%@ include file="../component/doctorHeader.jsp" %>
+      <%@ include file="../component/header.jsp" %>
       <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-3" style="margin-top:80px;">
           <h2 class="mb-0">Patient queue in this time slot</h2>
