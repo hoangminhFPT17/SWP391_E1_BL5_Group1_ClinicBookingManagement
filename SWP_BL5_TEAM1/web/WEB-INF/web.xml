@@ -32,6 +32,10 @@
         <servlet-name>ManagerTimeSlotListServlet</servlet-name>
         <servlet-class>controller.manager.ManagerTimeSlotListServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>QueueManager</servlet-name>
+        <servlet-class>controller.doctor.QueueManager</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <url-pattern>/PatientBookAppointmentServlet</url-pattern>
@@ -60,12 +64,8 @@
         <servlet-name>ExaminationPackageManager</servlet-name>
         <url-pattern>/ExaminationPackageManager</url-pattern>
     </servlet-mapping>
-    <servlet>
-    <servlet-name>MedicalRecordsServlet</servlet-name>
-    <servlet-class>controller.doctor.MedicalRecordsServlet</servlet-class>
-</servlet>
-<servlet-mapping>
-    <servlet-name>MedicalRecordsServlet</servlet-name>
-    <url-pattern>/doctor/medical-records</url-pattern>
-</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>QueueManager</servlet-name>
+        <url-pattern>/QueueManager</url-pattern>
+    </servlet-mapping>
 </web-app>

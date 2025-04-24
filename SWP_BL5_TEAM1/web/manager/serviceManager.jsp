@@ -28,9 +28,9 @@
     </head>
     <body>
         <div class="page-wrapper doctris-theme toggled">
-            <%@ include file="../component/sideBar.jsp" %>
+            <%@ include file="../component/managerSideBar.jsp" %>
             <main class="page-content bg-light">
-                <%@ include file="../component/header.jsp" %>
+                <%@ include file="../component/managerHeader.jsp" %>
                 <div class="container-fluid">
 
                     <!-- Header -->
@@ -212,6 +212,49 @@
                 </form>
             </div>
         </div>
+
+        <script>
+            // Client-side sorting & filtering
+            const table = document.getElementById('pkgTable');
+            const tbody = table.tBodies[0];
+            let sortOrder = {};
+
+            // Sorting
+            table.querySelectorAll('th button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const col = +btn.getAttribute('data-col');
+                    const asc = !sortOrder[col];
+                    sortOrder[col] = asc;
+                    const rows = Array.from(tbody.rows);
+                    rows.sort((a, b) => {
+                        let aText = a.cells[col].textContent.trim();
+                        let bText = b.cells[col].textContent.trim();
+                        let cmp;
+                        if (col === 0 || col === 3) { // numeric
+                            cmp = parseFloat(aText) - parseFloat(bText);
+                        } else {
+                            cmp = aText.localeCompare(bText, undefined, {numeric: true, sensitivity: 'base'});
+                        }
+                        return asc ? cmp : -cmp;
+                    });
+                    rows.forEach(r => tbody.appendChild(r));
+                });
+            });
+
+            // Filtering
+            table.querySelectorAll('.filter-input').forEach(input => {
+                input.addEventListener('input', () => {
+                    const col = +input.getAttribute('data-col');
+                    const val = input.value.trim().toLowerCase();
+                    Array.from(tbody.rows).forEach(row => {
+                        const cell = row.cells[col].textContent.trim().toLowerCase();
+                        row.style.display = cell.includes(val) ? '' : 'none';
+                    });
+                });
+            });
+
+
+        </script>
 
         <script>
             // ... sorting & filtering code omitted for brevity ...
