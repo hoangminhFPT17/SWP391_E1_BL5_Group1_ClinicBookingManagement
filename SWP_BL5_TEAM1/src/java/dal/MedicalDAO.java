@@ -4,6 +4,7 @@
  */
 package dal;
 
+import java.sql.Timestamp;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,6 +17,83 @@ import model.MedicalRecord;
  * @author ADMIN
  */
 public class MedicalDAO extends DBContext{
+    
+    public List<MedicalRecord> getAllMedicalRecords(Timestamp startDate, Timestamp endDate) {
+        List<MedicalRecord> records = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM MedicalRecord WHERE 1=1";
+            if (startDate != null) {
+                sql += " AND created_at >= ?";
+            }
+            if (endDate != null) {
+                sql += " AND created_at <= ?";
+            }
+            sql += " ORDER BY created_at DESC";
+            PreparedStatement st = connection.prepareStatement(sql);
+            int paramIndex = 1;
+            if (startDate != null) {
+                st.setTimestamp(paramIndex++, startDate);
+            }
+            if (endDate != null) {
+                st.setTimestamp(paramIndex++, endDate);
+            }
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                MedicalRecord record = new MedicalRecord();
+                record.setRecordId(rs.getInt("record_id"));
+                record.setPatientPhone(rs.getString("patient_phone"));
+                record.setDiagnosis(rs.getString("diagnosis"));
+                record.setPrescription(rs.getString("prescription"));
+                record.setNotes(rs.getString("notes"));
+                record.setCreatedAt(rs.getTimestamp("created_at"));
+                records.add(record);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving all medical records: " + e.getMessage());
+        }
+        return records;
+    }
+    
+    public List<MedicalRecord> getMedicalRecordsByPatientPhoneAndDateRange(String patientPhone, Timestamp startDate, Timestamp endDate) {
+    List<MedicalRecord> records = new ArrayList<>();
+    
+    try {
+        String sql = "SELECT * FROM MedicalRecord WHERE patient_phone = ?";
+        if (startDate != null) {
+            sql += " AND created_at >= ?";
+        }
+        if (endDate != null) {
+            sql += " AND created_at <= ?";
+        }
+        sql += " ORDER BY created_at DESC";
+        
+        PreparedStatement st = connection.prepareStatement(sql);
+        int paramIndex = 1;
+        st.setString(paramIndex++, patientPhone);
+        if (startDate != null) {
+            st.setTimestamp(paramIndex++, startDate);
+        }
+        if (endDate != null) {
+            st.setTimestamp(paramIndex++, endDate);
+        }
+        ResultSet rs = st.executeQuery();
+        
+        while (rs.next()) {
+            MedicalRecord record = new MedicalRecord();
+            record.setRecordId(rs.getInt("record_id"));
+            record.setPatientPhone(rs.getString("patient_phone"));
+            record.setDiagnosis(rs.getString("diagnosis"));
+            record.setPrescription(rs.getString("prescription"));
+            record.setNotes(rs.getString("notes"));
+            record.setCreatedAt(rs.getTimestamp("created_at"));
+            records.add(record);
+        }
+    } catch (SQLException e) {
+        System.out.println("Error retrieving medical records: " + e.getMessage());
+    }
+    
+    return records;
+}
     
     public List<MedicalRecord> getMedicalRecordsByPatientPhone(String patientPhone) {
         List<MedicalRecord> records = new ArrayList<>();

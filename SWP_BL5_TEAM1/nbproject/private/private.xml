@@ -3,8 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/admin/Documents/GitHub/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/model/PatientQueue.java</file>
+            <file>file:/C:/Users/admin/Documents/GitHub/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/WEB-INF/web.xml</file>
+            <file>file:/C:/Users/admin/Documents/GitHub/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/model/MedicalRecord.java</file>
+            <file>file:/C:/Users/admin/Documents/GitHub/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/dal/MedicalDAO.java</file>
+            <file>file:/C:/Users/admin/Documents/GitHub/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/controller/patient/PatientAppointmentsListServlet.java</file>
             <file>file:/C:/Users/admin/Documents/GitHub/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/dal/PatientQueueDAO.java</file>
-            <file>file:/C:/Users/admin/Documents/GitHub/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/nbproject/build-impl.xml</file>
+            <file>file:/C:/Users/admin/Documents/GitHub/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/model/Patient.java</file>
+            <file>file:/C:/Users/admin/Documents/GitHub/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/META-INF/context.xml</file>
+            <file>file:/C:/Users/admin/Documents/GitHub/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/web/doctor/medicalRecords.jsp</file>
+            <file>file:/C:/Users/admin/Documents/GitHub/SWP391_E1_BL5_Group1_ClinicBookingManagement/SWP_BL5_TEAM1/src/java/controller/doctor/MedicalRecordsServlet.java</file>
         </group>
     </open-files>
 </project-private>
