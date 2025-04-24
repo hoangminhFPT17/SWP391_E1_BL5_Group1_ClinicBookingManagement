@@ -2,37 +2,39 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package model;
+package dto;
+
+import java.math.BigDecimal;
 
 /**
  *
- * @author LENOVO
+ * @author Admin
  */
-import java.math.BigDecimal;
+public class ExaminationPackageDTO {
 
-public class ExaminationPackage {
+    /*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+     */
+    /**
+     *
+     * @author LENOVO
+     */
     private int packageId;
     private String name;
     private String description;
     private BigDecimal price;
-    private int specialtyId;
+    private String specialty;
 
-    public ExaminationPackage() {
-    }
-    
-    public ExaminationPackage(String name, String description, BigDecimal price, int specialtyId) {
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.specialtyId = specialtyId;
+    public ExaminationPackageDTO() {
     }
 
-    public ExaminationPackage(int packageId, String name, String description, BigDecimal price, int specialtyId) {
+    public ExaminationPackageDTO(int packageId, String name, String description, BigDecimal price, String specialty) {
         this.packageId = packageId;
         this.name = name;
         this.description = description;
         this.price = price;
-        this.specialtyId = specialtyId;
+        this.specialty = specialty;
     }
 
     public int getPackageId() {
@@ -67,16 +69,17 @@ public class ExaminationPackage {
         this.price = price;
     }
 
-    public int getSpecialtyId() {
-        return specialtyId;
+    public String getSpecialty() {
+        return specialty;
     }
 
-    public void setSpecialtyId(int specialtyId) {
-        this.specialtyId = specialtyId;
+    public void setSpecialty(String specialty) {
+        this.specialty = specialty;
     }
 
     @Override
     public String toString() {
-        return "ExaminationPackage{" + "packageId=" + packageId + ", name=" + name + ", description=" + description + ", price=" + price + ", specialtyId=" + specialtyId + '}';
+        return "ExaminationPackage{" + "packageId=" + packageId + ", name=" + name + ", description=" + description + ", price=" + price + ", specialtyId=" + specialty + '}';
     }
+
 }

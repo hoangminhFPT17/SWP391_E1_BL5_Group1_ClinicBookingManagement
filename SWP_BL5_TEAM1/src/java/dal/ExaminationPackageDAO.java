@@ -12,6 +12,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import model.ExaminationPackage;
+import dto.ExaminationPackageDTO;
 
 public class ExaminationPackageDAO extends DBContext {
 
@@ -31,7 +32,7 @@ public class ExaminationPackageDAO extends DBContext {
                 list.add(pkg);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.out.println("getAllPackages: " + ex.getMessage());
         }
         return list;
     }
@@ -53,7 +54,7 @@ public class ExaminationPackageDAO extends DBContext {
                 }
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.out.println("getPackageById: "  + ex.getMessage());
         }
         return null;
     }
@@ -68,7 +69,7 @@ public class ExaminationPackageDAO extends DBContext {
             ps.setInt(4, pkg.getSpecialtyId());
             return ps.executeUpdate() > 0;
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.out.println("insertPackage: " + ex.getMessage());
             return false;
         }
     }
@@ -84,7 +85,7 @@ public class ExaminationPackageDAO extends DBContext {
             ps.setInt(5, pkg.getPackageId());
             return ps.executeUpdate() > 0;
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.out.println("updatePackage: " + ex.getMessage());
             return false;
         }
     }
@@ -96,9 +97,37 @@ public class ExaminationPackageDAO extends DBContext {
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.out.println("deletePackage: " + ex.getMessage());
             return false;
         }
     }
+    
+    public List<ExaminationPackageDTO> getAllPackagesByDTO() {
+        List<ExaminationPackageDTO> packages = new ArrayList<>();
+        String sql = ""
+            + "SELECT ep.package_id, ep.name, ep.description, ep.price, s.name AS specialty "
+            + "FROM ExaminationPackage ep "
+            + "JOIN Specialty s ON ep.specialty_id = s.specialty_id";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                ExaminationPackageDTO pkg = new ExaminationPackageDTO();
+                pkg.setPackageId(rs.getInt("package_id"));
+                pkg.setName(rs.getString("name"));
+                pkg.setDescription(rs.getString("description"));
+                pkg.setPrice(rs.getBigDecimal("price"));
+                pkg.setSpecialty(rs.getString("specialty"));
+                packages.add(pkg);
+            }
+
+        } catch (SQLException ex) {
+            System.out.println("getAllPackages: " + ex.getMessage());
+        }
+
+        return packages;
+    }
+    
 }
 

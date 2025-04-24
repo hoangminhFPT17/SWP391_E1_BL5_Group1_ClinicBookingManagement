@@ -1,6 +1,6 @@
 <%-- 
-    Document   : patientAppointmentList
-    Created on : 16 Apr 2025, 08:15:37
+    Document   : managerTimeSlotList
+    Created on : 23 Apr 2025, 11:43:00
     Author     : LENOVO
 --%>
 
@@ -12,7 +12,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <jsp:include page="/WEB-INF/jsp/includes/patientHead.jsp" />
+        <jsp:include page="/includes/patientHead.jsp" />
         <title>JSP Page</title>
     </head>
     <body>
@@ -22,17 +22,17 @@
             request.setAttribute("currentDate", today.toString());
         %>
         <jsp:useBean id="now" class="java.util.Date" scope="page" />
-        <jsp:include page="/WEB-INF/jsp/common/patientHeaderNav.jsp" />
+        <jsp:include page="/common/patientHeaderNav.jsp" />
 
         <!-- Start Hero -->
         <section class="bg-dashboard">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12 mt-4 pt-2 mt-sm-0 pt-sm-0">
-                        <form method="post" action="PatientAppointmentsListServlet">
+                        <form method="get" action="ManagerTimeSlotListServlet">
                             <div class="row mb-3">
                                 <div class="col-xl-6 col-lg-6 col-md-4">
-                                    <h5 class="mb-0">Your List Of Appointment</h5>
+                                    <h5 class="mb-0">Assign Doctor To Time Slot</h5>
                                 </div><!--end col-->
                             </div>
                             <div class="row align-items-end">
@@ -40,33 +40,19 @@
                                 <div class="col-md-6">
                                     <input type="hidden" name="page" id="pageInput" value="${param.page != null ? param.page : 1}" />
                                     <div class="row g-3">
-                                        <!-- Time Slot -->
-                                        <div class="col-4">
-                                            <label class="form-label">Time Slot</label>
-                                            <select name="slotId" class="form-control select2input" style="min-width: 100%;">
-                                                <option value="">All</option>
-                                                <c:forEach var="slot" items="${timeSlots}">
-                                                    <option value="${slot.slotId}" ${param.slotId == slot.slotId ? 'selected' : ''}>
-                                                        ${slot.name}: ${slot.startTime} - ${slot.endTime}
-                                                    </option>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
-
                                         <!-- Status -->
                                         <div class="col-2">
                                             <label class="form-label">Status</label>
                                             <select name="status" class="form-control select2input" style="min-width: 100%;">
                                                 <option value="">All</option>
-                                                <option value="Approved" ${param.status == 'Approved' ? 'selected' : ''}>Approved</option>
-                                                <option value="Pending" ${param.status == 'Pending' ? 'selected' : ''}>Pending</option>
-                                                <option value="Cancelled" ${param.status == 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                                                <option value="true" ${param.status == 'true' ? 'selected' : ''}>Active</option>
+                                                <option value="false" ${param.status == 'false' ? 'selected' : ''}>Disabled</option>
                                             </select>
                                         </div>
 
                                         <!-- Search + Button -->
                                         <div class="col-4">
-                                            <label class="form-label">Search by Doctor</label>
+                                            <label class="form-label">Search by Doctor or Time Slot</label>
                                             <input type="text" name="keyword" class="form-control" placeholder="Doctor name" value="${param.keyword}">
                                         </div>
 
@@ -78,12 +64,25 @@
 
                                 <!-- RIGHT HALF: Appointment Button -->
                                 <div class="col-md-6 text-end mt-3 mt-md-0">
-                                    <a href="/SWP_BL5_TEAM1/PatientBookAppointmentServlet" class="btn btn-success">+ Appointment</a>
-                                </div>
-
+                                    <a href="/SWP_BL5_TEAM1/PatientBookAppointmentServlet" class="btn btn-success">+ Time Slot</a>
+                                </div>  
                             </div>
-
-
+                            <div class="row m-4 ms-5 me-5">
+                                <ul class="nav nav-pills nav-justified flex-column flex-sm-row rounded gap-2" id="pills-tab" role="tablist">
+                                    <c:set var="daysOfWeek" value="Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday" />
+                                    <c:forEach var="dayOfTheWeek" items="${fn:split(daysOfWeek, ',')}">
+                                        <li class="nav-item">
+                                            <a class="nav-link rounded ${selectedDay == dayOfTheWeek ? 'active' : ''}" 
+                                               href="ManagerTimeSlotListServlet?dayOfTheWeek=${dayOfTheWeek}">
+                                                <div class="text-center pt-1 pb-1">
+                                                    <h4 class="title font-weight-normal mb-0">${dayOfTheWeek}</h4>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </c:forEach>
+                                </ul>
+                                <input type="hidden" name="dayOfTheWeek" value="${selectedDay}" />
+                            </div>
                             <div class="row">
                                 <div class="col-12 mt-4">
                                     <div class="table-responsive bg-white shadow rounded">
@@ -91,98 +90,56 @@
                                             <thead>
                                                 <tr>
                                                     <th class="border-bottom p-3" style="min-width: 50px;">#</th>
-                                                    <th class="border-bottom p-3" style="min-width: 180px;">Name</th>
-                                                    <th class="border-bottom p-3" style="min-width: 150px;">Date of Birth</th>
-                                                    <th class="border-bottom p-3" style="min-width: 150px;">Appointment Date</th>
-                                                    <th class="border-bottom p-3">Time Slot</th>
-                                                    <th class="border-bottom p-3" style="min-width: 220px;">Doctor</th>
-                                                    <th class="border-bottom p-3" style="min-width: 130px;">Status</th>
-                                                    <th class="border-bottom p-3" style="min-width: 150px;">Action</th>
+                                                    <th class="border-bottom p-3" style="min-width: 150px;">Time Slot</th>
+                                                    <th class="border-bottom p-3" style="min-width: 100px;">Start Time</th>
+                                                    <th class="border-bottom p-3" style="min-width: 100px;">End Time</th>
+                                                    <th class="border-bottom p-3 text-center" style="min-width: 300px;">Assigned Doctors</th>
+                                                    <th class="border-bottom p-3" style="min-width: 100px;">Status</th>
+                                                    <th class="border-bottom p-3" style="min-width: 100px;">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <c:choose>
-                                                    <c:when test="${empty appointments}">
-                                                        <tr>
-                                                            <td class="p-3 text-center" colspan="8">
-                                                                No appointments found matching your search or filters.
-                                                            </td>
-                                                        </tr>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <c:forEach var="dto" items="${appointments}">
-                                                            <tr>
-                                                                <th class="p-3">${dto.index}</th>
-                                                                <td class="p-3">
-                                                                    <a href="#" class="text-dark">
-                                                                        <div class="d-flex align-items-center">
-                                                                            <img src="${pageContext.request.contextPath}/assets/images/client/01.jpg" class="avatar avatar-md-sm rounded-circle shadow" alt="">
-                                                                            <span class="ms-2">${dto.patientName}</span>
-                                                                        </div>
-                                                                    </a>
-                                                                </td>
-                                                                <td class="p-3">
-                                                                    <fmt:formatDate value="${dto.patientDateOfBirth}" pattern="dd MMM yyyy" />
-                                                                </td>
-                                                                <td class="p-3">
-                                                                    <fmt:formatDate value="${dto.appointmentDate}" pattern="dd MMM yyyy" />
-                                                                </td>
-                                                                <td class="p-3">${dto.timeSlotName}</td>
-                                                                <td class="p-3">
-                                                                    <a href="#" class="text-dark">
-                                                                        <div class="d-flex align-items-center">
-                                                                            <img src="${pageContext.request.contextPath}/assets/images/doctors/01.jpg" class="avatar avatar-md-sm rounded-circle border shadow" alt="">
-                                                                            <span class="ms-2">${dto.doctorFullName}</span>
-                                                                        </div>
-                                                                    </a>
-                                                                </td>
-                                                                <td class="p-3">
-                                                                    <c:choose>
-                                                                        <c:when test="${dto.status == 'Pending'}">
-                                                                            <span class="badge bg-warning">${dto.status}</span>
-                                                                        </c:when>
-                                                                        <c:when test="${dto.status == 'Approved'}">
-                                                                            <span class="badge bg-success">${dto.status}</span>
-                                                                        </c:when>
-                                                                        <c:otherwise>
-                                                                            <span class="badge bg-secondary">${dto.status}</span>
-                                                                        </c:otherwise>
-                                                                    </c:choose>
-                                                                </td>
-                                                                <td class="text-start p-3">
-                                                                    <a href="#" class="btn btn-icon btn-pills btn-soft-primary" data-bs-toggle="modal" data-bs-target="#viewappointment">
-                                                                        <i class="uil uil-eye"></i>
-                                                                    </a>
-
-                                                                    <c:if test="${dto.appointmentDate.time > now.time}">
-                                                                        <a href="#" 
-                                                                           class="btn btn-icon btn-pills btn-soft-success"
-                                                                           data-bs-toggle="modal" 
-                                                                           data-bs-target="#editAppointmentModal"
-                                                                           onclick="fillEditModal(this)"
-                                                                           data-id="${dto.appointmentId}"
-                                                                           data-fullname="${patient.fullName}"
-                                                                           data-phone="${phone}"
-                                                                           data-email="${user.email}"
-                                                                           data-dob="${patient.dateOfBirth}"
-                                                                           data-gender="${patient.gender}"
-                                                                           data-doctorid="${appointment.doctorId}"
-                                                                           data-date="${appointment.appointmentDate}"
-                                                                           data-slotid="${appointment.slotId}">
-                                                                            <i class="uil uil-edit"></i>
-                                                                        </a>
-                                                                    </c:if>
-
-                                                                    <c:if test="${dto.status == 'Pending'}">
-                                                                        <a href="#" class="btn btn-icon btn-pills btn-soft-danger" data-bs-toggle="modal" data-bs-target="#cancelappointment" data-appointment-id="${dto.appointmentId}">
-                                                                            <i class="uil uil-times-circle"></i>
-                                                                        </a>
-                                                                    </c:if>
-                                                                </td>
-                                                            </tr>
-                                                        </c:forEach>
-                                                    </c:otherwise>
-                                                </c:choose>
+                                                <c:forEach var="timeSlot" items="${timeSlotList}" varStatus="i">
+                                                    <tr>
+                                                        <th class="p-3">${i.index + 1}</th>
+                                                        <td class="p-3">${timeSlot.timeSlotName}</td>
+                                                        <td class="p-3">
+                                                            <fmt:formatDate value="${timeSlot.startTime}" pattern="HH:mm" type="time"/>
+                                                        </td>
+                                                        <td class="p-3">
+                                                            <fmt:formatDate value="${timeSlot.endTime}" pattern="HH:mm" type="time"/>
+                                                        </td>
+                                                        <td class="p-3 text-center">
+                                                            <c:choose>
+                                                                <c:when test="${not empty timeSlot.assignedDoctors}">
+                                                                    <c:forEach var="doc" items="${timeSlot.assignedDoctors}" varStatus="status">
+                                                                        ${doc.fullName} (${doc.maxAppointments})<c:if test="${!status.last}">, </c:if>
+                                                                    </c:forEach>
+                                                                </c:when>
+                                                                <c:otherwise>None</c:otherwise>
+                                                            </c:choose>
+                                                        </td>
+                                                        <td class="p-3">
+                                                            <c:choose>
+                                                                <c:when test="${timeSlot.isActive}">
+                                                                    <span class="badge bg-success">Active</span>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <span class="badge bg-secondary">Disabled</span>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
+                                                        <td class="p-3">
+                                                            <a href="#" 
+                                                               class="btn btn-icon btn-pills btn-soft-primary" 
+                                                               data-bs-toggle="modal" 
+                                                               data-bs-target="#manageDoctorSlotModal"
+                                                               data-slot-id="${slot.slotId}">
+                                                                <i class="uil uil-cog"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </c:forEach>
                                             </tbody>
                                         </table>
                                     </div>
@@ -200,12 +157,11 @@
                                             <label for="pageSize" class="me-2 text-muted">Showing</label>
                                             <select name="pageSize" id="pageSize" class="form-select form-select-sm me-2" style="width: auto;"
                                                     onchange="this.form.submit()">
-                                                <option value="3" ${param.pageSize == '3' ? 'selected' : ''}>3</option>
                                                 <option value="5" ${param.pageSize == '5' ? 'selected' : ''}>5</option>
                                                 <option value="10" ${param.pageSize == '10' ? 'selected' : ''}>10</option>
                                                 <option value="20" ${param.pageSize == '20' ? 'selected' : ''}>20</option>
                                             </select>
-                                            <span class="text-muted">out of ${totalAppointments} total records</span>
+                                            <span class="text-muted">out of ${totalRecords} total records</span>
                                         </div>
 
 
@@ -253,7 +209,6 @@
                                     </div>
                                 </div>
                             </div><!--end row-->
-
                         </form>
                     </div><!--end col-->
                 </div><!--end row-->

@@ -1586,7 +1586,7 @@ body{
     font-family:"Inter",sans-serif;
     overflow-x:hidden !important;
     font-size:15px;
-    color:#161c2d
+    color:#161c2d;
 }
 h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,.h4,.h5,.h6{
     font-family:"Inter",sans-serif
@@ -2656,6 +2656,13 @@ p{
     position:relative;
     background-position:center center
 }
+.bg-half-70{
+    padding:70px 0 0 0;
+    background-size:cover;
+    align-self:center;
+    position:relative;
+    background-position:center center
+}
 .bg-profile{
     padding:80px 0;
     background-size:cover;
@@ -3449,3 +3456,70 @@ footer .footer-bar,footer.footer-bar{
     background-color: #e9ecef !important;
     cursor: not-allowed;
 }
+
+
+.table__header {
+    width: 100%;
+    height: 10%;
+    background-color: #fff4;
+    padding: .8rem 1rem;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.table__header .input-group {
+    width: 35%;
+    height: 40px;
+    background-color: #fff5;
+    padding: 0 .8rem;
+    border-radius: 2rem;
+    display: flex
+        ;
+    justify-content: right;
+    align-items: center;
+    transition: .2s;
+}
+
+.table__header .input-group:hover {
+    width: 45%;
+    background-color: #fff8;
+    box-shadow: 0 .1rem .4rem #0002;
+}
+
+.table__header .input-group img {
+    width: 2rem;
+    height: 2rem;
+    position: absolute;
+
+}
+
+.table__header .input-group input {
+    width: 100%;
+    padding: 0 .5rem 0 .3rem;
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+tbody tr.hide {
+    opacity: 0;
+    display: none;
+    transform: translateX(100%);
+    transform: translateY(-500%);
+}
+
+
+tbody tr.hide td,
+tbody tr.hide td p,
+tbody tr.hide td a,
+tbody tr.hide td {
+    padding: 0px;
+    font: 0 / 0 sans-serif;
+}
+
+tbody tr.hide td img {
+    width: 0px;
+    height: 0px;
+}
+
