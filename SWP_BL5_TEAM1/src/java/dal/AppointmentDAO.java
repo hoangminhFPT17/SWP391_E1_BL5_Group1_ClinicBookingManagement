@@ -8,6 +8,7 @@ package dal;
  *
  * @author LENOVO
  */
+import dto.AppointmentDTO;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -241,5 +242,45 @@ public class AppointmentDAO extends DBContext {
                     + ", Date: " + appt.getAppointmentDate()
                     + ", Status: " + appt.getStatus());
         }
+    }
+    
+    public List<AppointmentDTO> getTodayAppointmentsForCurrentSlot(int doctorId) throws SQLException {
+        List<AppointmentDTO> list = new ArrayList<>();
+
+        String sql = ""
+            + "SELECT a.appointment_id, p.full_name AS patientName, p.date_of_birth, "
+            + "       a.appointment_date, ts.name AS timeSlotName, "
+            + "       u.full_name AS doctorFullName, a.status "
+            + "  FROM Appointment a "
+            + "  JOIN Patient p ON a.patient_phone = p.phone "
+            + "  JOIN TimeSlot ts ON a.slot_id = ts.slot_id "
+            + "  JOIN StaffAccount sa ON a.doctor_id = sa.staff_id "
+            + "  JOIN User u ON sa.user_id = u.user_id "
+            + " WHERE a.doctor_id = ? "
+            + "   AND a.appointment_date = CURRENT_DATE() "
+            + "   AND ts.start_time <= CURRENT_TIME() "
+            + "   AND ts.end_time   >  CURRENT_TIME() "
+            + " ORDER BY ts.start_time, a.created_at";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, doctorId);
+            try (ResultSet rs = ps.executeQuery()) {
+                int idx = 1;
+                while (rs.next()) {
+                    AppointmentDTO dto = new AppointmentDTO();
+                    dto.setIndex(idx++);
+                    dto.setPatientName(rs.getString("patientName"));
+                    dto.setPatientDateOfBirth(rs.getDate("date_of_birth"));
+                    dto.setAppointmentDate(rs.getDate("appointment_date"));
+                    dto.setTimeSlotName(rs.getString("timeSlotName"));
+                    dto.setDoctorFullName(rs.getString("doctorFullName"));
+                    dto.setStatus(rs.getString("status"));
+                    dto.setAppointmentId(rs.getInt("appointment_id"));
+                    list.add(dto);
+                }
+            }
+        }
+
+        return list;
     }
 }
