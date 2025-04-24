@@ -19,6 +19,13 @@ public class ExaminationPackage {
 
     public ExaminationPackage() {
     }
+    
+    public ExaminationPackage(String name, String description, BigDecimal price, int specialtyId) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.specialtyId = specialtyId;
+    }
 
     public ExaminationPackage(int packageId, String name, String description, BigDecimal price, int specialtyId) {
         this.packageId = packageId;
