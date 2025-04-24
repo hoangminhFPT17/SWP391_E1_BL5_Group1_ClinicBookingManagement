@@ -1,13 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dal;
 
-/**
- *
- * @author LENOVO
- */
+import dto.DoctorAssignDTO;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +82,6 @@ public class StaffAccountDAO extends DBContext {
             return doctors;
         }
 
-        // Build SQL placeholders (?, ?, ?) based on list size
         String placeholders = ids.stream().map(id -> "?").collect(Collectors.joining(","));
         String query = "SELECT * FROM StaffAccount WHERE staff_id IN (" + placeholders + ") AND role = 'Doctor'";
 
@@ -106,6 +98,30 @@ public class StaffAccountDAO extends DBContext {
         }
 
         return doctors;
+    }
+
+    public List<DoctorAssignDTO> getAllDoctors() {
+        List<DoctorAssignDTO> list = new ArrayList<>();
+        String sql = """
+            SELECT sa.staff_id, u.full_name, sa.department
+            FROM StaffAccount sa
+            JOIN `User` u ON sa.user_id = u.user_id
+            WHERE sa.role = 'Doctor'
+        """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int doctorId = rs.getInt("staff_id");
+                String fullName = rs.getString("full_name");
+                String department = rs.getString("department");
+                list.add(new DoctorAssignDTO(doctorId, fullName, department));
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(StaffAccountDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+
+        return list;
     }
 
     public StaffAccount getDoctorById(int id) {
