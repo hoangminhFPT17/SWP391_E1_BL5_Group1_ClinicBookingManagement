@@ -78,7 +78,11 @@ public class InsertDoctorAssignmentServlet extends HttpServlet {
         int slotId = Integer.parseInt(request.getParameter("slotId"));
         String dayOfWeek = request.getParameter("dayOfWeek");
         int maxAppointments = Integer.parseInt(request.getParameter("maxAppointments"));
-
+        System.out.println("DoctorID: " + doctorId);
+        System.out.println("slotId: " + doctorId);
+        System.out.println("dayOfWeek: " + doctorId);
+        System.out.println("maxAppointments: " + doctorId);
+        
         DoctorTimeSlotDAO dao = new DoctorTimeSlotDAO();
         Map<String, Object> jsonResponse = new HashMap<>();
 

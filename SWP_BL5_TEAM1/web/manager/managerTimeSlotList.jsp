@@ -369,6 +369,7 @@
         </div>
 
         <script>
+            let currentSlotId = null;
             document.querySelectorAll('[data-bs-target="#assignDoctorModal"]').forEach(button => {
                 button.addEventListener('click', function () {
                     const doctorAssignDTOs = ${doctorAssignDTOsJson};
@@ -529,7 +530,7 @@
                     });
                 });
             });
-            
+
             document.querySelector('#addDoctorBtn').addEventListener('click', function () {
                 // Get the table body element
                 const tableBody = document.getElementById('doctorAssignTableBody');
@@ -582,10 +583,12 @@
                     // Construct the request body to send to the server
                     const requestBody = new URLSearchParams({
                         doctorId: selectedDoctorId,
-                        slotId: timeSlotId,
+                        slotId: currentSlotId,
                         dayOfWeek: currentDayOfWeek,
                         maxAppointments: newLimit
                     });
+
+                    console.log("Sending CREATE NEW request with body:", requestBody.toString());
 
                     // Send the request to insert the new doctor assignment
                     fetch('InsertDoctorAssignmentServlet', {
@@ -599,7 +602,7 @@
                             .then(data => {
                                 if (data.success) {
                                     // Add the new doctor assignment to the table
-                                    alert("Doctor assigned successfully!");
+                                    //alert("Doctor assigned successfully!");
                                     redirectToManagerTimeSlotList();
                                 } else {
                                     alert("Failed to assign doctor.");
