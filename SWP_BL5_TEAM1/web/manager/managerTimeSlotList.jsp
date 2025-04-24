@@ -130,11 +130,13 @@
                                                             </c:choose>
                                                         </td>
                                                         <td class="p-3">
-                                                            <a href="#" 
-                                                               class="btn btn-icon btn-pills btn-soft-primary" 
-                                                               data-bs-toggle="modal" 
-                                                               data-bs-target="#manageDoctorSlotModal"
-                                                               data-slot-id="${slot.slotId}">
+                                                            <c:set var="json" value="${assignedDoctorsJsonMap[timeSlot.slotId]}" />
+                                                            <a
+                                                                class="btn btn-icon btn-pills btn-soft-primary open-assign-modal"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#assignDoctorModal"
+                                                                data-slot-id="${timeSlot.slotId}"
+                                                                data-doctors='${fn:escapeXml(json)}'>
                                                                 <i class="uil uil-cog"></i>
                                                             </a>
                                                         </td>
@@ -217,180 +219,44 @@
         <!-- End Hero -->
 
         <!-- Modal start -->
-        <!-- View Appintment Start -->
-        <div class="modal fade" id="viewappointment" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
+        <!-- Assign Doctors Modal -->
+        <div class="modal fade" id="assignDoctorModal" tabindex="-1" aria-labelledby="assignDoctorModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <!-- update this to your servlet path -->
                 <div class="modal-content">
-                    <div class="modal-header border-bottom p-3">
-                        <h5 class="modal-title" id="exampleModalLabel1">Appointment Detail</h5>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="assignDoctorModalLabel">Assign Doctors to Time Slot</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body p-3 pt-4">
-                        <div class="d-flex align-items-center">
-                            <img src="${pageContext.request.contextPath}/assets/images/client/01.jpg" class="avatar avatar-small rounded-pill" alt="">
-                            <h5 class="mb-0 ms-3">Howard Tanner</h5>
-                        </div>
-                        <ul class="list-unstyled mb-0 d-md-flex justify-content-between mt-4">
-                            <li>
-                                <ul class="list-unstyled mb-0">
-                                    <li class="d-flex">
-                                        <h6>Age:</h6>
-                                        <p class="text-muted ms-2">25 year old</p>
-                                    </li>
 
-                                    <li class="d-flex">
-                                        <h6>Gender:</h6>
-                                        <p class="text-muted ms-2">Male</p>
-                                    </li>
+                    <div class="modal-body">
+                        <p>${selectedDay}: Time Slot ${selectedTimeSlot.name}</p>
 
-                                    <li class="d-flex">
-                                        <h6 class="mb-0">Department:</h6>
-                                        <p class="text-muted ms-2 mb-0">Cardiology</p>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <ul class="list-unstyled mb-0">
-                                    <li class="d-flex">
-                                        <h6>Date:</h6>
-                                        <p class="text-muted ms-2">20th Dec 2020</p>
-                                    </li>
+                        <table class="table table-bordered text-center align-middle">
+                            <thead class="table-secondary">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Doctor</th>
+                                    <th>Patient Limit</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="doctorAssignTableBody">
+                                <!-- Row will be generated with js script -->
+                            </tbody>
+                        </table>
 
-                                    <li class="d-flex">
-                                        <h6>Time:</h6>
-                                        <p class="text-muted ms-2">11:00 AM</p>
-                                    </li>
+                        <button type="button" id="addDoctorBtn" class="btn btn-primary">Add Doctor to Time Slot</button>
 
-                                    <li class="d-flex">
-                                        <h6 class="mb-0">Doctor:</h6>
-                                        <p class="text-muted ms-2 mb-0">Dr. Calvin Carlo</p>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
+                        <input type="hidden" name="timeSlotId" value="${selectedTimeSlot.id}" />
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- View Appintment End -->
-
-        <!-- Edit/Update Appointment Modal Start -->
-        <div class="modal fade" id="editAppointmentModal" tabindex="-1" aria-labelledby="editAppointmentLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <form method="post" action="UpdateAppointmentServlet" class="modal-content">
-                    <div class="modal-body py-5">
-                        <div class="text-center">
-                            <div class="icon d-flex align-items-center justify-content-center bg-soft-success rounded-circle mx-auto"
-                                 style="height: 95px; width:95px;">
-                                <span class="mb-0"><i class="uil uil-edit h1"></i></span>
-                            </div>
-                            <div class="mt-4 px-4">
-                                <h4 class="mb-3">Edit Appointment</h4>
-
-                                <!-- Hidden input for Appointment ID -->
-                                <input type="hidden" name="appointmentId" id="editAppointmentId">
-
-                                <div class="form-group mb-3">
-                                    <input type="text" class="form-control" name="fullName" id="editFullName"
-                                           placeholder="Full Name" required pattern="^[A-Za-z\s]{3,50}$"
-                                           title="Full name must be 3-50 characters long and contain only letters and spaces." readonly>
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <input type="tel" class="form-control" name="phone" id="editPhone"
-                                           placeholder="Phone" required pattern="^\d{10,15}$"
-                                           title="Phone number must be between 10 to 15 digits." readonly>
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <input type="email" class="form-control" name="email" id="editEmail"
-                                           placeholder="Email" pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$"
-                                           title="Enter a valid email address." readonly>
-                                </div>
-
-                                <div class="row">
-                                    <div class="form-group mb-3 col-md-6">
-                                        <label class="form-label">Date of Birth</label>
-                                        <input type="date" class="form-control" name="dateOfBirth" id="editDateOfBirth" readonly>
-                                    </div>
-                                    <div class="form-group mb-3 col-md-6">
-                                        <label class="form-label">Gender</label>
-                                        <select name="gender" id="editGender" class="form-control" disabled>
-                                            <option value="">Select Gender</option>
-                                            <option value="Male">Male</option>
-                                            <option value="Female">Female</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="form-group mb-3 col-md-6">
-                                        <label class="form-label">Doctor</label>
-                                        <select name="doctorId" id="editDoctorId" class="form-control" required data-selected-id="${selectedDoctorId}">
-                                            <!-- Options will be loaded dynamically -->
-                                        </select>
-
-                                    </div>
-                                    <div class="form-group mb-3 col-md-6">
-                                        <label class="form-label">Appointment Date</label>
-                                        <input type="date" class="form-control" name="appointmentDate" id="editAppointmentDate" required min="${currentDate}">
-                                    </div>
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <label class="form-label">Time Slot</label>
-                                    <select name="slotId" id="editSlotId" class="form-control" required>
-                                        <c:forEach var="slot" items="${timeSlots}">
-                                            <option value="${slot.slotId}">
-                                                ${slot.name} (${slot.startTime} - ${slot.endTime})
-                                            </option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
-
-                                <div class="d-grid mt-4">
-                                    <button type="submit" class="btn btn-primary">Update Appointment</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <!-- Edit/Update Appointment Modal End -->
-
-        <!-- Cancel Appointment Modal -->
-        <div class="modal fade" id="cancelappointment" tabindex="-1" aria-labelledby="cancelAppointmentLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <form method="post" action="DeleteAppointmentServlet">
-                        <div class="modal-body py-5">
-                            <div class="text-center">
-                                <div class="icon d-flex align-items-center justify-content-center bg-soft-danger rounded-circle mx-auto" style="height: 95px; width:95px;">
-                                    <span class="mb-0"><i class="uil uil-times-circle h1"></i></span>
-                                </div>
-                                <div class="mt-4">
-                                    <h4 id="cancelAppointmentLabel">Cancel Appointment</h4>
-                                    <p class="para-desc mx-auto text-muted mb-0">
-                                        Are you sure you want to cancel this appointment?<br />
-                                        <strong>You can only cancel appointments that are still pending.</strong>
-                                    </p>
-
-                                    <!-- Hidden input for appointment ID -->
-                                    <input type="hidden" name="id" id="cancelAppointmentId">
-
-                                    <div class="mt-4">
-                                        <button type="submit" class="btn btn-soft-danger">Yes, Cancel</button>
-                                        <button type="button" class="btn btn-light ms-2" data-bs-dismiss="modal">No, Keep</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <!-- Cancel Appointment End -->
 
         <!-- Modal end -->
 
@@ -485,89 +351,315 @@
             </script>
         </c:if>
 
+        <%
+            String message = request.getParameter("message");
+        %>
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <% if (message != null) {%>
+            <div class="toast align-items-center text-white bg-success border-0"
+                 id="statusToast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <%= message%>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+            <% }%>
+        </div>
 
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const slotSelectModal = document.getElementById('editSlotId');
-                const doctorSelectModal = document.getElementById('editDoctorId');
+            let currentSlotId = null;
+            document.querySelectorAll('[data-bs-target="#assignDoctorModal"]').forEach(button => {
+                button.addEventListener('click', function () {
+                    const doctorAssignDTOs = ${doctorAssignDTOsJson};
+                    const doctorsData = JSON.parse(this.getAttribute('data-doctors') || '[]');
+                    const slotId = this.getAttribute('data-slot-id');
+                    currentSlotId = parseInt(slotId);
+                    const currentDayOfWeek = document.querySelector('input[name="dayOfTheWeek"]').value;
+                    const tableBody = document.getElementById('doctorAssignTableBody');
+                    tableBody.innerHTML = '';
 
-                if (!slotSelectModal || !doctorSelectModal) {
-                    console.log('Edit modal dropdowns not found!');
-                    return;
-                }
+                    doctorsData.forEach((doc, index) => {
+                        const row = document.createElement('tr');
 
-                function loadDoctorsForModal(slotId, selectedDoctorId = null) {
-                    console.log('Loading doctors for slotId (modal):', slotId);
+                        const indexTd = document.createElement('td');
+                        indexTd.textContent = index + 1;
+                        row.appendChild(indexTd);
 
-                    fetch(`/SWP_BL5_TEAM1/doctor-by-slot?slotId=` + slotId)
-                            .then(response => response.json())
-                            .then(data => {
-                                doctorSelectModal.innerHTML = '';
+                        const nameTd = document.createElement('td');
+                        nameTd.textContent = doc.fullName;
 
-                                if (data.length === 0) {
-                                    const opt = document.createElement('option');
-                                    opt.value = '';
-                                    opt.text = 'No doctors on duty';
-                                    doctorSelectModal.appendChild(opt);
-                                } else {
-                                    data.forEach(doctor => {
-                                        const opt = document.createElement('option');
-                                        opt.value = doctor.staffId;
-                                        opt.text = doctor.fullName;
-                                        if (selectedDoctorId && parseInt(selectedDoctorId) === doctor.staffId) {
-                                            opt.selected = true;
+                        const limitTd = document.createElement('td');
+                        limitTd.textContent = doc.maxAppointments;
+
+                        const actionsTd = document.createElement('td');
+
+                        const updateBtn = document.createElement('button');
+                        updateBtn.className = 'btn btn-sm btn-outline-primary me-1';
+                        updateBtn.textContent = 'Update';
+
+                        const removeBtn = document.createElement('button'); // Changed to button for consistency
+                        removeBtn.className = 'btn btn-sm btn-outline-danger';
+                        removeBtn.textContent = 'Remove';
+                        removeBtn.addEventListener('click', () => {
+                            // Construct the request body
+                            const requestBody = new URLSearchParams({
+                                doctorId: doc.doctorId,
+                                slotId: currentSlotId,
+                                dayOfWeek: currentDayOfWeek
+                            });
+
+                            // Debug: log the request body
+                            console.log("Sending delete request with body:", requestBody.toString());
+
+                            // Send the delete request to the server
+                            fetch('DeleteDoctorAssignmentServlet', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                },
+                                body: requestBody
+                            })
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            // Remove the row from the table if successful
+                                            row.remove();
+                                            // Call updateLocation to include query params in the URL
+                                            redirectToManagerTimeSlotList();
+                                        } else {
+                                            alert("Failed to remove assignment.");
                                         }
-                                        doctorSelectModal.appendChild(opt);
-                                    });
-                                }
+                                    })
+                                    .catch(err => console.error("Fetch error:", err));
+                        });
 
-                                if ($(doctorSelectModal).hasClass('select2')) {
-                                    $(doctorSelectModal).trigger('change.select2');
+                        // Handle update -> edit mode
+                        updateBtn.addEventListener('click', () => {
+                            // Create select dropdown for doctor
+                            const select = document.createElement('select');
+                            select.className = 'form-select';
+                            doctorAssignDTOs.forEach(d => {
+                                const option = document.createElement('option');
+                                option.value = d.doctorId;
+                                option.textContent = d.fullName;
+                                if (d.doctorId === doc.doctorId) {
+                                    option.selected = true;
+                                }
+                                select.appendChild(option);
+                            });
+                            nameTd.innerHTML = '';
+                            nameTd.appendChild(select);
+
+                            // Create input for patient limit
+                            const input = document.createElement('input');
+                            input.type = 'number';
+                            input.min = 1;
+                            input.className = 'form-control';
+                            input.value = doc.maxAppointments;
+                            limitTd.innerHTML = '';
+                            limitTd.appendChild(input);
+
+                            // Change actions to Save
+                            actionsTd.innerHTML = '';
+                            const saveBtn = document.createElement('button');
+                            saveBtn.className = 'btn btn-sm btn-success';
+                            saveBtn.textContent = 'Save';
+                            actionsTd.appendChild(saveBtn);
+
+                            saveBtn.addEventListener('click', () => {
+                                const selectedDoctorId = parseInt(select.value);
+                                const newLimit = parseInt(input.value);
+                                const selectedDoctor = doctorAssignDTOs.find(d => d.doctorId === selectedDoctorId);
+
+                                // Send the update to server
+                                // Construct the request body
+                                const requestBody = new URLSearchParams({
+                                    oldDoctorId: doc.doctorId,
+                                    newDoctorId: selectedDoctorId,
+                                    slotId: currentSlotId,
+                                    dayOfWeek: currentDayOfWeek,
+                                    maxAppointments: newLimit
+                                });
+
+                                // Debug: log the full request body
+                                console.log("Sending update request with body:", requestBody.toString());
+
+                                // Send the update to the server
+                                fetch('UpdateDoctorAssignmentServlet', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded'
+                                    },
+                                    body: requestBody
+                                })
+                                        .then(res => res.json())
+                                        .then(data => {
+                                            if (data.success) {
+                                                // Update local object
+                                                doc.doctorId = selectedDoctorId;
+                                                doc.fullName = selectedDoctor.fullName;
+                                                doc.maxAppointments = newLimit;
+
+                                                // Update UI
+                                                nameTd.textContent = selectedDoctor.fullName;
+                                                limitTd.textContent = newLimit;
+
+                                                actionsTd.innerHTML = '';
+                                                actionsTd.appendChild(updateBtn);
+                                                actionsTd.appendChild(removeBtn);
+
+                                                // Call updateLocation to include query params in the URL
+                                                redirectToManagerTimeSlotList();
+                                            } else {
+                                                alert("Update failed!: Update assignment must not be clash with already existing assignment");
+                                            }
+                                        })
+                                        .catch(err => console.error("Fetch error:", err));
+                            });
+                        });
+
+                        actionsTd.appendChild(updateBtn);
+                        actionsTd.appendChild(removeBtn);
+
+                        row.appendChild(nameTd);
+                        row.appendChild(limitTd);
+                        row.appendChild(actionsTd);
+                        tableBody.appendChild(row);
+                    });
+                });
+            });
+
+            document.querySelector('#addDoctorBtn').addEventListener('click', function () {
+                // Get the table body element
+                const tableBody = document.getElementById('doctorAssignTableBody');
+
+                // Create a new row
+                const row = document.createElement('tr');
+
+                // Create the index column
+                const indexTd = document.createElement('td');
+                indexTd.textContent = tableBody.rows.length + 1;  // Index for new row
+                row.appendChild(indexTd);
+
+                // Create the doctor selection column (dropdown)
+                const doctorTd = document.createElement('td');
+                const select = document.createElement('select');
+                const doctorAssignDTOs = ${doctorAssignDTOsJson};
+                const currentDayOfWeek = document.querySelector('input[name="dayOfTheWeek"]').value;
+                select.className = 'form-select';
+                doctorAssignDTOs.forEach(doc => {
+                    const option = document.createElement('option');
+                    option.value = doc.doctorId;
+                    option.textContent = doc.fullName;
+                    select.appendChild(option);
+                });
+                doctorTd.appendChild(select);
+                row.appendChild(doctorTd);
+
+                // Create the patient limit column (input)
+                const limitTd = document.createElement('td');
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.min = 1;
+                input.className = 'form-control';
+                input.value = 1;  // Default value for patient limit
+                limitTd.appendChild(input);
+                row.appendChild(limitTd);
+
+                // Create the actions column (Save button)
+                const actionsTd = document.createElement('td');
+                const saveBtn = document.createElement('button');
+                saveBtn.className = 'btn btn-sm btn-success';
+                saveBtn.textContent = 'Save';
+
+                // Handle the save action for the new doctor assignment
+                saveBtn.addEventListener('click', () => {
+                    const selectedDoctorId = parseInt(select.value);
+                    const newLimit = parseInt(input.value);
+                    const timeSlotId = document.querySelector('input[name="timeSlotId"]').value;
+
+                    // Construct the request body to send to the server
+                    const requestBody = new URLSearchParams({
+                        doctorId: selectedDoctorId,
+                        slotId: currentSlotId,
+                        dayOfWeek: currentDayOfWeek,
+                        maxAppointments: newLimit
+                    });
+
+                    console.log("Sending CREATE NEW request with body:", requestBody.toString());
+
+                    // Send the request to insert the new doctor assignment
+                    fetch('InsertDoctorAssignmentServlet', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: requestBody
+                    })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Add the new doctor assignment to the table
+                                    //alert("Doctor assigned successfully!");
+                                    redirectToManagerTimeSlotList();
+                                } else {
+                                    alert("Failed to assign doctor.");
                                 }
                             })
-                            .catch(error => console.error('Error fetching doctors (modal):', error));
-                }
-
-                // Load doctors when slot changes in modal
-                slotSelectModal.addEventListener('change', function () {
-                    const slotId = this.value;
-                    loadDoctorsForModal(slotId);
+                            .catch(err => console.error("Error:", err));
                 });
 
-                // Optional: When the modal opens, load doctors based on current slot & doctor
-                const editModal = document.getElementById('editAppointmentModal');
-                editModal.addEventListener('show.bs.modal', function () {
-                    const slotId = slotSelectModal.value;
-                    const selectedDoctorId = doctorSelectModal.getAttribute('data-selected-id');
-                    if (slotId) {
-                        loadDoctorsForModal(slotId, selectedDoctorId);
-                    }
-                });
+                actionsTd.appendChild(saveBtn);
+                row.appendChild(actionsTd);
+
+                // Append the new row to the table body
+                tableBody.appendChild(row);
             });
-        </script>
 
-        <script>
-            function fillEditModal(button) {
-                document.getElementById("editAppointmentId").value = button.getAttribute("data-id");
-                document.getElementById("editFullName").value = button.getAttribute("data-fullname");
-                document.getElementById("editPhone").value = button.getAttribute("data-phone");
-                document.getElementById("editEmail").value = button.getAttribute("data-email");
-                document.getElementById("editDateOfBirth").value = button.getAttribute("data-dob");
-                document.getElementById("editGender").value = button.getAttribute("data-gender");
-                document.getElementById("editDoctorId").value = button.getAttribute("data-doctorid");
-                document.getElementById("editAppointmentDate").value = button.getAttribute("data-date");
-                document.getElementById("editSlotId").value = button.getAttribute("data-slotid");
+            // Function to get query parameters from the current URL
+            function getQueryParams() {
+                const params = new URLSearchParams(window.location.search);
+
+                // Log the full query string for debugging
+                console.log("Current URL search params:", window.location.search);
+
+                // Retrieve query parameters with proper fallbacks if not found
+                const page = params.get('page') || '1';  // Default to page 1 if not present
+                const status = params.get('status') || '';
+                const keyword = params.get('keyword') || '';
+                const dayOfTheWeek = params.get('dayOfTheWeek') || '';  // Do not default to 'Wednesday'
+                const pageSize = params.get('pageSize') || '5';  // Default to pageSize 5 if not present
+
+                // Log each retrieved parameter for debugging
+                console.log("Retrieved Parameters:");
+                console.log("page:", page);
+                console.log("status:", status);
+                console.log("keyword:", keyword);
+                console.log("dayOfTheWeek:", dayOfTheWeek);
+                console.log("pageSize:", pageSize);
+
+                return {page, status, keyword, dayOfTheWeek, pageSize};
             }
-        </script>
 
-        <script>
-            const cancelModal = document.getElementById('cancelappointment');
-            cancelModal.addEventListener('show.bs.modal', function (event) {
-                const button = event.relatedTarget;
-                const appointmentId = button.getAttribute('data-appointment-id');
-                const inputField = cancelModal.querySelector('#cancelAppointmentId');
-                inputField.value = appointmentId;
-            });
+
+            function redirectToManagerTimeSlotList() {
+                const queryParams = getQueryParams();
+                const baseUrl = '/SWP_BL5_TEAM1/ManagerTimeSlotListServlet'; // Adjust the path if needed
+                const url = new URL(baseUrl, window.location.origin); // Use URL constructor for proper encoding
+
+                // Append parameters to the URL
+                url.searchParams.append('page', queryParams.page);
+                url.searchParams.append('status', queryParams.status);
+                url.searchParams.append('keyword', queryParams.keyword);
+                url.searchParams.append('dayOfTheWeek', queryParams.dayOfTheWeek);
+                url.searchParams.append('pageSize', queryParams.pageSize);
+
+                console.log("New URL:", url);
+                // Redirect to the new URL
+                window.location.href = url.toString();
+            }
         </script>
 
         <script>
@@ -589,24 +681,6 @@
                 this.form.submit();
             });
         </script>
-
-        <%
-            String message = request.getParameter("message");
-        %>
-        <div class="toast-container position-fixed bottom-0 end-0 p-3">
-            <% if (message != null) {%>
-            <div class="toast align-items-center text-white bg-success border-0"
-                 id="statusToast" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <%= message%>
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                </div>
-            </div>
-            <% }%>
-        </div>
-
 
         <script>
             window.addEventListener('DOMContentLoaded', () => {
