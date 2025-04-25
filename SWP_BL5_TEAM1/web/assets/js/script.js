@@ -22,21 +22,20 @@ function searchTable() {
     });
 }
 
-// 2. Sorting | Ordering data of HTML table
-
+// 2. Sorting | Ordering data of HTML table i is column
 table_headings.forEach((head, i) => {
     let sort_asc = true;
     head.onclick = () => {
-        table_headings.forEach(head => head.classList.remove('active'));
+        table_headings.forEach(head => head.classList.remove('active')); //remove active for effect
         head.classList.add('active');
 
         document.querySelectorAll('td').forEach(td => td.classList.remove('active'));
         table_rows.forEach(row => {
-            row.querySelectorAll('td')[i].classList.add('active');
+            row.querySelectorAll('td')[i].classList.add('active'); //add class active to chosen table heading
         })
 
-        head.classList.toggle('asc', sort_asc);
-        sort_asc = head.classList.contains('asc') ? false : true;
+        head.classList.toggle('asc', sort_asc); //add class asc > if sort_asc true else remove
+        sort_asc = head.classList.contains('asc') ? false : true; //check if asc class is present > set to sort_asc to false if
 
         sortTable(i, sort_asc);
     }
@@ -44,25 +43,46 @@ table_headings.forEach((head, i) => {
 
 
 function sortTable(column, sort_asc) {
-    [...table_rows].sort((a, b) => {
+    [...table_rows].sort((a, b) => { //spread operator(...) to convert to array
         let first_row = a.querySelectorAll('td')[column].textContent.toLowerCase(),
                 second_row = b.querySelectorAll('td')[column].textContent.toLowerCase();
 
-        return sort_asc ? (first_row < second_row ? 1 : -1) : (first_row < second_row ? -1 : 1);
+        return sort_asc ? (first_row < second_row ? 1 : -1) : (first_row < second_row ? -1 : 1); //flip based on sort_asc
     })
             .map(sorted_row => document.querySelector('tbody').appendChild(sorted_row));
 }
 
-// 3. Converting HTML table to PDF
 
+// 3. Converting HTML table to PDF
 const pdf_btn = document.querySelector('#toPDF');
 const customers_table = document.querySelector('#customers_table');
 
+pdf_btn.onclick = () => {
+    toPDF(customers_table);
+}
 
 const toPDF = function (customers_table) {
     const html_code = `
     <!DOCTYPE html>
-    <link rel="stylesheet" type="text/css" href="style.css">
+     <meta charset="utf-8" />
+        <title>Doctris - Doctor Appointment Booking System</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Premium Bootstrap 4 Landing Page Template" />
+        <meta name="keywords" content="Appointment, Booking, System, Dashboard, Health" />
+        <meta name="author" content="Shreethemes" />
+        <meta name="email" content="support@shreethemes.in" />
+        <meta name="website" content="https://shreethemes.in" />
+        <meta name="Version" content="v1.2.0" />
+        <!-- favicon -->
+        <link rel="shortcut icon" href="assets/images/favicon.ico.png">
+        <!-- Bootstrap -->
+        <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <!-- Icons -->
+        <link href="assets/css/materialdesignicons.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/remixicon.css" rel="stylesheet" type="text/css" />
+        <link href="https://unicons.iconscout.com/release/v3.0.6/css/line.css"  rel="stylesheet">
+        <!-- Css -->
+        <link href="assets/css/style.min.css" rel="stylesheet" type="text/css" id="theme-opt" />
     <main class="table" id="customers_table">${customers_table.innerHTML}</main>`;
 
     const new_window = window.open();
@@ -74,9 +94,7 @@ const toPDF = function (customers_table) {
     }, 400);
 }
 
-pdf_btn.onclick = () => {
-    toPDF(customers_table);
-}
+
 
 // 4. Converting HTML table to JSON
 
