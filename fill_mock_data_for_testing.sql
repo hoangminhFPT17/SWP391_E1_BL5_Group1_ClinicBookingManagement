@@ -43,7 +43,7 @@ VALUES
 
 -- Insert Specialties
 INSERT INTO Specialty (name) VALUES 
-('Diagnostics'), ('Oncology'), ('Immunology'), ('Surgery'), ('Neurology');
+('Diagnostics'), ('Oncology'), ('Immunology'), ('Surgery'), ('Neurology'),('General Medicine');
 
 -- Insert DoctorSpecialty
 INSERT INTO DoctorSpecialty (staff_id, specialty_id) VALUES
@@ -53,13 +53,12 @@ INSERT INTO DoctorSpecialty (staff_id, specialty_id) VALUES
 (5, 4), -- Chase - Surgery
 (6, 5); -- Foreman - Neurology
 
--- Insert Examination Packages
-INSERT INTO ExaminationPackage (name, description, price, specialty_id) VALUES
-('Full Diagnostic Panel', 'Comprehensive diagnostic testing', 500.00, 1),
-('Cancer Screening', 'Oncology screening tests', 700.00, 2),
-('Allergy Testing', 'Testing for common allergens', 300.00, 3),
-('Surgical Consultation', 'Pre-surgery consultation', 250.00, 4),
-('Neurological Assessment', 'Brain and nerve exam', 400.00, 5);
+-- Insert General Medicine Examination Packages
+INSERT INTO ExaminationPackage (name, description, specialty_id) VALUES
+('Normal Checkup', 'Basic consultation and health check for general concerns', 
+ (SELECT specialty_id FROM Specialty WHERE name = 'General Medicine')),
+('VIP Checkup', 'Comprehensive consultation with extended tests and personalized care', 
+ (SELECT specialty_id FROM Specialty WHERE name = 'General Medicine'));
 
 -- Insert DoctorTimeSlot coverage: Spread out doctor coverage at random
 INSERT INTO DoctorTimeSlot (staff_id, slot_id, day_of_week, max_appointments)
@@ -140,6 +139,25 @@ VALUES
 INSERT INTO token (token, expiryTime, isUsed, userId)
 VALUES
 ('abc123token', '2025-05-01 12:00:00', 0, 1);
+
+-- Insert Invoices for two appointments
+INSERT INTO Invoice (patient_phone, appointment_id, payment_method, status)
+VALUES 
+('2223334444', 1, 'Credit Card', 'Completed'),
+('3334445555', 2, 'Cash', 'Processing');
+
+-- Insert InvoiceItems for invoice_id = 1 (House's patient)
+INSERT INTO InvoiceItem (invoice_id, description, quantity, unit_price)
+VALUES 
+(1, 'Consultation Fee', 1, 300.00),
+(1, 'Blood Test', 1, 100.00),
+(1, 'X-ray Scan', 1, 150.00);
+
+-- Insert InvoiceItems for invoice_id = 2 (Wilson's patient)
+INSERT INTO InvoiceItem (invoice_id, description, quantity, unit_price)
+VALUES 
+(2, 'Oncology Consultation', 1, 400.00),
+(2, 'MRI Scan', 1, 500.00);
 
 /*
 -- Full DoctorTimeSlot coverage: 5 doctors × 5 slots × 7 days = 175 entries

@@ -32,7 +32,7 @@ public class InvoiceDAO extends DBContext {
                 + "?);";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, invoice.getInvoiceId());
-            ps.setString(2, invoice.getPhone());
+            ps.setString(2, invoice.getPatientPhone());
             ps.setInt(3, invoice.getAppointmentId());
             ps.setString(4, invoice.getPaymentMethod());
             ps.setDate(5, invoice.getGeneratedDate());
