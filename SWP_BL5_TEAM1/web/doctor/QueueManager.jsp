@@ -24,7 +24,7 @@
                 <%@ include file="../component/doctorHeader.jsp" %>
                 <div class="container-fluid">
                     <div class="d-flex justify-content-between align-items-center mb-3" style="margin-top:50px;">
-                        <h2 class="mb-0">Queue manager in thhis time slot</h2>
+                        <h2 class="mb-0">Queue manager in this time slot</h2>
 
                         
                     </div>
