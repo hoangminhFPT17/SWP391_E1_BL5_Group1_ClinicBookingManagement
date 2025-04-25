@@ -119,6 +119,7 @@
     <servlet-mapping>
         <servlet-name>PatientListServlet</servlet-name>
         <url-pattern>/doctor/patients-list</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DoctorAppointmentDetail</servlet-name>
         <url-pattern>/DoctorAppointmentDetail</url-pattern>

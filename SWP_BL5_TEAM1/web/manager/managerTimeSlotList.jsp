@@ -230,7 +230,8 @@
                     </div>
 
                     <div class="modal-body">
-                        <p>${selectedDay}: Time Slot ${selectedTimeSlot.name}</p>
+                        <p>${selectedDay}: Time Slot</p>
+                        <p id="slotInfoText"></p>
 
                         <table class="table table-bordered text-center align-middle">
                             <thead class="table-secondary">
