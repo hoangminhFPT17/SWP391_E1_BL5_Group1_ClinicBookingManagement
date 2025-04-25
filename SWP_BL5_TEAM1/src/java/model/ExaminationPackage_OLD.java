@@ -8,19 +8,30 @@ package model;
  *
  * @author LENOVO
  */
-public class ExaminationPackage {
+import java.math.BigDecimal;
+
+public class ExaminationPackage_OLD {
     private int packageId;
     private String name;
     private String description;
+    private BigDecimal price;
     private int specialtyId;
 
-    public ExaminationPackage() {
+    public ExaminationPackage_OLD() {
+    }
+    
+    public ExaminationPackage_OLD(String name, String description, BigDecimal price, int specialtyId) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.specialtyId = specialtyId;
     }
 
-    public ExaminationPackage(int packageId, String name, String description, int specialtyId) {
+    public ExaminationPackage_OLD(int packageId, String name, String description, BigDecimal price, int specialtyId) {
         this.packageId = packageId;
         this.name = name;
         this.description = description;
+        this.price = price;
         this.specialtyId = specialtyId;
     }
 
@@ -48,6 +59,14 @@ public class ExaminationPackage {
         this.description = description;
     }
 
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
     public int getSpecialtyId() {
         return specialtyId;
     }
@@ -58,6 +77,6 @@ public class ExaminationPackage {
 
     @Override
     public String toString() {
-        return "ExaminationPackage{" + "packageId=" + packageId + ", name=" + name + ", description=" + description + ", specialtyId=" + specialtyId + '}';
+        return "ExaminationPackage{" + "packageId=" + packageId + ", name=" + name + ", description=" + description + ", price=" + price + ", specialtyId=" + specialtyId + '}';
     }
 }
