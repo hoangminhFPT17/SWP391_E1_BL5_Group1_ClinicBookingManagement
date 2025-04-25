@@ -4,7 +4,7 @@
  */
 package controller.manager;
 
-import dal.ExaminationPackageDAO;
+import dal.ExaminationPackageDAO_OLD;
 import dto.ExaminationPackageDTO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.List;
-import model.ExaminationPackage;
+import model.ExaminationPackage_OLD;
 import dal.SpecialtyDAO;
 import model.Specialty;
 
@@ -26,7 +26,7 @@ public class ExaminationPackageManager extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ExaminationPackageDAO dao = new ExaminationPackageDAO();
+        ExaminationPackageDAO_OLD dao = new ExaminationPackageDAO_OLD();
         List<ExaminationPackageDTO> packages = dao.getAllPackagesByDTO();
         request.setAttribute("packages", packages);
 
@@ -51,21 +51,21 @@ public class ExaminationPackageManager extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
 
-        ExaminationPackageDAO dao = new ExaminationPackageDAO();
+        ExaminationPackageDAO_OLD dao = new ExaminationPackageDAO_OLD();
 
         if ("create".equals(action)) {
             String name = request.getParameter("name");
             String description = request.getParameter("description");
             BigDecimal price = BigDecimal.valueOf(Double.parseDouble(request.getParameter("price")));
             int specialtyId = Integer.parseInt(request.getParameter("specialtyId"));
-            dao.insertPackage(new ExaminationPackage(name, description, price, specialtyId));
+            dao.insertPackage(new ExaminationPackage_OLD(name, description, price, specialtyId));
         } else if ("edit".equals(action)) {
             String name = request.getParameter("name");
             String description = request.getParameter("description");
             BigDecimal price = BigDecimal.valueOf(Double.parseDouble(request.getParameter("price")));
             int specialtyId = Integer.parseInt(request.getParameter("specialtyId"));
             int id = Integer.parseInt(request.getParameter("packageId"));
-            dao.updatePackage(new ExaminationPackage(id, name, description, price, specialtyId));
+            dao.updatePackage(new ExaminationPackage_OLD(id, name, description, price, specialtyId));
         } else if ("delete".equals(action)) {
             int id = Integer.parseInt(request.getParameter("packageId"));
             dao.deletePackage(id);
