@@ -52,6 +52,10 @@
         <servlet-class>controller.doctor.QueueManager</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>DoctorAppointmentDetail</servlet-name>
+        <servlet-class>controller.doctor.DoctorAppointmentDetail</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <url-pattern>/PatientBookAppointmentServlet</url-pattern>
@@ -108,7 +112,7 @@
         <servlet-name>MedicalRecordsServlet</servlet-name>
         <url-pattern>/doctor/medical-records</url-pattern>
     </servlet-mapping>
-    <servlet>
+     <servlet>
         <servlet-name>PatientListServlet</servlet-name>
         <servlet-class>controller.staff.PatientListServlet</servlet-class>
     </servlet>

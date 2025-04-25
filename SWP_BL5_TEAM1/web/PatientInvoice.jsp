@@ -62,6 +62,7 @@
         <!-- Css -->
         <link href="${pageContext.request.contextPath}/assets/css/style.min.css" rel="stylesheet" type="text/css" id="theme-opt" />
 
+
     </head>
 
 
@@ -115,68 +116,67 @@
                     <div class="col-xl-9 col-lg-8 col-md-7 mt-4 pt-2 mt-sm-0 pt-sm-0">
                         <main class="table" id="customers_table">
                             <section class="table__header">
-<!--                                <h1>Customer's Orders</h1>-->
+                                <!--                                <h1>Customer's Orders</h1>-->
                                 <div class="input-group">
                                     <input type="search" placeholder="Search Data...">
                                     <img src="assets/images/searchFunc/search.png" alt="">
                                 </div>
                                 <div class="export__file">
                                     <label for="export-file" class="export__file-btn" title="Export File"></label>
-<!--                                    <input type="checkbox" id="export-file">-->
+                                    <input type="checkbox" id="export-file">
                                     <div class="export__file-options">
-<!--                                        <label>Export As &nbsp; &#10140;</label>
-                                        <label for="export-file" id="toPDF">PDF <img src="/assets/images/searchFunc/pdf.png" alt=""></label>
-                                        <label for="export-file" id="toJSON">JSON <img src="/assets/images/searchFunc/json.png" alt=""></label>
-                                        <label for="export-file" id="toCSV">CSV <img src="/assets/images/searchFunc/csv.png" alt=""></label>
-                                        <label for="export-file" id="toEXCEL">EXCEL <img src="/assets/images/searchFunc/excel.png" alt=""></label>-->
+                                        <label for="export-file" id="toPDF">PDF <img src="/${pageContext.request.contextPath}/assets/images/searchFunc/pdf.png" alt=""></label>
+                                        <label for="export-file" id="toJSON">JSON <img src="/${pageContext.request.contextPath}/assets/images/searchFunc/json.png" alt=""></label>
+                                        <label for="export-file" id="toCSV">CSV <img src="/${pageContext.request.contextPath}/assets/images/searchFunc/csv.png" alt=""></label>
+                                        <label for="export-file" id="toEXCEL">EXCEL <img src="/${pageContext.request.contextPath}/assets/images/searchFunc/excel.png" alt=""></label>
                                     </div>
                                 </div>
 
                             </section>
                             <section class="table__body">
-                                    <table class="table table-center bg-white mb-0">
-                                        <thead>
-                                            <tr class="bg-info">
-                                                <th class="border-bottom p-3" style="min-width: 150px;">Invoice <span class="icon-arrow">&UpArrow;</span></th>
-                                                <th class="border-bottom p-3" style="min-width: 220px;" >Doctor <span class="icon-arrow">&UpArrow;</span></th>
-                                                <th class="text-center border-bottom p-3" style="min-width: 180px;" >Phone <span class="icon-arrow">&UpArrow;</span></th>
-                                                <th class="text-center border-bottom p-3" >Amount <span class="icon-arrow">&UpArrow;</span></th>
-                                                <th class="text-center border-bottom p-3" style="min-width: 140px;" >Generate(Dt.) <span class="icon-arrow">&UpArrow;</span></th>
-                                                <th class="text-center border-bottom p-3" >Status</th>
-                                                <th class="text-end border-bottom p-3" style="min-width: 200px;" ></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <% for (Invoice invoice : invoice_list) {%>
-                                            <!-- Start -->
-                                            <tr>
-                                                <th class="p-3">#d0<%= invoice.getInvoiceId()%></th>
-                                                <td class="p-3">
-                                                    <a href="#" class="text-primary">
-                                                        <div class="d-flex align-items-center">
-                                                            <img src="${pageContext.request.contextPath}/assets/images/client/01.jpg" class="avatar avatar-md-sm rounded-circle shadow" alt="">
-                                                            <span class="ms-2"><%= user_dao.getUserById(SA_dao.getDoctorById(appoint_dao.getById(invoice.getAppointmentId()).getDoctorId()).getUserId()).getFullName()%></span>
-                                                        </div>
-                                                    </a>
-                                                </td>
-                                                <td class="text-center p-3"><%= user_dao.getUserById(SA_dao.getDoctorById(appoint_dao.getById(invoice.getAppointmentId()).getDoctorId()).getUserId()).getPhone()%></td>
-                                                <td class="text-center p-3">$253</td>
-                                                <td class="text-center p-3"><%= invoice.getGeneratedDate()%></td>
-                                                <td class="text-center p-3">
-                                                    <div class="badge bg-soft-danger rounded px-3 py-1">
-                                                        <%= invoice.getStatus()%>
+                                <table class="table table-center bg-white mb-0">
+                                    <thead>
+                                        <tr class="bg-info">
+                                            <th class="border-bottom p-3" style="min-width: 150px;">Invoice <span class="icon-arrow">&UpArrow;</span></th>
+                                            <th class="border-bottom p-3" style="min-width: 220px;" >Doctor <span class="icon-arrow">&UpArrow;</span></th>
+                                            <th class="text-center border-bottom p-3" style="min-width: 180px;" >Phone <span class="icon-arrow">&UpArrow;</span></th>
+                                            <th class="text-center border-bottom p-3" >Amount <span class="icon-arrow">&UpArrow;</span></th>
+                                            <th class="text-center border-bottom p-3" style="min-width: 140px;" >Generate(Dt.) <span class="icon-arrow">&UpArrow;</span></th>
+                                            <th class="text-center border-bottom p-3" >Status</th>
+                                            <th class="text-end border-bottom p-3" style="min-width: 200px;" ></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% for (Invoice invoice : invoice_list) {%>
+                                        <!-- Start -->
+                                        <tr>
+                                            <th class="p-3">#d0<%= invoice.getInvoiceId()%></th>
+                                            <td class="p-3">
+                                                <a href="#" class="text-primary">
+                                                    <div class="d-flex align-items-center">
+                                                        <img src="${pageContext.request.contextPath}/assets/images/client/01.jpg" class="avatar avatar-md-sm rounded-circle shadow" alt="">
+                                                        <span class="ms-2"><%= user_dao.getUserById(SA_dao.getDoctorById(appoint_dao.getById(invoice.getAppointmentId()).getDoctorId()).getUserId()).getFullName()%></span>
                                                     </div>
-                                                </td>
-                                                <td class="text-end p-3">
-                                                    <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#view-invoice">View</a>
-                                                    <a href="#" class="btn btn-sm btn-outline-primary ms-2">Print</a>
-                                                </td>
-                                            </tr>
-                                            <!-- End -->
-                                            <% }%>
-                                        </tbody>
-                                    </table>
-<!--                                </div>-->
+                                                </a>
+                                            </td>
+                                            <td class="text-center p-3"><%= user_dao.getUserById(SA_dao.getDoctorById(appoint_dao.getById(invoice.getAppointmentId()).getDoctorId()).getUserId()).getPhone()%></td>
+                                            <td class="text-center p-3">$253</td>
+                                            <td class="text-center p-3"><%= invoice.getGeneratedDate()%></td>
+                                            <td class="text-center p-3">
+                                                <div class="badge bg-soft-danger rounded px-3 py-1">
+                                                    <%= invoice.getStatus()%>
+                                                </div>
+                                            </td>
+                                            <td class="text-end p-3">
+                                                <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#view-invoice">View</a>
+                                                <a href="#" class="btn btn-sm btn-outline-primary ms-2">Print</a>
+                                            </td>
+                                        </tr>
+                                        <!-- End -->
+                                        <% }%>
+                                    </tbody>
+                                </table>
+                                <!--                                </div>-->
                                 <!--end row--></section>
 
                         </main>
@@ -455,6 +455,9 @@
 <!-- Main Js -->
 <script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/script.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/paging.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
 
 
 </html>

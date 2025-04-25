@@ -4,6 +4,8 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Patient;
@@ -23,6 +25,30 @@ public class PatientDAO extends DBContext {
      * @param userId the user ID to retrieve
      * @return Patient object with data or null if not found
      */
+    public List<Patient> getAllPatients() throws SQLException {
+        List<Patient> patients = new ArrayList<>();
+        String sql = "SELECT * FROM patient ORDER BY full_name";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Patient patient = new Patient();
+                patient.setPhone(rs.getString("phone"));
+                patient.setPatientAccountId(rs.getInt("patient_account_id") != 0 ? rs.getInt("patient_account_id") : null);
+                patient.setFullName(rs.getString("full_name"));
+                patient.setDateOfBirth(rs.getDate("date_of_birth"));
+                patient.setGender(rs.getString("gender"));
+                patient.setEmail(rs.getString("email"));
+                patient.setCreatedAt(rs.getTimestamp("created_at"));
+                patients.add(patient);
+            }
+            LOGGER.log(Level.INFO, "Retrieved " + patients.size() + " patients");
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error retrieving all patients", ex);
+            throw ex;
+        }
+        return patients;
+    }
     public Patient getPatientByUserId(int userId) {
         String sql = "SELECT p.* FROM patient p "
                 + "INNER JOIN user u ON p.phone = u.phone "
