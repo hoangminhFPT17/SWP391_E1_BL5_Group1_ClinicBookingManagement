@@ -12,9 +12,13 @@ import java.sql.Date;
  */
 public class Invoice {
 
-    private int invoiceId, appointmentId, packageId; //packageId to find price etc.........
-    private String phone, paymentMethod, status;
-    private java.sql.Date GeneratedDate;
+    private int invoiceId; 
+    private int appointmentId;
+    private int packageId;
+    private String patientPhone; 
+    private String paymentMethod;
+    private String status;
+    private java.sql.Date generatedDate;
 
     public int getPackageId() {
         return packageId;
@@ -28,20 +32,20 @@ public class Invoice {
         this.invoiceId = invoiceId;
         this.appointmentId = appointmentId;
         this.packageId = packageId;
-        this.phone = phone;
+        this.patientPhone = phone;
         this.paymentMethod = paymentMethod;
         this.status = status;
-        this.GeneratedDate = new java.sql.Date(System.currentTimeMillis());
+        this.generatedDate = new java.sql.Date(System.currentTimeMillis());
     }
 
     public Invoice(int invoiceId, int appointmentId, String phone, String paymentMethod, String status) {
         this.invoiceId = invoiceId;
         this.appointmentId = appointmentId;
-        this.phone = phone;
+        this.patientPhone = phone;
         this.paymentMethod = paymentMethod;
-         this.packageId = 1;
+        this.packageId = 1;
         this.status = status;
-        this.GeneratedDate = new java.sql.Date(System.currentTimeMillis());
+        this.generatedDate = new java.sql.Date(System.currentTimeMillis());
     }
 
     public int getInvoiceId() {
@@ -60,12 +64,12 @@ public class Invoice {
         this.appointmentId = appointmentId;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getPatientPhone() {
+        return patientPhone;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setPatientPhone(String phone) {
+        this.patientPhone = phone;
     }
 
     public String getPaymentMethod() {
@@ -85,10 +89,10 @@ public class Invoice {
     }
 
     public Date getGeneratedDate() {
-        return GeneratedDate;
+        return generatedDate;
     }
 
     public void setGeneratedDate(Date GeneratedDate) {
-        this.GeneratedDate = GeneratedDate;
+        this.generatedDate = GeneratedDate;
     }
 }
