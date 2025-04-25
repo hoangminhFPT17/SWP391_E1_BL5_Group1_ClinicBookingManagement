@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+
     <servlet>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <servlet-class>controller.patient.PatientBookAppointmentServlet</servlet-class>
@@ -32,6 +35,23 @@
         <servlet-name>ManagerTimeSlotListServlet</servlet-name>
         <servlet-class>controller.manager.ManagerTimeSlotListServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UpdateDoctorAssignmentServlet</servlet-name>
+        <servlet-class>controller.manager.UpdateDoctorAssignmentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteDoctorAssignmentServlet</servlet-name>
+        <servlet-class>controller.manager.DeleteDoctorAssignmentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>InsertDoctorAssignmentServlet</servlet-name>
+        <servlet-class>controller.manager.InsertDoctorAssignmentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>QueueManager</servlet-name>
+        <servlet-class>controller.doctor.QueueManager</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <url-pattern>/PatientBookAppointmentServlet</url-pattern>
@@ -60,4 +80,25 @@
         <servlet-name>ExaminationPackageManager</servlet-name>
         <url-pattern>/ExaminationPackageManager</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManagerTimeSlotListServlet</servlet-name>
+        <url-pattern>/ManagerTimeSlotListServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateDoctorAssignmentServlet</servlet-name>
+        <url-pattern>/UpdateDoctorAssignmentServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteDoctorAssignmentServlet</servlet-name>
+        <url-pattern>/DeleteDoctorAssignmentServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InsertDoctorAssignmentServlet</servlet-name>
+        <url-pattern>/InsertDoctorAssignmentServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>QueueManager</servlet-name>
+        <url-pattern>/QueueManager</url-pattern>
+    </servlet-mapping>
+
 </web-app>
