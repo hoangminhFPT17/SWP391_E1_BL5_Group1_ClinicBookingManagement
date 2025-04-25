@@ -83,7 +83,7 @@ public class RegisterUser extends HttpServlet {
         // Giữ plaintext
 
         try {
-            String error = validateInput(dao, email, fullName, phone, password);
+            String error = validateInput(dao, email, fullName, phone, password, request);
             if (!error.isEmpty()) {
                 request.setAttribute("error", error);
                 request.getRequestDispatcher(REGISTER_JSP).forward(request, response);
@@ -123,6 +123,9 @@ public class RegisterUser extends HttpServlet {
                 }
 
                 session.setAttribute("success", "Đăng ký thành công! Vui lòng kiểm tra email để kích hoạt tài khoản.");
+                request.removeAttribute("last_email");
+                request.removeAttribute("last_phone");
+                request.removeAttribute("last_name");
                 response.sendRedirect(LOGIN_JSP);
             } else {
                 request.setAttribute("error", "Đăng ký thất bại. Vui lòng thử lại.");
@@ -178,17 +181,16 @@ public class RegisterUser extends HttpServlet {
         return false;
     }
 
-    private String validateInput(DAOUser dao, String email, String fullName, String phone, String password) throws SQLException {
-        if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-            return "Email không hợp lệ.";
-        }
+    private String validateInput(DAOUser dao, String email, String fullName, String phone, String password, HttpServletRequest request) throws SQLException {
+        request.setAttribute("last_email", email);
+        request.setAttribute("last_phone", phone);
+        request.setAttribute("last_name", fullName);
         if (dao.isEmailExists(email)) {
+            request.setAttribute("last_email", "");
             return "Email đã được sử dụng.";
         }
-        if (phone == null || !phone.matches("\\d{10}")) {
-            return "Số điện thoại phải là 10 chữ số.";
-        }
         if (dao.isPhoneExists(phone)) {
+            request.setAttribute("last_phone", "");
             return "Số điện thoại đã được sử dụng.";
         }
         if (password == null || password.length() < 8) {

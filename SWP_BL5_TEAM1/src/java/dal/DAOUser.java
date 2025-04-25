@@ -287,7 +287,7 @@ public class DAOUser extends DBContext {
         if (connection == null) {
             throw new SQLException("Database connectionection is not initialized.");
         }
-        String sql = "SELECT COUNT(*) FROM User WHERE Email = ?";
+        String sql = "SELECT COUNT(*) FROM user WHERE email = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, email);
             try (ResultSet rs = stmt.executeQuery()) {
