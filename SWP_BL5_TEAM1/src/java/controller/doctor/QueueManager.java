@@ -59,7 +59,8 @@ public class QueueManager extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        Integer doctorId = Integer.valueOf(request.getParameter("doctorId"));
+        Integer doctorId = 1;
+//                Integer.valueOf(request.getParameter("doctorId"));
         AppointmentDAO dao = new AppointmentDAO();
         List<AppointmentDTO> appointments;
         try {

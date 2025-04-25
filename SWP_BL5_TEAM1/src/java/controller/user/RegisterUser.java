@@ -9,8 +9,10 @@ package controller.user;
  * @author JackGarland
  */
 import model.User;
+import model.Patient;
 import dal.DAOUser;
 import dal.DAOToken;
+import dal.PatientDAO;
 import model.Token; // Sử dụng entity.Token
 import java.io.IOException;
 import java.sql.Date;
@@ -26,6 +28,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
+import java.time.LocalDate;
 
 @WebServlet(name = "UserRegister", urlPatterns = {"/User"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, maxFileSize = 1024 * 1024 * 10, maxRequestSize = 1024 * 1024 * 50)
@@ -64,6 +67,7 @@ public class RegisterUser extends HttpServlet {
         }
 
         DAOUser dao = new DAOUser();
+        PatientDAO patient_dao = new PatientDAO();
         if (!dao.isConnected()) {
             LOGGER.log(Level.SEVERE, "Database connection is null");
             request.setAttribute("error", "Không thể kết nối cơ sở dữ liệu. Vui lòng thử lại sau.");
@@ -126,6 +130,20 @@ public class RegisterUser extends HttpServlet {
                 request.removeAttribute("last_email");
                 request.removeAttribute("last_phone");
                 request.removeAttribute("last_name");
+                
+                patient_dao.connectPatient(userId, userId);
+                
+                Patient patient = patient_dao.getPatientByPhone(phone);
+                if (patient == null) {
+                    patient = new Patient();
+                    patient.setPatientAccountId(userId);
+                    patient.setPhone(phone);
+                    patient.setFullName(fullName);
+                    patient.setEmail(email);
+                    patient.setGender("Male");
+                    patient.setDateOfBirth(Date.valueOf(LocalDate.now()));
+                    patient_dao.insertPatient(patient);
+                }
                 response.sendRedirect(LOGIN_JSP);
             } else {
                 request.setAttribute("error", "Đăng ký thất bại. Vui lòng thử lại.");

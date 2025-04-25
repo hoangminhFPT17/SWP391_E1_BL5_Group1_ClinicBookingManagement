@@ -24,6 +24,7 @@
           <h2 class="mb-0">Patient queue in this time slot</h2>
         </div>
 
+
         <table id="apptTable" class="table table-bordered table-striped">
           <thead class="thead-light">
             <tr>
@@ -80,6 +81,7 @@
       </div>
     </main>
   </div>
+
 
   <script>
     const table = document.getElementById('apptTable');
