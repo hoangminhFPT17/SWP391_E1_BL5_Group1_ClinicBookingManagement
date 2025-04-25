@@ -39,7 +39,7 @@ CREATE TABLE PatientAccount (
     FOREIGN KEY (user_id) REFERENCES User(user_id)
 );
 
--- ✅ Patient uses phone number as primary key
+-- Patient uses phone number as primary key
 CREATE TABLE Patient (
     phone VARCHAR(20) PRIMARY KEY,
     patient_account_id INT UNIQUE, -- Nullable for walk-ins
@@ -76,12 +76,11 @@ CREATE TABLE ExaminationPackage (
     package_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description TEXT,
-    price DECIMAL(10, 2),
     specialty_id INT NOT NULL,
     FOREIGN KEY (specialty_id) REFERENCES Specialty(specialty_id)
 );
 
--- ✅ Use patient phone as FK
+-- Use patient phone as FK
 CREATE TABLE Appointment (
     appointment_id INT AUTO_INCREMENT PRIMARY KEY,
     patient_phone VARCHAR(20) NOT NULL,
@@ -111,7 +110,7 @@ CREATE TABLE DoctorTimeSlot (
     UNIQUE (staff_id, slot_id, day_of_week)
 );
 
--- ✅ MedicalRecord now tied to patient directly, not appointment
+-- MedicalRecord now tied to patient directly, not appointment
 CREATE TABLE MedicalRecord (
     record_id INT AUTO_INCREMENT PRIMARY KEY,
     patient_phone VARCHAR(20) NOT NULL,
@@ -121,28 +120,6 @@ CREATE TABLE MedicalRecord (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (patient_phone) REFERENCES Patient(phone)
 );
-
--- CREATE TABLE PatientQueue (
---     queue_id INT AUTO_INCREMENT PRIMARY KEY,
---     patient_phone VARCHAR(20) NOT NULL,
---     doctor_id INT NOT NULL,
---     slot_id INT NOT NULL,
---     queue_date DATE NOT NULL,
-
---     priority_number INT NOT NULL, -- e.g., order of arrival or custom priority
---     patient_type ENUM('Appointment', 'Walk-in') NOT NULL,
---     status ENUM('Hasn\'t Arrived', 'Waiting', 'In Progress', 'Completed') DEFAULT 'Hasn\'t Arrived',
-
---     arrival_time DATETIME, -- only set when patient shows up (not when receptionist adds them)
---     created_by INT, -- user_id of receptionist who added the patient
-
---     FOREIGN KEY (patient_phone) REFERENCES Patient(phone),
---     FOREIGN KEY (doctor_id) REFERENCES StaffAccount(staff_id),
---     FOREIGN KEY (slot_id) REFERENCES TimeSlot(slot_id),
---     FOREIGN KEY (created_by) REFERENCES User(user_id),
-
---     UNIQUE (patient_phone, doctor_id, queue_date) -- optional: prevent duplicates
--- );
 
 CREATE TABLE DoctorUnavailability (
     unavailability_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -171,7 +148,7 @@ CREATE TABLE DoctorHandoff (
     FOREIGN KEY (appointment_id) REFERENCES Appointment(appointment_id)
 );
 
-CREATE TABLE token (
+CREATE TABLE Token (
 	id int AUTO_INCREMENT NOT NULL,
 	token varchar(255) NOT NULL,
 	expiryTime datetime(6) NOT NULL,
@@ -180,21 +157,25 @@ CREATE TABLE token (
 PRIMARY KEY CLUSTERED (id ASC)
 );
 
-CREATE TABLE invoice (
+CREATE TABLE Invoice (
     invoice_id INT AUTO_INCREMENT PRIMARY KEY,
     patient_phone VARCHAR(20) NOT NULL,
     appointment_id INT NOT NULL,
     payment_method VARCHAR(50),
-    generate_date DATETIME,
+    generate_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     status ENUM('Processing', 'Completed', 'Failed') DEFAULT 'Processing',
     
     FOREIGN KEY (patient_phone) REFERENCES Patient(phone),
     FOREIGN KEY (appointment_id) REFERENCES Appointment(appointment_id)
 );
 
-CREATE TABLE invoiceCharge (
-    charge_id INT AUTO_INCREMENT PRIMARY KEY,
-    appointment_id INT NOT NULL,
-    amount VARCHAR(50)
+CREATE TABLE InvoiceItem (
+    item_id INT AUTO_INCREMENT PRIMARY KEY,
+    invoice_id INT NOT NULL,
+    description VARCHAR(255) NOT NULL, -- e.g. "X-ray Scan", "Consultation Fee"
+    quantity INT DEFAULT 1,
+    unit_price DECIMAL(10, 2) NOT NULL,
+    total_price DECIMAL(10, 2) AS (quantity * unit_price) STORED,
 
+    FOREIGN KEY (invoice_id) REFERENCES Invoice(invoice_id)
 );
