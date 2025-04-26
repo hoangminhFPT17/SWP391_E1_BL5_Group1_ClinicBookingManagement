@@ -60,13 +60,17 @@
         <servlet-name>UpdateDoctorTimeSlotServlet</servlet-name>
         <servlet-class>controller.doctor.UpdateDoctorTimeSlotServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>PatientExaminationPackageSelectServlet</servlet-name>
+        <servlet-class>controller.patient.PatientExaminationPackageSelectServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <url-pattern>/PatientBookAppointmentServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DoctorBySlotServlet</servlet-name>
-        <url-pattern>/doctor-by-slot</url-pattern>
+        <url-pattern>/doctor-by-slot-and-date</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>PatientAppointmentsListServlet</servlet-name>
@@ -135,5 +139,9 @@
     <servlet-mapping>
         <servlet-name>UpdateDoctorTimeSlotServlet</servlet-name>
         <url-pattern>/UpdateDoctorTimeSlotServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PatientExaminationPackageSelectServlet</servlet-name>
+        <url-pattern>/PatientExaminationPackageSelectServlet</url-pattern>
     </servlet-mapping>
 </web-app>

@@ -5,6 +5,7 @@
 package controller.patient;
 
 import dal.AppointmentDAO;
+import dal.ExaminationPackageDAO;
 import dal.PatientDAO;
 import dal.TimeSlotDAO;
 import java.io.IOException;
@@ -20,6 +21,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 import model.Appointment;
+import model.ExaminationPackage;
 import model.Patient;
 import model.TimeSlot;
 import model.User;
@@ -68,7 +70,17 @@ public class PatientBookAppointmentServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        //Get current examination package for patient to book
+        String examPackageStr = request.getParameter("examPackageId");
+        int examPackageId = 1;
+        if(examPackageStr != null) {
+           examPackageId = Integer.parseInt(examPackageStr);
+        }
+        ExaminationPackageDAO examinationPackageDAO = new ExaminationPackageDAO();
+        ExaminationPackage examinationPackage = examinationPackageDAO.getPackageById(examPackageId);
+        request.setAttribute("examinationPackage", examinationPackage);
+        
+        // Get all time slots
         TimeSlotDAO timeSlotDAO = new TimeSlotDAO();
         List<TimeSlot> timeSlots = timeSlotDAO.getAllTimeSlots();
         request.setAttribute("timeSlots", timeSlots);
@@ -78,7 +90,7 @@ public class PatientBookAppointmentServlet extends HttpServlet {
             User user = (User) session.getAttribute("user");
             if (user != null) {
                 PatientDAO patientDAO = new PatientDAO();
-                Patient patient = patientDAO.getPatientByPhone(user.getPhone()); // assuming username is phone
+                Patient patient = patientDAO.getPatientByPhone(user.getPhone()); // key is phone
                 if (patient != null) {
                     request.setAttribute("fullName", patient.getFullName());
                     request.setAttribute("phone", patient.getPhone());
