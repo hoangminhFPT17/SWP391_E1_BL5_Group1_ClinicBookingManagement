@@ -21,15 +21,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.sql.Date;
 import java.net.URLEncoder; // Thêm để mã hóa tham số URL
 
 /**
- * Servlet xử lý các yêu cầu liên quan đến hồ sơ người dùng, bao gồm xem hồ sơ, cập nhật thông tin và đổi mật khẩu.
+ * Servlet xử lý các yêu cầu liên quan đến hồ sơ người dùng, bao gồm xem hồ sơ,
+ * cập nhật thông tin và đổi mật khẩu.
  */
 @WebServlet(name = "ProfileServlet", urlPatterns = {"/profile-alt"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // Kích thước ngưỡng để lưu tạm file: 2MB
-        maxFileSize = 1024 * 1024 * 10,      // Kích thước tối đa của một file: 10MB
+        maxFileSize = 1024 * 1024 * 10, // Kích thước tối đa của một file: 10MB
         maxRequestSize = 1024 * 1024 * 50)   // Kích thước tối đa của toàn bộ request: 50MB
 public class ProfileServlet extends HttpServlet {
 
@@ -68,9 +72,34 @@ public class ProfileServlet extends HttpServlet {
 
         if ("changePassword".equals(action)) {
             handleChangePassword(request, response, session, currentUser, daoUser);
+        } else if ("changeProfilePicture".equals(action)) {
+//            handleUpdateProfile(request, response, session, currentUser, daoUser);
+           String path = handleFileUpload(request, "DSADD");
+           currentUser.setImgPath(path);
+           response.sendRedirect("profile-alt?message=" + URLEncoder.encode("NICE JOB. "+path, "UTF-8"));
+           
         } else {
 //            handleUpdateProfile(request, response, session, currentUser, daoUser);
         }
+    }
+    
+    private boolean uploadFile(InputStream is, String path) {
+        boolean test = false;
+        
+        try {
+            byte[] byt = new byte[is.available()];
+            is.read(byt);
+            FileOutputStream fops = new FileOutputStream(path);
+            fops.write(byt);
+            fops.flush();
+            fops.close();
+            
+            test = true;
+        } catch (Exception E) {
+            E.printStackTrace();
+        }
+        
+        return test;
     }
 
     private void handleChangePassword(HttpServletRequest request, HttpServletResponse response,
@@ -80,10 +109,10 @@ public class ProfileServlet extends HttpServlet {
         String confirmPassword = request.getParameter("confirmPassword");
 
         try {
-      
+
             String encryptedCurrentPassword = currentPassword;
             if (!currentUser.getPasswordHash().equals(encryptedCurrentPassword)) {
-                response.sendRedirect("profile-alt?error=" + URLEncoder.encode("Mật khẩu hiện tại không đúng."+currentPassword+"  "+currentUser.getPasswordHash()+"  "+newPassword+confirmPassword, "UTF-8"));
+                response.sendRedirect("profile-alt?error=" + URLEncoder.encode("Mật khẩu hiện tại không đúng." + currentPassword + "  " + currentUser.getPasswordHash() + "  " + newPassword + confirmPassword, "UTF-8"));
                 return;
             }
 
@@ -148,7 +177,6 @@ public class ProfileServlet extends HttpServlet {
 //            response.sendRedirect("profile?error=" + URLEncoder.encode("Cập nhật hồ sơ thất bại.", "UTF-8"));
 //        }
 //    }
-
     private java.sql.Date parseDateOfBirth(String dobParam, HttpSession session) {
         if (dobParam == null || dobParam.trim().isEmpty()) {
             return null;

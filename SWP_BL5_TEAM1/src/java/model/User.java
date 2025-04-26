@@ -21,6 +21,48 @@ public class User {
     private java.sql.Timestamp otpExpiry;
     private java.sql.Timestamp createdAt;
     private String role;
+    private String bio;
+    private String imgPath;
+
+    public User(int userId, String email, String passwordHash, String phone, String fullName, boolean isVerified, String otpCode, Timestamp otpExpiry, Timestamp createdAt, String role, String bio, String imgPath) {
+        this.userId = userId;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.phone = phone;
+        this.fullName = fullName;
+        this.isVerified = isVerified;
+        this.otpCode = otpCode;
+        this.otpExpiry = otpExpiry;
+        this.createdAt = createdAt;
+        this.role = role;
+        this.bio = bio;
+        this.imgPath = imgPath;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getImgPath() {
+        return imgPath;
+    }
+
+    public void setImgPath(String imgPath) {
+        this.imgPath = imgPath;
+    }
+
+    public User(String email, String passwordHash, String phone, String fullName, String bio, String imgPath) {
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.phone = phone;
+        this.fullName = fullName;
+        this.bio = bio;
+        this.imgPath = imgPath;
+    }
 
     public User() {
     }
