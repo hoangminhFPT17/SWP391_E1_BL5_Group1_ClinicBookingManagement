@@ -112,7 +112,7 @@
                 </ul>
                 <!-- Start Dropdown -->
 
-                <jsp:include page="/WEB-INF/jsp/common/header.jsp" />
+                <jsp:include page="/common/header.jsp" />
             </div><!--end container-->
         </header><!--end header-->
         <!-- Navbar End -->
@@ -158,21 +158,23 @@
                             </div>
 
                             <div class="p-4 border-bottom">
-                                <div class="row align-items-center">
-                                    <div class="col-lg-2 col-md-4">
-                                        <img src="${pageContext.request.contextPath}/assets/images/doctors/01.jpg" class="avatar avatar-md-md rounded-pill shadow mx-auto d-block" alt="">
-                                    </div><!--end col-->
+                                <form class="edit-profile" action="profile-alt" method="POST" enctype="multipart/form-data">
+                                    <div class="row align-items-center">
+                                        <input type="hidden" name="action" value="changeProfilePicture">
+                                        <div class="col-lg-2 col-md-4">
+                                            <img src="${pageContext.request.contextPath}/<%= user.getImgPath() != null ? user.getImgPath() : "uploads/default_avatar.jpg"%>"  class="avatar avatar-md-md rounded-pill shadow mx-auto d-block" alt="">
+                                        </div><!--end col-->
 
-                                    <div class="col-lg-5 col-md-8 text-center text-md-start mt-4 mt-sm-0">
-                                        <h5 class="">Upload your picture</h5>
-                                        <p class="text-muted mb-0">For best results, use an image at least 256px by 256px in either .jpg or .png format</p>
-                                    </div><!--end col-->
+                                        <div class="col-lg-5 col-md-8 text-center text-md-start mt-4 mt-sm-0">
+                                            <input class="form-control" type="file" name="avatar" accept="image/*">
+                                            <p class="text-muted mb-0">For best results, use an image at least 256px by 256px in either .jpg or .png format</p>
+                                        </div><!--end col-->
 
-                                    <div class="col-lg-5 col-md-12 text-lg-end text-center mt-4 mt-lg-0">                                        
-                                        <a href="#" class="btn btn-primary">Upload</a>
-                                        <a href="#" class="btn btn-soft-primary ms-2">Remove</a>
-                                    </div><!--end col-->
-                                </div><!--end row-->
+                                        <div class="col-lg-5 col-md-12 text-lg-end text-center mt-4 mt-lg-0">                                        
+                                             <button type="submit" class="btn btn-primary">Upload</button>
+                                        </div><!--end col-->
+                                    </div><!--end row-->
+                                </form>
                             </div>
 
                             <div class="p-4">
@@ -255,7 +257,7 @@
                                         </div><!--end col-->
 
                                         <div class="col-lg-12 mt-2 mb-0">
-                                            <button type="" onclick="return encryptForPassChange()" class="btn btn-primary">Save password</button>
+                                            <button type="submit" onclick="return encryptForPassChange()" class="btn btn-primary">Save password</button>
                                         </div><!--end col-->
                                     </div><!--end row-->
                                 </form>
@@ -458,25 +460,25 @@
         <script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
     </body>
     <script>
-                                            // Xử lý popup thông báo từ tham số URL
-                                            const urlParams = new URLSearchParams(window.location.search);
-                                            const message = urlParams.get('message');
-                                            const error = urlParams.get('error');
+                                        // Xử lý popup thông báo từ tham số URL
+                                        const urlParams = new URLSearchParams(window.location.search);
+                                        const message = urlParams.get('message');
+                                        const error = urlParams.get('error');
 
-                                            if (message) {
-                                                alert(decodeURIComponent(message)); // Hiển thị thông báo thành công
-                                                // Xóa tham số sau khi hiển thị để tránh popup lặp lại khi refresh
-                                                window.history.replaceState({}, document.title, window.location.pathname);
-                                            } else if (error) {
-                                                alert(decodeURIComponent(error));   // Hiển thị thông báo lỗi
-                                                window.history.replaceState({}, document.title, window.location.pathname);
-                                            }
+                                        if (message) {
+                                            alert(decodeURIComponent(message)); // Hiển thị thông báo thành công
+                                            // Xóa tham số sau khi hiển thị để tránh popup lặp lại khi refresh
+                                            window.history.replaceState({}, document.title, window.location.pathname);
+                                        } else if (error) {
+                                            alert(decodeURIComponent(error));   // Hiển thị thông báo lỗi
+                                            window.history.replaceState({}, document.title, window.location.pathname);
+                                        }
 
-                                            // Chuyển tab dựa trên action (nếu cần)
+                                        // Chuyển tab dựa trên action (nếu cần)
         <% if ("changePassword".equals(request.getParameter("action"))) { %>
-                                            $('#change-password').tab('show');
+                                        $('#change-password').tab('show');
         <% } else if ("editProfile".equals(request.getParameter("action"))) { %>
-                                            $('#edit-profile').tab('show');
+                                        $('#edit-profile').tab('show');
         <% }%>
     </script>
 </html>
