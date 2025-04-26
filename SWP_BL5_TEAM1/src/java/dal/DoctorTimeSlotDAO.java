@@ -11,7 +11,11 @@ package dal;
 import dto.AssignedDoctorDTO;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.DoctorTimeSlot;
@@ -189,6 +193,49 @@ public class DoctorTimeSlotDAO extends DBContext {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public Map<String, Set<Integer>> getSlotMapByDoctorId(int doctorId) {
+        Map<String, Set<Integer>> map = new HashMap<>(); //Use set to avoid duplicates (even tho is unique)
+        String query = "SELECT day_of_week, slot_id FROM DoctorTimeSlot WHERE staff_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, doctorId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                String day = rs.getString("day_of_week");
+                int slotId = rs.getInt("slot_id");
+                map.computeIfAbsent(day, k -> new HashSet<>()).add(slotId);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorTimeSlotDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return map;
+    }
+
+    public boolean addDoctorToTimeSlot(int doctorId, int slotId, String dayOfWeek) {
+        String sql = "INSERT INTO DoctorTimeSlot (staff_id, slot_id, day_of_week, max_appointments) VALUES (?, ?, ?, 10)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, doctorId);
+            ps.setInt(2, slotId);
+            ps.setString(3, dayOfWeek);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean removeDoctorFromTimeSlot(int doctorId, int slotId, String dayOfWeek) {
+        String sql = "DELETE FROM DoctorTimeSlot WHERE staff_id = ? AND slot_id = ? AND day_of_week = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, doctorId);
+            ps.setInt(2, slotId);
+            ps.setString(3, dayOfWeek);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return false;
     }
 
     private DoctorTimeSlot mapToDoctorTimeSlot(ResultSet rs) throws SQLException {
