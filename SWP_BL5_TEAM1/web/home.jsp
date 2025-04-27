@@ -100,10 +100,10 @@
                                     <a href="User?service=registerUser" class="sub-menu-item" style="color: rgba(255, 255, 255, 0.5) !important;">Register</a>
                                         <% } else {%>
                                      <div class="dropdown dropdown-primary">
-                            <button type="button" class="btn btn-pills btn-soft-primary dropdown-toggle p-0" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="${pageContext.request.contextPath}/assets/images/doctors/01.jpg" class="avatar avatar-ex-small rounded-circle" alt=""></button>
+                            <button type="button" class="btn btn-pills btn-soft-primary dropdown-toggle p-0" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="${pageContext.request.contextPath}/<%= user.getImgPath() != null ? user.getImgPath() : "uploads/default_avatar.jpg"%>" class="avatar avatar-ex-small rounded-circle" alt=""></button>
                             <div class="dropdown-menu dd-menu dropdown-menu-end bg-white shadow border-0 mt-3 py-3" style="min-width: 200px;">
                                 <a class="dropdown-item d-flex align-items-center text-dark" href="doctor-profile.html">
-                                    <img src="${pageContext.request.contextPath}/assets/images/doctors/01.jpg" class="avatar avatar-md-sm rounded-circle border shadow" alt="">
+                                    <img src="${pageContext.request.contextPath}/<%= user.getImgPath() != null ? user.getImgPath() : "uploads/default_avatar.jpg"%>" class="avatar avatar-md-sm rounded-circle border shadow" alt="">
                                     <div class="flex-1 ms-2">
                                         <span class="d-block mb-1">${sessionScope.user.getFullName()}</span>
                                         <small class="text-muted">Orthopedic</small>

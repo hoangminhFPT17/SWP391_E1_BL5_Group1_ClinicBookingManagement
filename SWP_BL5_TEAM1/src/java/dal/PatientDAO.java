@@ -129,6 +129,21 @@ public class PatientDAO extends DBContext {
             return false;
         }
     }
+    
+    public boolean updatePatientPhone(String phone, int id) {
+        String sql = "UPDATE patient SET phone = ? WHERE patient_account_id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, phone);
+            stmt.setInt(2, id);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error updating patient name", ex);
+            return false;
+        }
+    }
 
     /**
      * Update patient profile information without changing the phone number
