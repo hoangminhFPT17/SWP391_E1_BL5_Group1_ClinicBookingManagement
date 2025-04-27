@@ -87,7 +87,7 @@ CREATE TABLE Appointment (
     doctor_id INT NOT NULL,
     slot_id INT NOT NULL,
     appointment_date DATE NOT NULL,
-    status ENUM('Pending', 'Approved', 'Cancelled', 'Completed', 'No-show') DEFAULT 'Pending',
+    status ENUM('No-show','Pending','In progress','Waiting payment','Completed','Canceled','On-hand-off','Back-from-hand-off') DEFAULT 'No-show',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (patient_phone) REFERENCES Patient(phone),
     FOREIGN KEY (doctor_id) REFERENCES StaffAccount(staff_id),
@@ -140,7 +140,7 @@ CREATE TABLE DoctorHandoff (
     to_doctor_id INT NOT NULL,
     appointment_id INT NOT NULL,
     reason TEXT,
-    status ENUM('Pending', 'Received', 'Completed') DEFAULT 'Pending',
+    status ENUM('Pending','In Progress','Completed') DEFAULT 'Pending',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (from_doctor_id) REFERENCES StaffAccount(staff_id),

@@ -50,7 +50,7 @@ function encrypt()
 {
     var pass = document.getElementById('password').value;
     var hide = document.getElementById('hide').value;
-    if (pass == "")
+    if (pass === "")
     {
         document.getElementById('err').innerHTML = 'Error:Password is missing';
         return false;
