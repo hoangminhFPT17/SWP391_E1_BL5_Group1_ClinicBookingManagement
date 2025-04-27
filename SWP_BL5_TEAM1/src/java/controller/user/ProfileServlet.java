@@ -10,6 +10,7 @@ package controller.user;
  */
 import model.User;
 import dal.DAOUser;
+import dal.PatientDAO;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -25,7 +26,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.sql.Date;
-import java.net.URLEncoder; // Thêm để mã hóa tham số URL
+import java.net.URLEncoder;
+import Service.RandomStringService;// Thêm để mã hóa tham số URL
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Servlet xử lý các yêu cầu liên quan đến hồ sơ người dùng, bao gồm xem hồ sơ,
@@ -73,19 +76,24 @@ public class ProfileServlet extends HttpServlet {
         if ("changePassword".equals(action)) {
             handleChangePassword(request, response, session, currentUser, daoUser);
         } else if ("changeProfilePicture".equals(action)) {
-//            handleUpdateProfile(request, response, session, currentUser, daoUser);
-           String path = handleFileUpload(request, "DSADD");
-           currentUser.setImgPath(path);
-           response.sendRedirect("profile-alt?message=" + URLEncoder.encode("NICE JOB. "+path, "UTF-8"));
-           
+            String path = handleFileUpload(request, "DSADD");
+            daoUser.updateImagePath(currentUser.getUserId(), path);
+            currentUser.setImgPath(path);
+            response.sendRedirect("profile-alt?message=" + URLEncoder.encode("NICE JOB. " + path, "UTF-8"));
+
+        } else if ("medicalHistory".equals(action)) {
+            String path2 = handlePdfUpload(request, currentUser.getPdfPath());
+            daoUser.updatePdfPath(currentUser.getUserId(), path2);
+            currentUser.setPdfPath(path2);
+            response.sendRedirect("profile-alt?message=" + URLEncoder.encode("NICE JOB. " + path2, "UTF-8"));
         } else {
-//            handleUpdateProfile(request, response, session, currentUser, daoUser);
+            handleUpdateProfile(request, response, session, currentUser, daoUser);
         }
     }
-    
+
     private boolean uploadFile(InputStream is, String path) {
         boolean test = false;
-        
+
         try {
             byte[] byt = new byte[is.available()];
             is.read(byt);
@@ -93,12 +101,12 @@ public class ProfileServlet extends HttpServlet {
             fops.write(byt);
             fops.flush();
             fops.close();
-            
+
             test = true;
         } catch (Exception E) {
             E.printStackTrace();
         }
-        
+
         return test;
     }
 
@@ -139,44 +147,55 @@ public class ProfileServlet extends HttpServlet {
         }
     }
 
-//    private void handleUpdateProfile(HttpServletRequest request, HttpServletResponse response,
-//            HttpSession session, User currentUser, DAOUser daoUser) throws IOException, ServletException {
-//        int userId = currentUser.getUserID();
-//        String fullName = request.getParameter("fullName");
-//        String phone = request.getParameter("phone");
-//        String dobParam = request.getParameter("dob");
-//        String address = request.getParameter("address");
-//        java.sql.Date sqlDob = parseDateOfBirth(dobParam, session);
-//
-//        if (sqlDob == null && session.getAttribute("error") != null) {
-//            response.sendRedirect("profile?error=" + URLEncoder.encode("Ngày sinh không hợp lệ.", "UTF-8"));
-//            return;
-//        }
-//
-//        if (phone != null && !phone.trim().isEmpty() && !phone.equals(currentUser.getPhone())) {
-//            try {
-//                if (daoUser.isPhoneExist(phone, userId)) {
-//                    response.sendRedirect("profile?error=" + URLEncoder.encode("Số điện thoại đã được sử dụng bởi người dùng khác.", "UTF-8"));
-//                    return;
-//                }
-//            } catch (SQLException e) {
-//                response.sendRedirect("profile?error=" + URLEncoder.encode("Lỗi khi kiểm tra số điện thoại: " + e.getMessage(), "UTF-8"));
-//                return;
-//            }
-//        }
-//
-//        String avatarPath = handleFileUpload(request, currentUser.getAvatar());
-//        User updatedUser = new User(userId, currentUser.getRoleID(), currentUser.getEmail(), fullName, phone,
-//                currentUser.getCreateAt(), currentUser.getIsActive(), sqlDob, address,
-//                avatarPath, currentUser.getUserName(), currentUser.getPassword());
-//
-//        if (daoUser.updateUser(updatedUser)) {
-//            session.setAttribute("user", updatedUser);
-//            response.sendRedirect("profile?message=" + URLEncoder.encode("Cập nhật hồ sơ thành công!", "UTF-8"));
-//        } else {
-//            response.sendRedirect("profile?error=" + URLEncoder.encode("Cập nhật hồ sơ thất bại.", "UTF-8"));
-//        }
-//    }
+    private void handleUpdateProfile(HttpServletRequest request, HttpServletResponse response,
+            HttpSession session, User currentUser, DAOUser daoUser) throws IOException, ServletException {
+        int userId = currentUser.getUserId();
+        String firstName = request.getParameter("name1").trim();
+        String lastName = request.getParameter("name2").trim();
+
+        String fullName = firstName + " " + lastName;
+        String email = request.getParameter("email");
+        String phone = request.getParameter("phone");
+        String bio = request.getParameter("bio");
+        
+        PatientDAO p_dao = new PatientDAO();
+
+        if (phone != null && !phone.equals(currentUser.getPhone())) {
+            try {
+                if (daoUser.isPhoneExist(phone, userId)) {
+                    response.sendRedirect("profile-alt?error=" + URLEncoder.encode("Số điện thoại đã được sử dụng bởi người dùng khác.", "UTF-8"));
+                    return;
+                }
+            } catch (SQLException e) {
+                response.sendRedirect("profile-alt?error=" + URLEncoder.encode("Lỗi khi kiểm tra số điện thoại: " + e.getMessage(), "UTF-8"));
+                return;
+            }
+        }
+
+        if (email != null && !email.equals(currentUser.getEmail())) {
+            try {
+                if (daoUser.isEmailExists(email)) {
+                    response.sendRedirect("profile-alt?error=" + URLEncoder.encode("email đã được sử dụng bởi người dùng khác.", "UTF-8"));
+                    return;
+                }
+            } catch (SQLException e) {
+                response.sendRedirect("profile-alt?error=" + URLEncoder.encode("Lỗi khi kiểm tra email: " + e.getMessage(), "UTF-8"));
+                return;
+            }
+        }
+
+        User updatedUser = new User(userId, email, currentUser.getPasswordHash(), phone, fullName, true,
+                currentUser.getOtpCode(), currentUser.getOtpExpiry(), currentUser.getCreatedAt(), bio, currentUser.getImgPath(), currentUser.getPdfPath());
+
+        if (daoUser.updateUser2(updatedUser)) {
+            session.setAttribute("user", updatedUser);
+            p_dao.updatePatientPhone(phone, userId);
+            response.sendRedirect("profile-alt?message=" + URLEncoder.encode("Cập nhật hồ sơ thành công!", "UTF-8"));
+        } else {
+            response.sendRedirect("profile-alt?error=" + URLEncoder.encode("Cập nhật hồ sơ thất bại.", "UTF-8"));
+        }
+    }
+
     private java.sql.Date parseDateOfBirth(String dobParam, HttpSession session) {
         if (dobParam == null || dobParam.trim().isEmpty()) {
             return null;
@@ -209,6 +228,25 @@ public class ProfileServlet extends HttpServlet {
         return currentAvatar;
     }
 
+    private String handlePdfUpload(HttpServletRequest request, String currentPdf) throws IOException, ServletException {
+        Part filePart = request.getPart("pdf");
+        if (filePart != null && filePart.getSize() > 0) {
+            String fileName = extractFileName2(filePart);
+            if (fileName != null && isImageFile(fileName)) {
+                String uploadPath = getServletContext().getRealPath("") + "uploads/";
+                java.io.File uploadDir = new java.io.File(uploadPath);
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdir();
+                }
+                filePart.write(uploadPath + fileName);
+                return "uploads/" + fileName;
+            } else {
+                return currentPdf;
+            }
+        }
+        return currentPdf;
+    }
+
     private String extractFileName(Part part) {
         String contentDisposition = part.getHeader("content-disposition");
         String[] items = contentDisposition.split(";");
@@ -220,8 +258,46 @@ public class ProfileServlet extends HttpServlet {
         return null;
     }
 
+    private String extractFileName2(Part part) {
+        String contentDisposition = part.getHeader("content-disposition");
+        if (contentDisposition == null) {
+            return null;
+        }
+
+        String[] items = contentDisposition.split(";");
+        String fileName = null;
+
+        // Extract original filename
+        for (String item : items) {
+            if (item.trim().startsWith("filename")) {
+                fileName = item.substring(item.indexOf("=") + 2, item.length() - 1);
+                break;
+            }
+        }
+
+        if (fileName == null || fileName.isEmpty()) {
+            return null;
+        }
+
+        // Split filename and extension
+        int lastDotIndex = fileName.lastIndexOf('.');
+        String baseName = fileName;
+        String extension = "";
+
+        if (lastDotIndex != -1) {
+            baseName = fileName.substring(0, lastDotIndex);
+            extension = fileName.substring(lastDotIndex);
+        }
+
+        // Generate 6-digit random number
+        int randomDigits = ThreadLocalRandom.current().nextInt(100_000, 1_000_000);
+
+        // Construct new filename
+        return baseName + "_" + randomDigits + extension;
+    }
+
     private boolean isImageFile(String fileName) {
-        String[] allowedExtensions = {".jpg", ".jpeg", ".png", ".gif"};
+        String[] allowedExtensions = {".jpg", ".jpeg", ".png", ".gif", ".pdf"};
         for (String ext : allowedExtensions) {
             if (fileName.toLowerCase().endsWith(ext)) {
                 return true;

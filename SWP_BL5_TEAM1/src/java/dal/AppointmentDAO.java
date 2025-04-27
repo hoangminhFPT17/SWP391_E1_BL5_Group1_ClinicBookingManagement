@@ -10,6 +10,8 @@ package dal;
  */
 import dto.AppointmentDTO;
 import dto.AppointmentDetailDTO;
+import dto.ReceptionAppointmentDTO;
+import jakarta.servlet.ServletException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -90,6 +92,19 @@ public class AppointmentDAO extends DBContext {
     public List<Appointment> getAll() {
         List<Appointment> list = new ArrayList<>();
         String sql = "SELECT * FROM Appointment";
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(extractAppointment(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<Appointment> getAllWaitingPayment() {
+        List<Appointment> list = new ArrayList<>();
+        String sql = "SELECT * FROM swp_clinic.appointment WHERE status = 'completed' ";
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 list.add(extractAppointment(rs));
@@ -214,52 +229,62 @@ public class AppointmentDAO extends DBContext {
     public static void main(String[] args) {
         AppointmentDAO dao = new AppointmentDAO();
 
-        // Test parameters
-        String phone = "3333333333";          // Replace with existing patient phone
-        String keyword = "";              // Search keyword (Doctor name or TimeSlot name), can be null or ""
-        String status = "";            // Status filter, can be null or ""
-        Integer timeSlotId = null;
-        int page = 1;                         // Page number
-        int pageSize = 5;                     // Number of records per page
+//        // Test parameters
+//        String phone = "3333333333";          // Replace with existing patient phone
+//        String keyword = "";              // Search keyword (Doctor name or TimeSlot name), can be null or ""
+//        String status = "";            // Status filter, can be null or ""
+//        Integer timeSlotId = null;
+//        int page = 1;                         // Page number
+//        int pageSize = 5;                     // Number of records per page
+//
+//        int offset = (page - 1) * pageSize;
+//
+//        // Test search
+//        List<Appointment> appointments = dao.searchAppointments(phone, keyword, status, timeSlotId, offset, pageSize);
+//        int totalRecords = dao.countAppointments(phone, keyword, status, timeSlotId);
+//        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+//
+//        // Output result
+//        System.out.println("Total appointments found: " + totalRecords);
+//        System.out.println("Total pages: " + totalPages);
+//        System.out.println("Current page: " + page);
+//        System.out.println("Appointments on this page:");
+//
+//        for (Appointment appt : appointments) {
+//            System.out.println("ID: " + appt.getAppointmentId()
+//                    + ", Phone: " + appt.getPatientPhone()
+//                    + ", Doctor ID: " + appt.getDoctorId()
+//                    + ", Slot ID: " + appt.getSlotId()
+//                    + ", Date: " + appt.getAppointmentDate()
+//                    + ", Status: " + appt.getStatus());
+//        }
+        List<ReceptionAppointmentDTO> appointments;
+        try {
+            appointments = dao.getCompletedAppointments();
+            for (ReceptionAppointmentDTO dto : appointments) {
+                System.err.print(dto.getDoctor_fullName());
+            }
+        } catch (Exception e) {
 
-        int offset = (page - 1) * pageSize;
-
-        // Test search
-        List<Appointment> appointments = dao.searchAppointments(phone, keyword, status, timeSlotId, offset, pageSize);
-        int totalRecords = dao.countAppointments(phone, keyword, status, timeSlotId);
-        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
-
-        // Output result
-        System.out.println("Total appointments found: " + totalRecords);
-        System.out.println("Total pages: " + totalPages);
-        System.out.println("Current page: " + page);
-        System.out.println("Appointments on this page:");
-
-        for (Appointment appt : appointments) {
-            System.out.println("ID: " + appt.getAppointmentId()
-                    + ", Phone: " + appt.getPatientPhone()
-                    + ", Doctor ID: " + appt.getDoctorId()
-                    + ", Slot ID: " + appt.getSlotId()
-                    + ", Date: " + appt.getAppointmentDate()
-                    + ", Status: " + appt.getStatus());
         }
+
     }
-    
+
     public List<AppointmentDTO> getTodayAppointmentsForCurrentSlot(int doctorId) throws SQLException {
         List<AppointmentDTO> list = new ArrayList<>();
 
         String sql = ""
-            + "SELECT a.appointment_id, p.full_name AS patientName, p.date_of_birth, "
-            + "       a.appointment_date, ts.name AS timeSlotName, "
-            + "       u.full_name AS doctorFullName, a.status "
-            + "  FROM Appointment a "
-            + "  JOIN Patient p ON a.patient_phone = p.phone "
-            + "  JOIN TimeSlot ts ON a.slot_id = ts.slot_id "
-            + "  JOIN StaffAccount sa ON a.doctor_id = sa.staff_id "
-            + "  JOIN User u ON sa.user_id = u.user_id "
-            + " WHERE a.doctor_id = ? "
-            + "   AND a.appointment_date = CURRENT_DATE() "
-            + " ORDER BY ts.start_time, a.created_at";
+                + "SELECT a.appointment_id, p.full_name AS patientName, p.date_of_birth, "
+                + "       a.appointment_date, ts.name AS timeSlotName, "
+                + "       u.full_name AS doctorFullName, a.status "
+                + "  FROM Appointment a "
+                + "  JOIN Patient p ON a.patient_phone = p.phone "
+                + "  JOIN TimeSlot ts ON a.slot_id = ts.slot_id "
+                + "  JOIN StaffAccount sa ON a.doctor_id = sa.staff_id "
+                + "  JOIN User u ON sa.user_id = u.user_id "
+                + " WHERE a.doctor_id = ? "
+                + "   AND a.appointment_date = CURRENT_DATE() "
+                + " ORDER BY ts.start_time, a.created_at";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, doctorId);
@@ -282,33 +307,70 @@ public class AppointmentDAO extends DBContext {
 
         return list;
     }
-    
+
+    public List<ReceptionAppointmentDTO> getCompletedAppointments() throws SQLException {
+        List<ReceptionAppointmentDTO> list = new ArrayList<>();
+
+        String sql
+                = "SELECT\n"
+                + "    a.appointment_id as appointment_id,\n"
+                + "    p.phone AS patient_phone,\n"
+                + "    p.full_name AS patient_fullName,\n"
+                + "    u.user_id AS doctor_userId,\n"
+                + "    u.full_name AS doctor_fullName,\n"
+                + "    ts.start_time AS slot_startTime,\n"
+                + "    ts.end_time AS slot_endTime,\n"
+                + "    ep.name AS package_name,\n"
+                + "    a.description AS appointment_description\n"
+                + "FROM Appointment a\n"
+                + "INNER JOIN Patient p ON a.patient_phone = p.phone\n"
+                + "INNER JOIN StaffAccount sa ON a.doctor_id = sa.staff_id\n"
+                + "INNER JOIN User u ON sa.user_id = u.user_id\n"
+                + "INNER JOIN TimeSlot ts ON a.slot_id = ts.slot_id\n"
+                + "LEFT JOIN ExaminationPackage ep ON a.package_id = ep.package_id\n"
+                + "WHERE a.status = 'Completed' \n"
+                + "ORDER BY a.appointment_date;";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ReceptionAppointmentDTO dto = new ReceptionAppointmentDTO(rs.getInt("appointment_id"), rs.getString("patient_phone"),
+                            rs.getString("patient_fullName"), rs.getInt("doctor_userId"), rs.getString("doctor_fullName"),
+                            rs.getTime("slot_startTime"), rs.getString("package_name"), rs.getString("appointment_description"), rs.getTime("slot_endTime"));
+                    list.add(dto);
+                }
+            }
+        }
+
+        return list;
+    }
+
     public AppointmentDetailDTO getAppointmentDetailById(int id) {
-        String sql =
-            "SELECT a.appointment_id, a.patient_phone, u_doc.full_name AS doctorFullName, " +
-            "       ts.name AS slot, a.appointment_date, a.status, a.created_at, " +
-            "       a.description, ep.name AS examinationPackage " +
-            "  FROM Appointment a " +
-            "  JOIN TimeSlot ts  ON a.slot_id = ts.slot_id " +
-            "  JOIN ExaminationPackage ep ON a.package_id = ep.package_id " +
-            "  JOIN StaffAccount sa ON a.doctor_id = sa.staff_id " +
-            "  JOIN User u_doc     ON sa.user_id = u_doc.user_id " +
-            " WHERE a.appointment_id = ?";
+        String sql
+                = "SELECT a.appointment_id, a.patient_phone, u_doc.full_name AS doctorFullName, "
+                + "       ts.name AS slot, a.appointment_date, a.status, a.created_at, "
+                + "       a.description, ep.name AS examinationPackage "
+                + "  FROM Appointment a "
+                + "  JOIN TimeSlot ts  ON a.slot_id = ts.slot_id "
+                + "  JOIN ExaminationPackage ep ON a.package_id = ep.package_id "
+                + "  JOIN StaffAccount sa ON a.doctor_id = sa.staff_id "
+                + "  JOIN User u_doc     ON sa.user_id = u_doc.user_id "
+                + " WHERE a.appointment_id = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return new AppointmentDetailDTO(
-                        rs.getInt("appointment_id"),
-                        rs.getString("patient_phone"),
-                        rs.getString("doctorFullName"),   // mapping doctorId→full name
-                        rs.getString("slot"),
-                        rs.getDate("appointment_date"),
-                        rs.getString("status"),
-                        rs.getTimestamp("created_at"),
-                        rs.getString("description"),
-                        rs.getString("examinationPackage")
+                            rs.getInt("appointment_id"),
+                            rs.getString("patient_phone"),
+                            rs.getString("doctorFullName"), // mapping doctorId→full name
+                            rs.getString("slot"),
+                            rs.getDate("appointment_date"),
+                            rs.getString("status"),
+                            rs.getTimestamp("created_at"),
+                            rs.getString("description"),
+                            rs.getString("examinationPackage")
                     );
                 }
             }

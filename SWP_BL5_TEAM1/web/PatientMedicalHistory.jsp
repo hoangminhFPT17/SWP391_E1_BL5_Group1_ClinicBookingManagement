@@ -1,9 +1,11 @@
-<%-- 
-    Document   : profile_user
-    Created on : Apr 17, 2025, 12:57:26 AM
-    Author     : JackGarland
---%>
-
+<%@page import="java.util.List"%>
+<%@page import="model.Invoice"%>
+<%@page import="model.Patient"%>
+<%@page import="dal.DAOUser"%>
+<%@page import="dal.StaffAccountDAO"%>
+<%@page import="dal.InvoiceDAO"%>
+<%@page import="dal.AppointmentDAO"%>
+<%@page import="dal.PatientDAO"%>
 <%@page import="model.User"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -34,12 +36,26 @@
 
     <body>
         <%
-            User user = (User) session.getAttribute("user");
-            if (user == null) {
-                response.sendRedirect("home.jsp");
-                return;
-            }
-        %>
+        PatientDAO dao = new PatientDAO();
+        AppointmentDAO appoint_dao = new AppointmentDAO();
+        InvoiceDAO invoice_dao = new InvoiceDAO();
+        User user = (User) session.getAttribute("user");
+        StaffAccountDAO SA_dao = new StaffAccountDAO();
+        DAOUser user_dao = new DAOUser();
+
+        if (user == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        Patient patient = dao.getPatientByUserId(user.getUserId());
+        if (patient == null) {
+            response.sendRedirect("home.jsp");
+            return;
+        }
+        List<Invoice> invoice_list = invoice_dao.getByPatientPhone(patient.getPhone());
+
+    %>
         <!-- Loader -->
         <div id="preloader">
             <div id="status">
@@ -154,207 +170,43 @@
                         <h5 class="mb-0 pb-2">Schedule Timing</h5>
                         <div class="rounded shadow mt-4">
                             <div class="p-4 border-bottom">
-                                <h5 class="mb-0">Personal Information :</h5>
-                            </div>
+                                <h5 class="mb-0">Medical History :</h5>
+                            </div >
 
-                            <div class="p-4 border-bottom">
-                                <form class="edit-profile" action="profile-alt" method="POST" enctype="multipart/form-data">
-                                    <div class="row align-items-center">
-                                        <input type="hidden" name="action" value="changeProfilePicture">
-                                        <div class="col-lg-2 col-md-4">
-                                            <img src="${pageContext.request.contextPath}/<%= user.getImgPath() != null ? user.getImgPath() : "uploads/default_avatar.jpg"%>"  class="avatar avatar-md-md rounded-pill shadow mx-auto d-block" alt="">
-                                        </div><!--end col-->
 
-                                        <div class="col-lg-5 col-md-8 text-center text-md-start mt-4 mt-sm-0">
-                                            <input class="form-control" type="file" name="avatar" accept="image/*">
-                                            <p class="text-muted mb-0">For best results, use an image at least 256px by 256px in either .jpg or .png format</p>
-                                        </div><!--end col-->
-
-                                        <div class="col-lg-5 col-md-12 text-lg-end text-center mt-4 mt-lg-0">                                        
-                                             <button type="submit" class="btn btn-primary">Upload</button>
-                                        </div><!--end col-->
-                                    </div><!--end row-->
-                                </form>
-                            </div>
-
-                            <div class="p-4" id="edit-profile">
-                                <form class="edit-profile" action="profile-alt" method="POST" enctype="multipart/form-data">
-                                    <input type="hidden" name="action" value="editProfile">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">First Name</label>
-                                                <input id="name" type="text" name="name1" class="form-control" value="<%= user.getFullName()%>" pattern="^[A-Za-z\s]{3,50}$">
-                                            </div>
-                                        </div><!--end col-->
-
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Last Name</label>
-                                                <input id="name2" name="name2" type="text" class="form-control" value="<%= user.getFullName()%>" pattern="^[A-Za-z\s]{3,50}$">
-                                            </div>
-                                        </div><!--end col-->
-
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Your Email</label>
-                                                <input name="email" id="email" type="email" class="form-control" value="<%= user.getEmail()%>" pattern="^[A-Za-z0-9+_.-]+@(.+)$">
-                                            </div> 
-                                        </div><!--end col-->
-
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Phone no.</label>
-                                                <input id="number" type="text" name="phone" class="form-control" value="<%= user.getPhone()%>" pattern="\d{10}">
-                                            </div>                                                                               
-                                        </div><!--end col-->
-
-                                        <div class="col-md-12">
-                                            <div class="mb-3">
-                                                <label class="form-label">Your Bio Here</label>
-                                                <textarea id="comments" name="bio" rows="4" class="form-control" placeholder="Bio :"></textarea>
-                                            </div>
-                                        </div>
-                                    </div><!--end row-->
-
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <button type="submit" class="btn btn-primary">Save Changes</button>
-                                            <button type="reset" class="btn btn-secondary">Reset</button>
-                                        </div><!--end col-->
-                                    </div><!--end row-->
-                                </form><!--end form--> 
-                            </div>
-                        </div>
-
-                        <div class="rounded shadow mt-4">
-                            <div class="p-4 border-bottom">
-                                <h5 class="mb-0">Change Password :</h5>
-                            </div>
-
-                            <div class="p-4 profile-head" id="change-password">
-                                <form class="edit-profile" action="profile-alt" method="POST">
-                                    <input type="hidden" name="action" value="changePassword">
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <div class="mb-3">
-                                                <label class="form-label">Old password :</label>
-                                                <input class="form-control" id="currentPassword" type="password" name="currentPassword" placeholder="Old password" required="">
-                                            </div>
-                                        </div><!--end col-->
-
-                                        <div class="col-lg-12">
-                                            <div class="mb-3">
-                                                <label class="form-label">New password :</label>
-                                                <input type="hidden" name="hide" id="hide" />
-                                                <input class="form-control" id="newPassword" type="password" name="newPassword" placeholder="New password" required="">
-                                            </div>
-                                        </div><!--end col-->
-
-                                        <div class="col-lg-12">
-                                            <div class="mb-3">
-                                                <label class="form-label">Re-type New password :</label>
-                                                <input class="form-control" id="confirmPassword" type="password" name="confirmPassword" placeholder="Re-type New password" required="">
-                                            </div>
-                                        </div><!--end col-->
-
-                                        <div class="col-lg-12 mt-2 mb-0">
-                                            <button type="submit" onclick="return encryptForPassChange()" class="btn btn-primary">Save password</button>
-                                        </div><!--end col-->
-                                    </div><!--end row-->
-                                </form>
-                            </div>
-                        </div>
-
-                        <div class="rounded shadow mt-4">
-                            <div class="p-4 border-bottom">
-                                <h5 class="mb-0">Account Notifications :</h5>
-                            </div>
-
-                            <div class="p-4">
-                                <div class="d-flex justify-content-between pb-4">
-                                    <h6 class="mb-0 fw-normal">When someone mentions me</h6>
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" value="" id="customSwitch1">
-                                        <label class="form-check-label" for="customSwitch1"></label>
+                            <form class="edit-profile" action="profile-alt" method="POST" enctype="multipart/form-data">
+                                <div class="row align-items-center">
+                                    <input type="hidden" name="action" value="medicalHistory">
+                                    <div class="p-4 border-bottom" name="medicalHistory">
+                                        <object data="${pageContext.request.contextPath}/<%= user.getPdfPath() != null ? user.getPdfPath() : "uploads/67bfa8f08d1c74c48794fd66_edit.pdf"%>" type="application/pdf" width="800px" height="600px"></object>
                                     </div>
+
+                                    <div class="col-lg-5 col-md-8 text-center text-md-start mt-4 mt-sm-0">
+                                        <input class="form-control" type="file" name="pdf" accept="application/pdf">
+                                        <p class="text-muted mb-0">If you haven't completed this form from our hospital yet or if you want to change your form, please complete the form, download with changes and then select it so we can save it for you!</p>
+                                    </div><!--end col-->
+
+                                    <div class="col-lg-5 col-md-12 text-lg-end text-center mt-4 mt-lg-0">                                        
+                                        <button type="submit" class="btn btn-primary">Upload</button>
+                                    </div><!--end col-->
+                                </div><!--end row-->
+                            </form>
+
+                            <div class="rounded shadow mt-4">
+                                <div class="p-4 border-bottom">
+                                    <h5 class="mb-0 text-danger">Delete Account :</h5>
                                 </div>
-                                <div class="d-flex justify-content-between py-4 border-top">
-                                    <h6 class="mb-0 fw-normal">When someone follows me</h6>
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="customSwitch2" checked>
-                                        <label class="form-check-label" for="customSwitch2"></label>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-between py-4 border-top">
-                                    <h6 class="mb-0 fw-normal">When shares my activity</h6>
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="customSwitch3">
-                                        <label class="form-check-label" for="customSwitch3"></label>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-between py-4 border-top">
-                                    <h6 class="mb-0 fw-normal">When someone messages me</h6>
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="customSwitch4" checked>
-                                        <label class="form-check-label" for="customSwitch4"></label>
-                                    </div>
+
+                                <div class="p-4">
+                                    <h6 class="mb-0 fw-normal">Do you want to delete the account? Please press below "Delete" button</h6>
+                                    <div class="mt-4">
+                                        <button class="btn btn-danger">Delete Account</button>
+                                    </div><!--end col-->
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="rounded shadow mt-4">
-                            <div class="p-4 border-bottom">
-                                <h5 class="mb-0">Marketing Notifications :</h5>
-                            </div>
-
-                            <div class="p-4">
-                                <div class="d-flex justify-content-between pb-4">
-                                    <h6 class="mb-0 fw-normal">There is a sale or promotion</h6>
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="customSwitch5" checked>
-                                        <label class="form-check-label" for="customSwitch5"></label>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-between py-4 border-top">
-                                    <h6 class="mb-0 fw-normal">Company news</h6>
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="customSwitch6">
-                                        <label class="form-check-label" for="customSwitch6"></label>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-between py-4 border-top">
-                                    <h6 class="mb-0 fw-normal">Weekly jobs</h6>
-                                    <div class="form-check"> 
-                                        <input type="checkbox" class="form-check-input" id="customSwitch7">
-                                        <label class="form-check-label" for="customSwitch7"></label>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-between py-4 border-top">
-                                    <h6 class="mb-0 fw-normal">Unsubscribe News</h6>
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="customSwitch8" checked>
-                                        <label class="form-check-label" for="customSwitch8"></label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="rounded shadow mt-4">
-                            <div class="p-4 border-bottom">
-                                <h5 class="mb-0 text-danger">Delete Account :</h5>
-                            </div>
-
-                            <div class="p-4">
-                                <h6 class="mb-0 fw-normal">Do you want to delete the account? Please press below "Delete" button</h6>
-                                <div class="mt-4">
-                                    <button class="btn btn-danger">Delete Account</button>
-                                </div><!--end col-->
-                            </div>
-                        </div>
-                    </div><!--end col-->
-                </div><!--end row-->
-            </div><!--end container-->
+                        </div><!--end col-->
+                    </div><!--end row-->
+                </div><!--end container-->
         </section><!--end section-->
         <!-- End -->
 
@@ -461,6 +313,7 @@
         <!-- Main Js -->
         <script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
     </body>
+
     <script>
                                         // Xử lý popup thông báo từ tham số URL
                                         const urlParams = new URLSearchParams(window.location.search);
