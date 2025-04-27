@@ -2,13 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.doctor;
+package controller.staff;
 
 import dal.AppointmentDAO;
-import dto.AppointmentDTO;
+import dto.ReceptionAppointmentDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,9 +17,10 @@ import java.util.List;
 
 /**
  *
- * @author Admin
+ * @author JackGarland
  */
-public class QueueManager extends HttpServlet {
+//@WebServlet(name = "ReceptionAppointmentsListServlet", urlPatterns = {"/appointmentsReception"})
+public class ReceptionAppointmentsListServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,10 +39,10 @@ public class QueueManager extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet QueueManager</title>");
+            out.println("<title>Servlet ReceptionAppointmentsListServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet QueueManager at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ReceptionAppointmentsListServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -58,21 +60,20 @@ public class QueueManager extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        Integer doctorId = 1;
-//                Integer.valueOf(request.getParameter("doctorId"));
+
         AppointmentDAO dao = new AppointmentDAO();
-        List<AppointmentDTO> appointments;
+        List<ReceptionAppointmentDTO> appointments;
         try {
-            appointments = dao.getTodayAppointmentsForCurrentSlot(doctorId);
+            appointments = dao.getCompletedAppointments();
+
         } catch (Exception e) {
+
             throw new ServletException("Error fetching appointments", e);
         }
 
         // 3) Push into request & forward
         request.setAttribute("appointments", appointments);
-        request.getRequestDispatcher("/doctor/QueueManager.jsp")
-                .forward(request, response);
+        request.getRequestDispatcher("ReceptionAppointmentsList.jsp").forward(request, response);
     }
 
     /**
@@ -86,7 +87,7 @@ public class QueueManager extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        doGet(request, response);
     }
 
     /**
