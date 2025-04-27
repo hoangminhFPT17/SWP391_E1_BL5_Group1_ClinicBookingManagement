@@ -5,6 +5,7 @@
 package controller.patient;
 
 import dal.AppointmentDAO;
+import dal.ExaminationPackageDAO;
 import dal.PatientDAO;
 import dal.TimeSlotDAO;
 import java.io.IOException;
@@ -16,10 +17,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 import model.Appointment;
+import model.ExaminationPackage;
 import model.Patient;
 import model.TimeSlot;
 import model.User;
@@ -68,9 +71,19 @@ public class PatientBookAppointmentServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //Get current examination package for patient to book
+        String examPackageStr = request.getParameter("examPackageId");
+        int examPackageId = 1;
+        if (examPackageStr != null) {
+            examPackageId = Integer.parseInt(examPackageStr);
+        }
+        ExaminationPackageDAO examinationPackageDAO = new ExaminationPackageDAO();
+        ExaminationPackage examinationPackage = examinationPackageDAO.getPackageById(examPackageId);
+        request.setAttribute("examinationPackage", examinationPackage);
 
+        // Get all time slots
         TimeSlotDAO timeSlotDAO = new TimeSlotDAO();
-        List<TimeSlot> timeSlots = timeSlotDAO.getAllTimeSlots();
+        List<TimeSlot> timeSlots = timeSlotDAO.getAllActiveTimeSlots();
         request.setAttribute("timeSlots", timeSlots);
 
         HttpSession session = request.getSession(false);
@@ -78,7 +91,7 @@ public class PatientBookAppointmentServlet extends HttpServlet {
             User user = (User) session.getAttribute("user");
             if (user != null) {
                 PatientDAO patientDAO = new PatientDAO();
-                Patient patient = patientDAO.getPatientByPhone(user.getPhone()); // assuming username is phone
+                Patient patient = patientDAO.getPatientByPhone(user.getPhone()); // key is phone
                 if (patient != null) {
                     request.setAttribute("fullName", patient.getFullName());
                     request.setAttribute("phone", patient.getPhone());
@@ -106,6 +119,12 @@ public class PatientBookAppointmentServlet extends HttpServlet {
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
+        
+        HttpSession session = request.getSession(false);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
 
         // Collect form data
         String fullName = request.getParameter("fullName");
@@ -116,6 +135,8 @@ public class PatientBookAppointmentServlet extends HttpServlet {
         String doctorIdStr = request.getParameter("doctorId");
         String slotIdStr = request.getParameter("slotId");
         String appointmentDateStr = request.getParameter("appointmentDate");
+        String description = request.getParameter("description");
+        String examPackageIdStr = request.getParameter("examPackageId");
 
         // Input validation
         String errorMessage = null;
@@ -139,6 +160,7 @@ public class PatientBookAppointmentServlet extends HttpServlet {
             request.setAttribute("doctorId", doctorIdStr);
             request.setAttribute("slotId", slotIdStr);
             request.setAttribute("appointmentDate", appointmentDateStr);
+            request.setAttribute("description", description);
             request.getRequestDispatcher("/patient/patientBookingAppointment.jsp").forward(request, response);
             return;
         }
@@ -148,6 +170,8 @@ public class PatientBookAppointmentServlet extends HttpServlet {
         int doctorId = Integer.parseInt(doctorIdStr);
         int slotId = Integer.parseInt(slotIdStr);
         Date appointmentDate = Date.valueOf(appointmentDateStr);
+        int examPackageId = Integer.parseInt(examPackageIdStr);
+        Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
         // Create DAOs
         PatientDAO patientDAO = new PatientDAO();
@@ -165,6 +189,10 @@ public class PatientBookAppointmentServlet extends HttpServlet {
                 patient.setEmail(email);
                 patient.setGender(gender);
                 patient.setDateOfBirth(dateOfBirth);
+                patient.setCreatedAt(createdAt);
+                if(user != null) {
+                    patient.setPatientAccountId(user.getUserId());
+                }
                 patientDAO.insertPatient(patient);
             }
 
@@ -174,6 +202,8 @@ public class PatientBookAppointmentServlet extends HttpServlet {
             appointment.setSlotId(slotId);
             appointment.setAppointmentDate(appointmentDate);
             appointment.setStatus("Pending");
+            appointment.setDescription(description);
+            appointment.setPackageId(examPackageId);
 
             appointmentDAO.insert(appointment);
             success = true;
@@ -184,9 +214,9 @@ public class PatientBookAppointmentServlet extends HttpServlet {
         }
 
         if (success) {
-            response.sendRedirect(request.getContextPath() + "/PatientBookAppointmentServlet?status=success");
+            response.sendRedirect(request.getContextPath() + "/PatientBookAppointmentServlet?examPackageId=" + examPackageId +"&status=success");
         } else {
-            response.sendRedirect(request.getContextPath() + "/PatientBookAppointmentServlet?status=fail");
+            response.sendRedirect(request.getContextPath() + "/PatientBookAppointmentServlet?examPackageId=" + examPackageId + "&status=fail");
         }
     }
 

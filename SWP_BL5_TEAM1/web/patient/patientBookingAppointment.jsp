@@ -81,14 +81,26 @@
                                 <div class="tab-pane fade show active" id="pills-clinic" role="tabpanel" aria-labelledby="clinic-booking">
                                     <form method="post" action="PatientBookAppointmentServlet">
                                         <div class="row">
+                                            <!-- Examination Package -->
+                                            <div class="col-lg-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Examination Package</label>
+                                                    <input type="text" class="form-control" 
+                                                           value="${examinationPackage.name}" 
+                                                           readonly />
+                                                    <input type="hidden" name="examPackageId" value="${examinationPackage.packageId}" />
+                                                </div>
+                                            </div>
 
                                             <!-- Full Name -->
                                             <div class="col-lg-12">
                                                 <div class="mb-3">
                                                     <label class="form-label">Full Name <span class="text-danger">*</span></label>
                                                     <input name="fullName" id="fullName" type="text" class="form-control"
-                                                           placeholder="Patient Full Name :" required pattern="^[A-Za-z\s]{3,50}$"
-                                                           title="Full name must be 3-50 characters long and contain only letters and spaces."
+                                                           placeholder="Patient Full Name :" required 
+                                                           pattern="^[A-Za-z]+(?:\s[A-Za-z]+)*$"
+                                                           title="Full name must be 1-100 characters long and contain only letters and spaces."
+                                                           minlength="1" maxlength="100"
                                                            value="${fullName}" <c:if test="${isLoggedIn}"></c:if> />
                                                     </div>
                                                 </div>
@@ -120,8 +132,9 @@
                                                     <div class="mb-3">
                                                         <label class="form-label">Date of Birth</label>
                                                         <input name="dateOfBirth" id="dateOfBirth" type="date" class="form-control"
-                                                               value="${dateOfBirth}" <c:if test="${isLoggedIn}"></c:if> />
-
+                                                               value="${dateOfBirth}" 
+                                                        max="${currentDate}" 
+                                                        <c:if test="${isLoggedIn}"></c:if> />
                                                     </div>
                                                 </div>
 
@@ -143,7 +156,7 @@
                                                 <div class="mb-3">
                                                     <label class="form-label">Doctor <span class="text-danger">*</span></label>
                                                     <select name="doctorId" id="doctorSelect" class="form-control select2" required>
-                                                        <option value="">Select a time slot first</option>
+                                                        <option value="">Select a time slot and date first</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -170,6 +183,15 @@
                                                     </select>
                                                 </div>
                                             </div>
+
+                                            <!-- Description -->
+                                            <div class="col-lg-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Description</label>
+                                                    <textarea name="description" id="description" rows="4" class="form-control" 
+                                                              placeholder="Write a description for your appointment (optional)">${description}</textarea>
+                                                </div>
+                                            </div><!--end col-->
 
                                             <!-- Submit Button -->
                                             <div class="col-lg-12">
@@ -451,44 +473,26 @@
         </script>
 
         <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const departmentSelect = document.querySelector('.department-name');
-                const doctorSelect = document.querySelector('#doctorSelect');
-                const allDoctors = Array.from(doctorSelect.options);
-
-                departmentSelect.addEventListener('change', function () {
-                    const selectedDept = departmentSelect.value;
-
-                    // Clear current options
-                    doctorSelect.innerHTML = '';
-
-                    // Add matching options back
-                    allDoctors.forEach(doctor => {
-                        if (doctor.dataset.department === selectedDept) {
-                            doctorSelect.appendChild(doctor);
-                        }
-                    });
-
-                    // Optional: reset selected value
-                    doctorSelect.selectedIndex = 0;
-                });
-            });
-        </script>
-
-        <script>
             document.addEventListener('DOMContentLoaded', function () {
                 const slotSelect = document.querySelector('select[name="slotId"]');
                 const doctorSelect = document.getElementById('doctorSelect');
+                const appointmentDateInput = document.getElementById('appointmentDate');
 
-                if (!slotSelect || !doctorSelect) {
-                    console.log('Dropdowns not found!');
+                if (!slotSelect || !doctorSelect || !appointmentDateInput) {
+                    console.log('Dropdowns or date input not found!');
                     return;
                 }
 
-                function loadDoctors(slotId) {
-                    console.log('Loading doctors for slotId:', slotId);
+                function loadDoctors(slotId, appointmentDate) {
+                    console.log('Loading doctors for slotId:', slotId, 'on date:', appointmentDate);
 
-                    fetch(`/SWP_BL5_TEAM1/doctor-by-slot?slotId=` + slotId)
+                    if (!slotId || !appointmentDate) {
+                        console.log('Missing slot or date');
+                        doctorSelect.innerHTML = '<option value="">Select a time slot and date</option>';
+                        return;
+                    }
+
+                    fetch("/SWP_BL5_TEAM1/doctor-by-slot-and-date?slotId=" + slotId + "&appointmentDate=" + appointmentDate)
                             .then(response => response.json())
                             .then(data => {
                                 console.log('Doctors fetched:', data);
@@ -497,7 +501,7 @@
                                 if (data.length === 0) {
                                     const opt = document.createElement('option');
                                     opt.value = '';
-                                    opt.text = 'No doctors on duty';
+                                    opt.text = 'No doctors available';
                                     doctorSelect.appendChild(opt);
                                 } else {
                                     data.forEach(doctor => {
@@ -515,20 +519,24 @@
                             .catch(error => console.error('Error fetching doctors:', error));
                 }
 
-                // Run on slot select change
-                slotSelect.addEventListener('change', function () {
-                    const slotId = this.value;
-                    loadDoctors(slotId);
-                });
+                function triggerLoad() {
+                    const slotId = slotSelect.value;
+                    const appointmentDate = appointmentDateInput.value;
+                    loadDoctors(slotId, appointmentDate);
+                }
 
-                // Trigger initial load based on default selected slot
-                if (slotSelect.value) {
-                    loadDoctors(slotSelect.value);
+                // Run when slot changes
+                slotSelect.addEventListener('change', triggerLoad);
+
+                // Run when date changes
+                appointmentDateInput.addEventListener('change', triggerLoad);
+
+                // Initial load
+                if (slotSelect.value && appointmentDateInput.value) {
+                    triggerLoad();
                 }
             });
         </script>
-
-
 
         <!--        <script>
                     $(document).ready(function() {

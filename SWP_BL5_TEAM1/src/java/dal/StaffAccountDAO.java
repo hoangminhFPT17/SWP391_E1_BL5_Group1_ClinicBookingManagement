@@ -25,6 +25,28 @@ public class StaffAccountDAO extends DBContext {
         return null;
     }
 
+    public StaffAccount getStaffByUserId(int userId) {
+        StaffAccount staffAccount = null;
+        String sql = "SELECT * FROM staffaccount WHERE user_id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                staffAccount = new StaffAccount();
+                staffAccount.setStaffId(rs.getInt("staff_id"));
+                staffAccount.setUserId(rs.getInt("user_id"));
+                staffAccount.setRole(rs.getString("role"));
+                staffAccount.setDepartment(rs.getString("department"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return staffAccount;
+    }
+
     public List<StaffAccount> getAllStaff() {
         List<StaffAccount> list = new ArrayList<>();
         String query = "SELECT * FROM StaffAccount";

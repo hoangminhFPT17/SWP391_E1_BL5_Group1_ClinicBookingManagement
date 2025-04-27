@@ -144,6 +144,7 @@ public class PatientAppointmentsListServlet extends HttpServlet {
             TimeSlot slot = timeSlotDAO.getTimeSlotById(appt.getSlotId());
             if (slot != null) {
                 dto.setTimeSlotName(slot.getName() + ": " + slot.getStartTime() + " - " + slot.getEndTime());
+                dto.setTimeSlotId(slot.getSlotId());
             }
 
             StaffAccount doctorAccount = staffAccountDAO.getStaffById(appt.getDoctorId());
