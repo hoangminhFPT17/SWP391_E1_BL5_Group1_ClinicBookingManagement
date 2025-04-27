@@ -12,6 +12,8 @@ import dal.DAOToken;
 import dal.DAOUser;
 import model.Token;
 import model.User;
+import model.Patient;
+import dal.PatientDAO;
 import java.io.IOException;
 import java.sql.SQLException;
 import jakarta.servlet.ServletException;
@@ -25,6 +27,7 @@ public class ActivateServlet extends HttpServlet {
 
     private final DAOToken daoToken = new DAOToken();
     private final DAOUser daoUser = new DAOUser();
+    private final PatientDAO patientdao = new PatientDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
