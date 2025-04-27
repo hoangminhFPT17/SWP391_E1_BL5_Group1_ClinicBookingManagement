@@ -66,7 +66,7 @@
                         <div class="col-xl-3 col-lg-4 col-md-6 col-12 mt-4 pt-2">
                             <div class="card features feature-primary border-0">
                                 <div class="icon text-center rounded-md">
-                                    <i class="ri-apple-line h3 mb-0"></i>
+                                    <i class="ri-hospital-line h3 mb-0"></i>
                                 </div>
                                 <div class="card-body p-0 mt-3">
                                     <a href="PatientBookAppointmentServlet?examPackageId=${examPackage.packageId}" class="title text-dark h5">${examPackage.name}</a>
