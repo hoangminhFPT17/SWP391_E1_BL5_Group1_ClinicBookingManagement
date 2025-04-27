@@ -18,7 +18,7 @@ public class DoctorUnavailabilityDAO extends DBContext {
 
     // Check if a doctor is unavailable for a given slot and date
     public boolean isDoctorUnavailable(int staffId, int slotId, Date appointmentDate) {
-        String sql = "SELECT COUNT(*) FROM doctor_unavailability WHERE staff_id = ? AND slot_id = ? AND unavailable_date = ?";
+        String sql = "SELECT COUNT(*) FROM doctorunavailability WHERE staff_id = ? AND slot_id = ? AND unavailable_date = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, staffId);
             ps.setInt(2, slotId);

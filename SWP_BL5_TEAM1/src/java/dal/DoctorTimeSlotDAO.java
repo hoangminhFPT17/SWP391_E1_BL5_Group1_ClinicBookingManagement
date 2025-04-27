@@ -212,12 +212,13 @@ public class DoctorTimeSlotDAO extends DBContext {
         return map;
     }
 
-    public boolean addDoctorToTimeSlot(int doctorId, int slotId, String dayOfWeek) {
-        String sql = "INSERT INTO DoctorTimeSlot (staff_id, slot_id, day_of_week, max_appointments) VALUES (?, ?, ?, 10)";
+    public boolean addDoctorToTimeSlot(int doctorId, int slotId, String dayOfWeek, int maxAppointments) {
+        String sql = "INSERT INTO DoctorTimeSlot (staff_id, slot_id, day_of_week, max_appointments) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, doctorId);
             ps.setInt(2, slotId);
             ps.setString(3, dayOfWeek);
+            ps.setInt(4, maxAppointments);
             return ps.executeUpdate() > 0;
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -265,7 +266,7 @@ public class DoctorTimeSlotDAO extends DBContext {
     // 1. Get all doctor staff IDs working a specific slot on a specific day
     public List<Integer> getDoctorIdsBySlotAndDay(int slotId, String dayOfWeek) {
         List<Integer> doctorIds = new ArrayList<>();
-        String sql = "SELECT staff_id FROM doctor_time_slot WHERE slot_id = ? AND day_of_week = ?";
+        String sql = "SELECT staff_id FROM doctortimeslot WHERE slot_id = ? AND day_of_week = ? ORDER BY max_appointments ASC";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, slotId);

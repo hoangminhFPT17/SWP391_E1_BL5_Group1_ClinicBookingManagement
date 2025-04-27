@@ -18,14 +18,20 @@ import model.Appointment;
 public class AppointmentDAO extends DBContext {
 
     public void insert(Appointment appointment) {
-        String sql = "INSERT INTO Appointment (patient_phone, doctor_id, slot_id, appointment_date, status, created_at) "
-                + "VALUES (?, ?, ?, ?, ?, NOW())";
+        String sql = "INSERT INTO Appointment (patient_phone, doctor_id, slot_id, appointment_date, status, description, package_id, created_at) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, appointment.getPatientPhone());
             ps.setInt(2, appointment.getDoctorId());
             ps.setInt(3, appointment.getSlotId());
             ps.setDate(4, appointment.getAppointmentDate());
             ps.setString(5, appointment.getStatus());
+            ps.setString(6, appointment.getDescription());
+            if (appointment.getPackageId() != null) {
+                ps.setInt(7, appointment.getPackageId());
+            } else {
+                ps.setNull(7, java.sql.Types.INTEGER);
+            }
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

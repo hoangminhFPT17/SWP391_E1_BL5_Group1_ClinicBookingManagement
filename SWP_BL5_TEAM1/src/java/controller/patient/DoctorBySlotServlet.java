@@ -143,7 +143,7 @@ public class DoctorBySlotServlet extends HttpServlet {
                         staffAccount.getStaffId(),
                         user.getUserId(),
                         user.getFullName(),
-                        user.getRole(),
+                        staffAccount.getRole(),
                         staffAccount.getDepartment()
                 );
                 System.out.println("DoctorDTO created: " + doctorDTO.getFullName());

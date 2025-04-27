@@ -97,8 +97,10 @@
                                                 <div class="mb-3">
                                                     <label class="form-label">Full Name <span class="text-danger">*</span></label>
                                                     <input name="fullName" id="fullName" type="text" class="form-control"
-                                                           placeholder="Patient Full Name :" required pattern="^[A-Za-z\s]{3,50}$"
-                                                           title="Full name must be 3-50 characters long and contain only letters and spaces."
+                                                           placeholder="Patient Full Name :" required 
+                                                           pattern="^[A-Za-z]+(?:\s[A-Za-z]+)*$"
+                                                           title="Full name must be 1-100 characters long and contain only letters and spaces."
+                                                           minlength="1" maxlength="100"
                                                            value="${fullName}" <c:if test="${isLoggedIn}"></c:if> />
                                                     </div>
                                                 </div>
@@ -130,8 +132,9 @@
                                                     <div class="mb-3">
                                                         <label class="form-label">Date of Birth</label>
                                                         <input name="dateOfBirth" id="dateOfBirth" type="date" class="form-control"
-                                                               value="${dateOfBirth}" <c:if test="${isLoggedIn}"></c:if> />
-
+                                                               value="${dateOfBirth}" 
+                                                        max="${currentDate}" 
+                                                        <c:if test="${isLoggedIn}"></c:if> />
                                                     </div>
                                                 </div>
 
@@ -153,7 +156,7 @@
                                                 <div class="mb-3">
                                                     <label class="form-label">Doctor <span class="text-danger">*</span></label>
                                                     <select name="doctorId" id="doctorSelect" class="form-control select2" required>
-                                                        <option value="">Select a time slot first</option>
+                                                        <option value="">Select a time slot and date first</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -180,6 +183,15 @@
                                                     </select>
                                                 </div>
                                             </div>
+
+                                            <!-- Description -->
+                                            <div class="col-lg-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Description</label>
+                                                    <textarea name="description" id="description" rows="4" class="form-control" 
+                                                              placeholder="Write a description for your appointment (optional)">${description}</textarea>
+                                                </div>
+                                            </div><!--end col-->
 
                                             <!-- Submit Button -->
                                             <div class="col-lg-12">

@@ -77,12 +77,13 @@ public class UpdateDoctorTimeSlotServlet extends HttpServlet {
         boolean isWorking = "1".equals(request.getParameter("isWorking"));
         
         int doctorId = 1; // replace with your actual way to get logged-in doctor
-
+        int maxAppointments = 5; //Default max Appointments
+        
         DoctorTimeSlotDAO dao = new DoctorTimeSlotDAO();
 
         boolean success;
         if (isWorking) {
-            success = dao.addDoctorToTimeSlot(doctorId, slotId, dayOfWeek);
+            success = dao.addDoctorToTimeSlot(doctorId, slotId, dayOfWeek, maxAppointments);
         } else {
             success = dao.removeDoctorFromTimeSlot(doctorId, slotId, dayOfWeek);
         }
