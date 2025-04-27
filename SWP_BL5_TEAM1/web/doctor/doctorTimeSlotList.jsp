@@ -35,6 +35,7 @@
                                 <h5 class="mb-0">Assign Doctor To Time Slot</h5>
                             </div><!--end col-->
                         </div>
+
                         <div class="row">
                             <div class="col-12 mt-4">
                                 <div class="table-responsive bg-white shadow rounded">
@@ -71,6 +72,57 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row mt-5 mb-3">
+                            <div class="col-xl-6 col-lg-6 col-md-4">
+                                <h5 class="mb-0">Date of unavailability</h5>
+                            </div><!--end col-->
+                        </div>
+                        <div class="row">
+                            <div class="col-12 mt-4">
+                                <div class="table-responsive bg-white shadow rounded">
+                                    <table class="table mb-0 table-center">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Time Slot</th>
+                                                <th>Unavailable Date</th>
+                                                <th>Reason</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <c:forEach var="unavail" items="${unavailabilities}">
+                                                <tr>
+                                                    <td>${unavail.index}</td>
+                                                    <td>${unavail.slotNameWithTime}</td>
+                                                    <td>${unavail.unavailableDate}</td>
+                                                    <td>${unavail.reason}</td>
+                                                    <td>
+                                                        <form action="RemoveUnavailabilityServlet" method="post" style="display: inline;">
+                                                            <input type="hidden" name="unavailabilityId" value="${unavail.unavailabilityId}">
+                                                            <button type="submit" class="btn btn-icon btn-pills btn-soft-danger" onclick="return confirm('Are you sure you want to remove this unavailability?')">
+                                                                <i class="uil uil-times-circle"></i>
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
+                                            <c:if test="${empty unavailabilities}">
+                                                <tr>
+                                                    <td colspan="5" class="text-center">No unavailability records found.</td>
+                                                </tr>
+                                            </c:if>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-12 text-end">
+                                        <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#addUnavailabilityModal">+ Unavailable Date</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!--end row-->
                     </div><!--end col-->
                 </div><!--end row-->
@@ -80,6 +132,53 @@
         <!-- Back to top -->
         <a href="#" onclick="topFunction()" id="back-to-top" class="btn btn-icon btn-pills btn-primary back-to-top"><i data-feather="arrow-up" class="icons"></i></a>
         <!-- Back to top -->
+
+        <!-- Add Unavailability Modal Start -->
+        <div class="modal fade" id="addUnavailabilityModal" tabindex="-1" aria-labelledby="addUnavailabilityLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <form method="post" action="AddUnavailabilityServlet" class="modal-content">
+                    <input type="hidden" name="staffId" value="${staffAccount.staffId}">
+                    <div class="modal-body py-5">
+                        <div class="text-center">
+                            <div class="icon d-flex align-items-center justify-content-center bg-soft-danger rounded-circle mx-auto"
+                                 style="height: 95px; width:95px;">
+                                <span class="mb-0"><i class="uil uil-calendar-slash h1"></i></span>
+                            </div>
+                            <div class="mt-4 px-4">
+                                <h4 class="mb-3">Add Unavailable Date</h4>
+
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Time Slot</label>
+                                    <select name="slotId" id="unavailableSlotId" class="form-control" required>
+                                        <c:forEach var="slot" items="${timeSlotList}">
+                                            <option value="${slot.slotId}">
+                                                ${slot.name} (${slot.startTime} - ${slot.endTime})
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Unavailable Date</label>
+                                    <input type="date" class="form-control" name="unavailableDate" id="unavailableDate" required min="${currentDate}">
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Reason</label>
+                                    <textarea class="form-control" name="reason" id="unavailableReason" rows="3" placeholder="Enter reason" required></textarea>
+                                </div>
+
+                                <div class="d-grid mt-4">
+                                    <button type="submit" class="btn btn-danger">Add Unavailability</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Add Unavailability Modal End -->
 
         <!-- Offcanvas Start -->
         <div class="offcanvas bg-white offcanvas-top" tabindex="-1" id="offcanvasTop">
@@ -149,6 +248,22 @@
             </div>
         </div>
         <!-- Offcanvas End -->
+
+        <c:if test="${not empty errorMessage}">
+            <div aria-live="polite" aria-atomic="true" class="position-relative">
+                <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                    <div class="toast align-items-center text-bg-danger border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                ${errorMessage}
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </c:if>
+
 
         <script>
             document.querySelectorAll('.time-slot-checkbox').forEach(checkbox => {

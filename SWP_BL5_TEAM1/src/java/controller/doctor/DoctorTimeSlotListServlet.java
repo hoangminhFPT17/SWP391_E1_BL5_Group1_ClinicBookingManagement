@@ -5,17 +5,24 @@
 package controller.doctor;
 
 import dal.DoctorTimeSlotDAO;
+import dal.DoctorUnavailabilityDAO;
+import dal.StaffAccountDAO;
 import dal.TimeSlotDAO;
+import dto.DoctorUnavailabilityDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import model.DoctorUnavailability;
+import model.StaffAccount;
 import model.TimeSlot;
+import model.User;
 
 /**
  *
@@ -40,7 +47,7 @@ public class DoctorTimeSlotListServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet DoctorTimeSlotList</title>");            
+            out.println("<title>Servlet DoctorTimeSlotList</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet DoctorTimeSlotList at " + request.getContextPath() + "</h1>");
@@ -61,14 +68,61 @@ public class DoctorTimeSlotListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // 1. Get logged-in user from session
+        User loggedInUser = (User) request.getSession().getAttribute("user");
+        if (loggedInUser == null) {
+            // User not logged in, redirect to login page
+            response.sendRedirect("/SWP_BL5_TEAM1/login");
+            return;
+        }
+
+        // 2. Check if the user is a staff member by looking up their StaffAccount
+        StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
+        StaffAccount staffAccount = staffAccountDAO.getStaffByUserId(loggedInUser.getUserId());
+
+        // 3. If no staff account exists for this user, redirect to login page or show an error
+        if (staffAccount == null) {
+            response.sendRedirect("/SWP_BL5_TEAM1/login");
+            return;
+        }
+
         TimeSlotDAO timeSlotDAO = new TimeSlotDAO();
         DoctorTimeSlotDAO doctorTimeSlotDAO = new DoctorTimeSlotDAO();
-        
+        DoctorUnavailabilityDAO doctorUnavailabilityDAO = new DoctorUnavailabilityDAO();
+
         List<TimeSlot> timeSlots = timeSlotDAO.getAllTimeSlots();
-        Map<String, Set<Integer>> doctorTimeSlotMap = doctorTimeSlotDAO.getSlotMapByDoctorId(1);
-        
+        Map<String, Set<Integer>> doctorTimeSlotMap = doctorTimeSlotDAO.getSlotMapByDoctorId(staffAccount.getStaffId());
+
+        List<DoctorUnavailability> unavailabilities = doctorUnavailabilityDAO.getUnavailabilitiesByStaffId(staffAccount.getStaffId());
+        List<DoctorUnavailabilityDTO> unavailabilityDTOs = new ArrayList<>();
+
+        int index = 1;
+        for (DoctorUnavailability du : unavailabilities) {
+            TimeSlot slot = timeSlotDAO.getTimeSlotById(du.getSlotId());
+            String slotNameWithTime = "";
+            if (slot != null) {
+                slotNameWithTime = slot.getName() + ": " + slot.getStartTime() + "-" + slot.getEndTime();
+            }
+
+            DoctorUnavailabilityDTO dto = new DoctorUnavailabilityDTO(
+                    du.getUnavailabilityId(),
+                    index++,
+                    slotNameWithTime,
+                    du.getUnavailableDate(),
+                    du.getReason()
+            );
+
+            unavailabilityDTOs.add(dto);
+        }
+        String errorMessage = request.getParameter("errorMessage");
+        if (errorMessage != null && !errorMessage.isEmpty()) {
+            request.setAttribute("errorMessage", errorMessage);
+        }
+
+        request.setAttribute("unavailabilities", unavailabilityDTOs);
         request.setAttribute("timeSlotList", timeSlots);
         request.setAttribute("doctorSlotMap", doctorTimeSlotMap);
+        request.setAttribute("staffAccount", staffAccount);
 
         request.getRequestDispatcher("/doctor/doctorTimeSlotList.jsp").forward(request, response);
     }

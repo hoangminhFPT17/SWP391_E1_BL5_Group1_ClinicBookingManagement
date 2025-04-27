@@ -64,6 +64,14 @@
         <servlet-name>PatientExaminationPackageSelectServlet</servlet-name>
         <servlet-class>controller.patient.PatientExaminationPackageSelectServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AddUnavailabilityServlet</servlet-name>
+        <servlet-class>controller.doctor.AddUnavailabilityServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RemoveUnavailabilityServlet</servlet-name>
+        <servlet-class>controller.doctor.RemoveUnavailabilityServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <url-pattern>/PatientBookAppointmentServlet</url-pattern>
@@ -143,5 +151,13 @@
     <servlet-mapping>
         <servlet-name>PatientExaminationPackageSelectServlet</servlet-name>
         <url-pattern>/PatientExaminationPackageSelectServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddUnavailabilityServlet</servlet-name>
+        <url-pattern>/AddUnavailabilityServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RemoveUnavailabilityServlet</servlet-name>
+        <url-pattern>/RemoveUnavailabilityServlet</url-pattern>
     </servlet-mapping>
 </web-app>
