@@ -16,6 +16,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -24,44 +25,27 @@ import java.util.List;
  */
 public class QueueManager extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet QueueManager</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet QueueManager at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("userId") == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        System.out.println((Integer) session.getAttribute("userId"));
+
         // 2) Pull doctorId from session
-        Integer doctorId = Integer.valueOf(request.getParameter("doctorId"));
+        Integer userId = (Integer) session.getAttribute("userId");
 
         // 3) Look up the next appointment’s ID, then its full DTO
         AppointmentDAO dao = new AppointmentDAO();
         AppointmentDetailDTO detail = null;
         StaffAccountDAO staffDao = new StaffAccountDAO();
+        
+        Integer doctorId = staffDao.getDoctorByUserId(userId).getStaffId();
 
         Integer nextId = dao.getNextAppointmentIdForCurrentSlot(doctorId);
         if (nextId != null) {
@@ -103,7 +87,7 @@ public class QueueManager extends HttpServlet {
 
         // reload to show updated next appointment
         response.sendRedirect(request.getContextPath() + "/QueueManager?doctorId=1");
-    } 
+    }
 
     /**
      * Returns a short description of the servlet.

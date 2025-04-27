@@ -28,7 +28,7 @@ public class AppointmentDAO extends DBContext {
             ps.setString(5, appointment.getStatus());
             ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("insert: " + e.getMessage());
         }
     }
 
@@ -284,48 +284,48 @@ public class AppointmentDAO extends DBContext {
     }
 
     public AppointmentDetailDTO getAppointmentDetailById(int id) {
-    String sql
-        = "SELECT a.appointment_id, " +
-        "       p.full_name       AS patientName, " +
-        "       a.patient_phone, " +
-        "       u_doc.full_name   AS doctorFullName, " +
-        "       ts.name           AS slot, " +
-        "       a.appointment_date, " +
-        "       a.status, " +
-        "       a.created_at, " +
-        "       a.description, " +
-        "       ep.name           AS examinationPackage " +
-        "  FROM Appointment a " +
-        "  JOIN Patient p          ON a.patient_phone = p.phone " +
-        "  JOIN TimeSlot ts        ON a.slot_id        = ts.slot_id " +
-        "  JOIN ExaminationPackage ep ON a.package_id   = ep.package_id " +
-        "  JOIN StaffAccount sa    ON a.doctor_id      = sa.staff_id " +
-        "  JOIN User u_doc         ON sa.user_id        = u_doc.user_id " +
-        " WHERE a.appointment_id = ?";
+        String sql
+                = "SELECT a.appointment_id, "
+                + "       p.full_name       AS patientName, "
+                + "       a.patient_phone, "
+                + "       u_doc.full_name   AS doctorFullName, "
+                + "       ts.name           AS slot, "
+                + "       a.appointment_date, "
+                + "       a.status, "
+                + "       a.created_at, "
+                + "       a.description, "
+                + "       ep.name           AS examinationPackage "
+                + "  FROM Appointment a "
+                + "  JOIN Patient p          ON a.patient_phone = p.phone "
+                + "  JOIN TimeSlot ts        ON a.slot_id        = ts.slot_id "
+                + "  JOIN ExaminationPackage ep ON a.package_id   = ep.package_id "
+                + "  JOIN StaffAccount sa    ON a.doctor_id      = sa.staff_id "
+                + "  JOIN User u_doc         ON sa.user_id        = u_doc.user_id "
+                + " WHERE a.appointment_id = ?";
 
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, id);
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                return new AppointmentDetailDTO(
-                    rs.getInt("appointment_id"),
-                    rs.getString("patientName"),          // ← new
-                    rs.getString("patient_phone"),
-                    rs.getString("doctorFullName"),
-                    rs.getString("slot"),
-                    rs.getDate("appointment_date"),
-                    rs.getString("status"),
-                    rs.getTimestamp("created_at"),
-                    rs.getString("description"),
-                    rs.getString("examinationPackage")
-                );
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new AppointmentDetailDTO(
+                            rs.getInt("appointment_id"),
+                            rs.getString("patientName"), // ← new
+                            rs.getString("patient_phone"),
+                            rs.getString("doctorFullName"),
+                            rs.getString("slot"),
+                            rs.getDate("appointment_date"),
+                            rs.getString("status"),
+                            rs.getTimestamp("created_at"),
+                            rs.getString("description"),
+                            rs.getString("examinationPackage")
+                    );
+                }
             }
+        } catch (SQLException e) {
+            System.out.println("getAppointmentDetailById: " + e.getMessage());
         }
-    } catch (SQLException e) {
-        System.out.println("getAppointmentDetailById: " + e.getMessage());
+        return null;
     }
-    return null;
-}
 
     public Integer getNextAppointmentIdForCurrentSlot(int doctorId) {
         String sql
@@ -342,12 +342,12 @@ public class AppointmentDAO extends DBContext {
                 + " WHERE a.doctor_id         = ? "
                 + "   AND a.appointment_date  = CURDATE() "
                 + "   AND CURTIME() BETWEEN ts.start_time AND ts.end_time "
-                + "   AND a.status IN ('Back-from-hand-off','Pending','No-show', 'In progress') "
+                + "   AND a.status IN ('Back-from-hand-off','Pending','Waiting', 'In progress') "
                 + " ORDER BY CASE a.status "
                 + "            WHEN 'In progress'        THEN 1 "
                 + "            WHEN 'Back-from-hand-off' THEN 2 "
-                + "            WHEN 'Pending'            THEN 3 "
-                + "            WHEN 'No-show'            THEN 4 "
+                + "            WHEN 'Waiting'            THEN 3 "
+                + "            WHEN 'Pending'            THEN 4 "
                 + "            ELSE 5 END, "
                 + "          a.created_at "
                 + " LIMIT 1";
@@ -366,7 +366,7 @@ public class AppointmentDAO extends DBContext {
 
         return null;
     }
-    
+
     public boolean updateAppointmentStatus(int appointmentId, String newStatus) {
         Boolean result = false;
         String sql = "UPDATE Appointment SET status = ? WHERE appointment_id = ?";
@@ -379,6 +379,94 @@ public class AppointmentDAO extends DBContext {
             System.err.println("updateAppointmentStatus: " + e.getMessage());
         }
         return result;
+    }
+
+    public List<AppointmentDTO> getAllAppointments(String patientNameFilter) {
+        List<AppointmentDTO> list = new ArrayList<>();
+
+        String sql = """
+        SELECT @rownum := @rownum + 1 AS `index`,
+               p.full_name       AS patientName,
+               p.date_of_birth   AS patientDateOfBirth,
+               a.appointment_date AS appointmentDate,
+               ts.name           AS timeSlotName,
+               u_doc.full_name   AS doctorFullName,
+               a.status,
+               a.appointment_id  AS appointmentId
+          FROM (SELECT @rownum := 0) vars
+          JOIN Patient p
+            ON 1=1
+          JOIN Appointment a
+            ON a.patient_phone = p.phone
+          JOIN TimeSlot ts
+            ON a.slot_id = ts.slot_id
+          JOIN StaffAccount sa
+            ON a.doctor_id = sa.staff_id
+          JOIN `User` u_doc
+            ON sa.user_id = u_doc.user_id
+         WHERE (? = '' OR LOWER(p.full_name) LIKE ?)
+         ORDER BY a.appointment_date ASC, ts.start_time ASC
+        """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            String f = (patientNameFilter == null ? "" : patientNameFilter.toLowerCase());
+            ps.setString(1, f);
+            ps.setString(2, "%" + f + "%");
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new AppointmentDTO(
+                            rs.getInt("index"),
+                            rs.getString("patientName"),
+                            rs.getDate("patientDateOfBirth"),
+                            rs.getDate("appointmentDate"),
+                            rs.getString("timeSlotName"),
+                            rs.getString("doctorFullName"),
+                            rs.getString("status"),
+                            rs.getInt("appointmentId")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("getAllAppointments: " + e.getMessage());
+        }
+        return list;
+    }
+
+    
+    public boolean create(Appointment appt) {
+        String sql = "INSERT INTO Appointment"
+                + " (patient_phone, doctor_id, slot_id, appointment_date, status, created_at, description, package_id)"
+                + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, appt.getPatientPhone());
+            ps.setInt(2, appt.getDoctorId());
+            ps.setInt(3, appt.getSlotId());
+            ps.setDate(4, appt.getAppointmentDate());
+            ps.setString(5, appt.getStatus());
+            ps.setTimestamp(6, appt.getCreatedAt());
+            ps.setString(7, appt.getDescription());
+            if (appt.getPackageId() != null) {
+                ps.setInt(8, appt.getPackageId());
+            } else {
+                ps.setNull(8, Types.INTEGER);
+            }
+
+            int affected = ps.executeUpdate();
+            if (affected == 1) {
+                try (ResultSet keys = ps.getGeneratedKeys()) {
+                    if (keys.next()) {
+                        appt.setAppointmentId(keys.getInt(1));
+                    }
+                }
+                return true;
+            }
+            return false;
+        } catch (SQLException e) {
+            System.err.println("create: " + e.getMessage());
+        }
+        return false;
     }
 
 }

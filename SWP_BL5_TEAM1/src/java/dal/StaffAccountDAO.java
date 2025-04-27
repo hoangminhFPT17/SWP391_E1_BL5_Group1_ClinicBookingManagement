@@ -138,6 +138,20 @@ public class StaffAccountDAO extends DBContext {
         return null;
     }
 
+    public StaffAccount getDoctorByUserId(int id) {
+        String query = "SELECT * FROM StaffAccount WHERE user_id=? AND role = 'Doctor'";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return mapToStaffAccount(rs);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(StaffAccountDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
     private StaffAccount mapToStaffAccount(ResultSet rs) throws SQLException {
         StaffAccount staff = new StaffAccount();
         staff.setStaffId(rs.getInt("staff_id"));
@@ -145,5 +159,33 @@ public class StaffAccountDAO extends DBContext {
         staff.setRole(rs.getString("role"));
         staff.setDepartment(rs.getString("department"));
         return staff;
+    }
+
+    public List<DoctorAssignDTO> getDoctorsBySpecialty(int specialtyId) {
+        List<DoctorAssignDTO> doctorList = new ArrayList<>();
+        String sql = """
+                     SELECT sa.staff_id, u.full_name, ds.specialty_id 
+                               FROM StaffAccount sa 
+                               JOIN User u ON sa.user_id = u.user_id 
+                               JOIN DoctorSpecialty ds ON sa.staff_id = ds.staff_id
+                               WHERE sa.role = 'Doctor' and specialty_id = ?
+                               
+                     """;
+        try (
+                PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, specialtyId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    DoctorAssignDTO doctor = new DoctorAssignDTO();
+                    doctor.setDoctorId(rs.getInt("staff_id"));
+                    doctor.setFullName(rs.getString("full_name"));
+                    doctor.setDepartment("");
+                    doctorList.add(doctor);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(StaffAccountDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return doctorList;
     }
 }

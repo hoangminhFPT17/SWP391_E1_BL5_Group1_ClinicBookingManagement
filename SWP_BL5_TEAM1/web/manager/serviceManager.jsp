@@ -60,10 +60,6 @@
                                     <input class="filter-input form-control" data-col="2" placeholder="Filter Description" />
                                 </th>
                                 <th>
-                                    Price <button data-col="3">↕</button>
-                                    <input class="filter-input form-control" data-col="3" placeholder="Filter Price" />
-                                </th>
-                                <th>
                                     Specialty <button data-col="4">↕</button>
                                     <input class="filter-input form-control" data-col="4" placeholder="Filter Specialty" />
                                 </th>
@@ -76,7 +72,6 @@
                                     <td>${pkg.packageId}</td>
                                     <td>${pkg.name}</td>
                                     <td>${pkg.description}</td>
-                                    <td>${pkg.price}</td>
                                     <td>${pkg.specialty}</td>
                                     <td>
                                         <button 
@@ -86,7 +81,6 @@
                                             data-id="${pkg.packageId}"
                                             data-name="${pkg.name}"
                                             data-description="${pkg.description}"
-                                            data-price="${pkg.price}"
                                             data-specialty="${pkg.specialty}">
                                             >
 
@@ -143,10 +137,6 @@
                             <textarea name="description" id="add-description" class="form-control" required></textarea>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Price</label>
-                            <input type="number" step="0.01" name="price" class="form-control" required />
-                        </div>
-                        <div class="mb-3">
                             <label class="form-label">Specialty</label>
                             <select name="specialtyId" class="form-select" required>
                                 <c:forEach var="s" items="${specialties}">
@@ -191,10 +181,6 @@
                         <div class="mb-3">
                             <label class="form-label">Description</label>
                             <textarea name="description" id="edit-description" class="form-control" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Price</label>
-                            <input type="number" step="0.01" name="price" id="edit-price" class="form-control" required/>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Specialty</label>
@@ -290,6 +276,25 @@
                 const name = document.getElementById('edit-name').value.trim();
                 const desc = document.getElementById('edit-description').value.trim();
                 const alertBox = document.getElementById('edit-alert');
+                alertBox.classList.add('d-none');
+
+                if (!name) {
+                    alertBox.textContent = 'Name cannot be blank or spaces only.';
+                    alertBox.classList.remove('d-none');
+                    return false;
+                }
+                if (!desc) {
+                    alertBox.textContent = 'Description cannot be blank or spaces only.';
+                    alertBox.classList.remove('d-none');
+                    return false;
+                }
+                return true;
+            }
+            
+            function validateAddForm() {
+                const name = document.getElementById('add-name').value.trim();
+                const desc = document.getElementById('add-description').value.trim();
+                const alertBox = document.getElementById('add-alert');
                 alertBox.classList.add('d-none');
 
                 if (!name) {
