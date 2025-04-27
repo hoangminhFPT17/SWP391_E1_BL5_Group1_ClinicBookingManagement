@@ -60,6 +60,14 @@
         <servlet-name>PatientCheckin</servlet-name>
         <servlet-class>controller.staff.PatientCheckin</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>StaffManager</servlet-name>
+        <servlet-class>controller.manager.StaffManager</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AccountManager</servlet-name>
+        <servlet-class>controller.manager.AccountManager</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <url-pattern>/PatientBookAppointmentServlet</url-pattern>
@@ -135,5 +143,13 @@
     <servlet-mapping>
         <servlet-name>PatientCheckin</servlet-name>
         <url-pattern>/PatientCheckin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StaffManager</servlet-name>
+        <url-pattern>/StaffManager</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AccountManager</servlet-name>
+        <url-pattern>/AccountManager</url-pattern>
     </servlet-mapping>
 </web-app>

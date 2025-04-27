@@ -15,11 +15,11 @@
             <li><a href="appointment.html"><i class="uil uil-stethoscope me-2 d-inline-block"></i>Appointment</a></li>
 
             <li>
-                <a href="javascript:void(0)"><i class="uil uil-user me-2 d-inline-block"></i>Doctors</a>
+                <a href="StaffManager"><i class="uil uil-user me-2 d-inline-block"></i>Staff manager</a>
             </li>
 
             <li>
-                <a href="javascript:void(0)"><i class="uil uil-wheelchair me-2 d-inline-block"></i>Patients</a>
+                <a href="AccountManager"><i class="uil uil-wheelchair me-2 d-inline-block"></i>Account manager</a>
             </li>
 
             <li>
