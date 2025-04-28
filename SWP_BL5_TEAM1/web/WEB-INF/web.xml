@@ -170,4 +170,8 @@
         <servlet-name>RemoveUnavailabilityServlet</servlet-name>
         <url-pattern>/RemoveUnavailabilityServlet</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MedicalRecordsServlet</servlet-name>
+        <url-pattern>/doctor/medical-records</url-pattern>
+    </servlet-mapping>
 </web-app>
