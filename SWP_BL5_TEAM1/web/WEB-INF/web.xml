@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+<web-app version="6.0"
+         xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
 
     <!-- Patient Controllers -->
     <servlet>
@@ -40,6 +43,14 @@
         <servlet-name>PatientListServlet</servlet-name>
         <servlet-class>controller.staff.PatientListServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AppointmentManager</servlet-name>
+        <servlet-class>controller.staff.AppointmentManager</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>PatientCheckin</servlet-name>
+        <servlet-class>controller.staff.PatientCheckin</servlet-class>
+    </servlet>
 
     <!-- Manager Controllers -->
     <servlet>
@@ -61,6 +72,18 @@
     <servlet>
         <servlet-name>InsertDoctorAssignmentServlet</servlet-name>
         <servlet-class>controller.manager.InsertDoctorAssignmentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>StaffManager</servlet-name>
+        <servlet-class>controller.manager.StaffManager</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AccountManager</servlet-name>
+        <servlet-class>controller.manager.AccountManager</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ManagerAnalyticServlet</servlet-name>
+        <servlet-class>controller.manager.ManagerAnalyticServlet</servlet-class>
     </servlet>
 
     <!-- Doctor Controllers -->
@@ -92,12 +115,8 @@
         <servlet-name>MedicalRecordsServlet</servlet-name>
         <servlet-class>controller.doctor.MedicalRecordsServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>ManagerAnalyticServlet</servlet-name>
-        <servlet-class>controller.manager.ManagerAnalyticServlet</servlet-class>
-    </servlet>
+
     <!-- Servlet Mappings -->
-   
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <url-pattern>/PatientBookAppointmentServlet</url-pattern>
@@ -147,8 +166,32 @@
         <url-pattern>/QueueManager</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>MedicalRecordsServlet</servlet-name>
+        <url-pattern>/doctor/medical-records</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PatientListServlet</servlet-name>
+        <url-pattern>/doctor/patients-list</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>DoctorAppointmentDetail</servlet-name>
         <url-pattern>/DoctorAppointmentDetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AppointmentManager</servlet-name>
+        <url-pattern>/AppointmentManager</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PatientCheckin</servlet-name>
+        <url-pattern>/PatientCheckin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StaffManager</servlet-name>
+        <url-pattern>/StaffManager</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AccountManager</servlet-name>
+        <url-pattern>/AccountManager</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DoctorTimeSlotListServlet</servlet-name>
@@ -170,4 +213,5 @@
         <servlet-name>RemoveUnavailabilityServlet</servlet-name>
         <url-pattern>/RemoveUnavailabilityServlet</url-pattern>
     </servlet-mapping>
+
 </web-app>

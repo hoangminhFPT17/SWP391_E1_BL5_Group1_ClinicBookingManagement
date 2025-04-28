@@ -16,7 +16,7 @@
 
 <body>
     <div class="page-wrapper doctris-theme toggled">
-        <%@ include file="../component/sideBar.jsp" %>
+        <%@ include file="../component/doctorSideBar.jsp" %>
 
         <!-- Start Page Content -->
         <main class="page-content bg-light">
