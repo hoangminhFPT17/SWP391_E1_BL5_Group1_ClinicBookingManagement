@@ -81,14 +81,26 @@
                                 <div class="tab-pane fade show active" id="pills-clinic" role="tabpanel" aria-labelledby="clinic-booking">
                                     <form method="post" action="PatientBookAppointmentServlet">
                                         <div class="row">
+                                            <!-- Examination Package -->
+                                            <div class="col-lg-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Examination Package</label>
+                                                    <input type="text" class="form-control" 
+                                                           value="${examinationPackage.name}" 
+                                                           readonly />
+                                                    <input type="hidden" name="examPackageId" value="${examinationPackage.packageId}" />
+                                                </div>
+                                            </div>
 
                                             <!-- Full Name -->
                                             <div class="col-lg-12">
                                                 <div class="mb-3">
                                                     <label class="form-label">Full Name <span class="text-danger">*</span></label>
                                                     <input name="fullName" id="fullName" type="text" class="form-control"
-                                                           placeholder="Patient Full Name :" required pattern="^[A-Za-z\s]{3,50}$"
-                                                           title="Full name must be 3-50 characters long and contain only letters and spaces."
+                                                           placeholder="Patient Full Name :" required 
+                                                           pattern="^[A-Za-z]+(?:\s[A-Za-z]+)*$"
+                                                           title="Full name must be 1-100 characters long and contain only letters and spaces."
+                                                           minlength="1" maxlength="100"
                                                            value="${fullName}" <c:if test="${isLoggedIn}"></c:if> />
                                                     </div>
                                                 </div>
@@ -120,8 +132,9 @@
                                                     <div class="mb-3">
                                                         <label class="form-label">Date of Birth</label>
                                                         <input name="dateOfBirth" id="dateOfBirth" type="date" class="form-control"
-                                                               value="${dateOfBirth}" <c:if test="${isLoggedIn}"></c:if> />
-
+                                                               value="${dateOfBirth}" 
+                                                        max="${currentDate}" 
+                                                        <c:if test="${isLoggedIn}"></c:if> />
                                                     </div>
                                                 </div>
 
@@ -143,7 +156,7 @@
                                                 <div class="mb-3">
                                                     <label class="form-label">Doctor <span class="text-danger">*</span></label>
                                                     <select name="doctorId" id="doctorSelect" class="form-control select2" required>
-                                                        <option value="">Select a time slot first</option>
+                                                        <option value="">Select a time slot and date first</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -171,6 +184,15 @@
                                                 </div>
                                             </div>
 
+                                            <!-- Description -->
+                                            <div class="col-lg-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Description</label>
+                                                    <textarea name="description" id="description" rows="4" class="form-control" 
+                                                              placeholder="Write a description for your appointment (optional)">${description}</textarea>
+                                                </div>
+                                            </div><!--end col-->
+
                                             <!-- Submit Button -->
                                             <div class="col-lg-12">
                                                 <div class="d-grid">
@@ -187,98 +209,8 @@
             </div><!--end container-->
         </section><!--end section-->
         <!-- End -->
-
-        <!-- Start -->
-        <footer class="bg-footer">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xl-5 col-lg-4 mb-0 mb-md-4 pb-0 pb-md-2">
-                        <a href="#" class="logo-footer">
-                            <img src="../assets/images/logo-light.png" height="22" alt="">
-                        </a>
-                        <p class="mt-4 me-xl-5">Great doctor if you need your family member to get effective immediate assistance, emergency treatment or a simple consultation.</p>
-                    </div><!--end col-->
-
-                    <div class="col-xl-7 col-lg-8 col-md-12">
-                        <div class="row">
-                            <div class="col-md-4 col-12 mt-4 mt-sm-0 pt-2 pt-sm-0">
-                                <h5 class="text-light title-dark footer-head">Company</h5>
-                                <ul class="list-unstyled footer-list mt-4">
-                                    <li><a href="aboutus.html" class="text-foot"><i class="mdi mdi-chevron-right me-1"></i> About us</a></li>
-                                    <li><a href="departments.html" class="text-foot"><i class="mdi mdi-chevron-right me-1"></i> Services</a></li>
-                                    <li><a href="doctor-team-two.html" class="text-foot"><i class="mdi mdi-chevron-right me-1"></i> Team</a></li>
-                                    <li><a href="blog-detail.html" class="text-foot"><i class="mdi mdi-chevron-right me-1"></i> Project</a></li>
-                                    <li><a href="blogs.html" class="text-foot"><i class="mdi mdi-chevron-right me-1"></i> Blog</a></li>
-                                    <li><a href="login.html" class="text-foot"><i class="mdi mdi-chevron-right me-1"></i> Login</a></li>
-                                </ul>
-                            </div><!--end col-->
-
-                            <div class="col-md-4 col-12 mt-4 mt-sm-0 pt-2 pt-sm-0">
-                                <h5 class="text-light title-dark footer-head">Departments</h5>
-                                <ul class="list-unstyled footer-list mt-4">
-                                    <li><a href="departments.html" class="text-foot"><i class="mdi mdi-chevron-right me-1"></i> Eye Care</a></li>
-                                    <li><a href="departments.html" class="text-foot"><i class="mdi mdi-chevron-right me-1"></i> Psychotherapy</a></li>
-                                    <li><a href="departments.html" class="text-foot"><i class="mdi mdi-chevron-right me-1"></i> Dental Care</a></li>
-                                    <li><a href="departments.html" class="text-foot"><i class="mdi mdi-chevron-right me-1"></i> Orthopedic</a></li>
-                                    <li><a href="departments.html" class="text-foot"><i class="mdi mdi-chevron-right me-1"></i> Cardiology</a></li>
-                                    <li><a href="departments.html" class="text-foot"><i class="mdi mdi-chevron-right me-1"></i> Gynecology</a></li>
-                                    <li><a href="departments.html" class="text-foot"><i class="mdi mdi-chevron-right me-1"></i> Neurology</a></li>
-                                </ul>
-                            </div><!--end col-->
-
-                            <div class="col-md-4 col-12 mt-4 mt-sm-0 pt-2 pt-sm-0">
-                                <h5 class="text-light title-dark footer-head">Contact us</h5>
-                                <ul class="list-unstyled footer-list mt-4">
-                                    <li class="d-flex align-items-center">
-                                        <i data-feather="mail" class="fea icon-sm text-foot align-middle"></i>
-                                        <a href="mailto:contact@example.com" class="text-foot ms-2">contact@example.com</a>
-                                    </li>
-
-                                    <li class="d-flex align-items-center">
-                                        <i data-feather="phone" class="fea icon-sm text-foot align-middle"></i>
-                                        <a href="tel:+152534-468-854" class="text-foot ms-2">+152 534-468-854</a>
-                                    </li>
-
-                                    <li class="d-flex align-items-center">
-                                        <i data-feather="map-pin" class="fea icon-sm text-foot align-middle"></i>
-                                        <a href="javascript:void(0)" class="video-play-icon text-foot ms-2">View on Google map</a>
-                                    </li>
-                                </ul>
-
-                                <ul class="list-unstyled social-icon footer-social mb-0 mt-4">
-                                    <li class="list-inline-item"><a href="#" class="rounded-pill"><i data-feather="facebook" class="fea icon-sm fea-social"></i></a></li>
-                                    <li class="list-inline-item"><a href="#" class="rounded-pill"><i data-feather="instagram" class="fea icon-sm fea-social"></i></a></li>
-                                    <li class="list-inline-item"><a href="#" class="rounded-pill"><i data-feather="twitter" class="fea icon-sm fea-social"></i></a></li>
-                                    <li class="list-inline-item"><a href="#" class="rounded-pill"><i data-feather="linkedin" class="fea icon-sm fea-social"></i></a></li>
-                                </ul><!--end icon-->
-                            </div><!--end col-->
-                        </div><!--end row-->
-                    </div><!--end col-->
-                </div><!--end row-->
-            </div><!--end container-->
-
-            <div class="container mt-5">
-                <div class="pt-4 footer-bar">
-                    <div class="row align-items-center">
-                        <div class="col-sm-6">
-                            <div class="text-sm-start text-center">
-                                <p class="mb-0"><script>document.write(new Date().getFullYear())</script> © Doctris. Design with <i class="mdi mdi-heart text-danger"></i> by <a href="../../../index.html" target="_blank" class="text-reset">Shreethemes</a>.</p>
-                            </div>
-                        </div><!--end col-->
-
-                        <div class="col-sm-6 mt-4 mt-sm-0">
-                            <ul class="list-unstyled footer-list text-sm-end text-center mb-0">
-                                <li class="list-inline-item"><a href="terms.html" class="text-foot me-2">Terms</a></li>
-                                <li class="list-inline-item"><a href="privacy.html" class="text-foot me-2">Privacy</a></li>
-                                <li class="list-inline-item"><a href="aboutus.html" class="text-foot me-2">About</a></li>
-                                <li class="list-inline-item"><a href="contact.html" class="text-foot me-2">Contact</a></li>
-                            </ul>
-                        </div><!--end col-->
-                    </div><!--end row-->
-                </div>
-            </div><!--end container-->
-        </footer><!--end footer-->
-        <!-- End -->
+        
+        <jsp:include page="/component/footer.jsp" />
 
         <!-- Back to top -->
         <a href="#" onclick="topFunction()" id="back-to-top" class="btn btn-icon btn-pills btn-primary back-to-top"><i data-feather="arrow-up" class="icons"></i></a>
@@ -402,7 +334,8 @@
             </div>
             <% }%>
         </div>
-
+        
+        
 
         <!-- javascript -->
         <script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
@@ -451,44 +384,26 @@
         </script>
 
         <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const departmentSelect = document.querySelector('.department-name');
-                const doctorSelect = document.querySelector('#doctorSelect');
-                const allDoctors = Array.from(doctorSelect.options);
-
-                departmentSelect.addEventListener('change', function () {
-                    const selectedDept = departmentSelect.value;
-
-                    // Clear current options
-                    doctorSelect.innerHTML = '';
-
-                    // Add matching options back
-                    allDoctors.forEach(doctor => {
-                        if (doctor.dataset.department === selectedDept) {
-                            doctorSelect.appendChild(doctor);
-                        }
-                    });
-
-                    // Optional: reset selected value
-                    doctorSelect.selectedIndex = 0;
-                });
-            });
-        </script>
-
-        <script>
             document.addEventListener('DOMContentLoaded', function () {
                 const slotSelect = document.querySelector('select[name="slotId"]');
                 const doctorSelect = document.getElementById('doctorSelect');
+                const appointmentDateInput = document.getElementById('appointmentDate');
 
-                if (!slotSelect || !doctorSelect) {
-                    console.log('Dropdowns not found!');
+                if (!slotSelect || !doctorSelect || !appointmentDateInput) {
+                    console.log('Dropdowns or date input not found!');
                     return;
                 }
 
-                function loadDoctors(slotId) {
-                    console.log('Loading doctors for slotId:', slotId);
+                function loadDoctors(slotId, appointmentDate) {
+                    console.log('Loading doctors for slotId:', slotId, 'on date:', appointmentDate);
 
-                    fetch(`/SWP_BL5_TEAM1/doctor-by-slot?slotId=` + slotId)
+                    if (!slotId || !appointmentDate) {
+                        console.log('Missing slot or date');
+                        doctorSelect.innerHTML = '<option value="">Select a time slot and date</option>';
+                        return;
+                    }
+
+                    fetch("/SWP_BL5_TEAM1/doctor-by-slot-and-date?slotId=" + slotId + "&appointmentDate=" + appointmentDate)
                             .then(response => response.json())
                             .then(data => {
                                 console.log('Doctors fetched:', data);
@@ -497,7 +412,7 @@
                                 if (data.length === 0) {
                                     const opt = document.createElement('option');
                                     opt.value = '';
-                                    opt.text = 'No doctors on duty';
+                                    opt.text = 'No doctors available';
                                     doctorSelect.appendChild(opt);
                                 } else {
                                     data.forEach(doctor => {
@@ -515,20 +430,24 @@
                             .catch(error => console.error('Error fetching doctors:', error));
                 }
 
-                // Run on slot select change
-                slotSelect.addEventListener('change', function () {
-                    const slotId = this.value;
-                    loadDoctors(slotId);
-                });
+                function triggerLoad() {
+                    const slotId = slotSelect.value;
+                    const appointmentDate = appointmentDateInput.value;
+                    loadDoctors(slotId, appointmentDate);
+                }
 
-                // Trigger initial load based on default selected slot
-                if (slotSelect.value) {
-                    loadDoctors(slotSelect.value);
+                // Run when slot changes
+                slotSelect.addEventListener('change', triggerLoad);
+
+                // Run when date changes
+                appointmentDateInput.addEventListener('change', triggerLoad);
+
+                // Initial load
+                if (slotSelect.value && appointmentDateInput.value) {
+                    triggerLoad();
                 }
             });
         </script>
-
-
 
         <!--        <script>
                     $(document).ready(function() {

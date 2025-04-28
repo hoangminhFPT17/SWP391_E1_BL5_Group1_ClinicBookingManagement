@@ -179,3 +179,9 @@ CREATE TABLE InvoiceItem (
 
     FOREIGN KEY (invoice_id) REFERENCES Invoice(invoice_id)
 );
+
+
+ALTER TABLE `swp_clinic`.`user` 
+ADD COLUMN `img_path` VARCHAR(255) NULL AFTER `created_at`,
+ADD COLUMN `user_bio` VARCHAR(255) NULL AFTER `img_path`,
+ADD COLUMN `pdf_path` VARCHAR(255) NULL AFTER `user_bio`;

@@ -21,9 +21,25 @@
         <servlet-class>controller.patient.UpdateAppointmentServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>PatientExaminationPackageSelectServlet</servlet-name>
+        <servlet-class>controller.patient.PatientExaminationPackageSelectServlet</servlet-class>
+    </servlet>
+
+    <!-- Staff Controllers -->
+    <servlet>
         <servlet-name>queueRecordController</servlet-name>
         <servlet-class>controller.staff.queueRecordController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ReceptionAppointmentsListServlet</servlet-name>
+        <servlet-class>controller.staff.ReceptionAppointmentsListServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>PatientListServlet</servlet-name>
+        <servlet-class>controller.staff.PatientListServlet</servlet-class>
+    </servlet>
+
+    <!-- Manager Controllers -->
     <servlet>
         <servlet-name>ExaminationPackageManager</servlet-name>
         <servlet-class>controller.manager.ExaminationPackageManager</servlet-class>
@@ -44,6 +60,8 @@
         <servlet-name>InsertDoctorAssignmentServlet</servlet-name>
         <servlet-class>controller.manager.InsertDoctorAssignmentServlet</servlet-class>
     </servlet>
+
+    <!-- Doctor Controllers -->
     <servlet>
         <servlet-name>QueueManager</servlet-name>
         <servlet-class>controller.doctor.QueueManager</servlet-class>
@@ -68,13 +86,38 @@
         <servlet-name>AccountManager</servlet-name>
         <servlet-class>controller.manager.AccountManager</servlet-class>
     </servlet>
+        <servlet-name>DoctorTimeSlotListServlet</servlet-name>
+        <servlet-class>controller.doctor.DoctorTimeSlotListServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateDoctorTimeSlotServlet</servlet-name>
+        <servlet-class>controller.doctor.UpdateDoctorTimeSlotServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddUnavailabilityServlet</servlet-name>
+        <servlet-class>controller.doctor.AddUnavailabilityServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RemoveUnavailabilityServlet</servlet-name>
+        <servlet-class>controller.doctor.RemoveUnavailabilityServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>MedicalRecordsServlet</servlet-name>
+        <servlet-class>controller.doctor.MedicalRecordsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ManagerAnalyticServlet</servlet-name>
+        <servlet-class>controller.manager.ManagerAnalyticServlet</servlet-class>
+    </servlet>
+    <!-- Servlet Mappings -->
+   
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <url-pattern>/PatientBookAppointmentServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DoctorBySlotServlet</servlet-name>
-        <url-pattern>/doctor-by-slot</url-pattern>
+        <url-pattern>/doctor-by-slot-and-date</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>PatientAppointmentsListServlet</servlet-name>
@@ -151,5 +194,23 @@
     <servlet-mapping>
         <servlet-name>AccountManager</servlet-name>
         <url-pattern>/AccountManager</url-pattern>
+        <servlet-name>DoctorTimeSlotListServlet</servlet-name>
+        <url-pattern>/DoctorTimeSlotListServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateDoctorTimeSlotServlet</servlet-name>
+        <url-pattern>/UpdateDoctorTimeSlotServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PatientExaminationPackageSelectServlet</servlet-name>
+        <url-pattern>/PatientExaminationPackageSelectServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddUnavailabilityServlet</servlet-name>
+        <url-pattern>/AddUnavailabilityServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RemoveUnavailabilityServlet</servlet-name>
+        <url-pattern>/RemoveUnavailabilityServlet</url-pattern>
     </servlet-mapping>
 </web-app>

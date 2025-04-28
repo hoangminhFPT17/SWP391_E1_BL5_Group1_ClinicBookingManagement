@@ -1,4 +1,4 @@
-    /*
+/*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
@@ -11,6 +11,7 @@ import java.sql.Timestamp;
  * @author LENOVO
  */
 public class User {
+
     private int userId;
     private String email;
     private String passwordHash;
@@ -23,8 +24,17 @@ public class User {
     private String role;
     private String bio;
     private String imgPath;
+    private String pdfPath;
 
-    public User(int userId, String email, String passwordHash, String phone, String fullName, boolean isVerified, String otpCode, Timestamp otpExpiry, Timestamp createdAt, String role, String bio, String imgPath) {
+    public String getPdfPath() {
+        return pdfPath;
+    }
+
+    public void setPdfPath(String pdfPath) {
+        this.pdfPath = pdfPath;
+    }
+
+    public User(int userId, String email, String passwordHash, String phone, String fullName, boolean isVerified, String otpCode, Timestamp otpExpiry, Timestamp createdAt, String bio, String imgPath, String pdfPath) {
         this.userId = userId;
         this.email = email;
         this.passwordHash = passwordHash;
@@ -34,7 +44,29 @@ public class User {
         this.otpCode = otpCode;
         this.otpExpiry = otpExpiry;
         this.createdAt = createdAt;
-        this.role = role;
+        this.bio = bio;
+        this.imgPath = imgPath;
+        this.pdfPath = pdfPath;
+    }
+
+    public User(int userId, String email, String phone, String fullName, String bio) {
+        this.userId = userId;
+        this.email = email;
+        this.phone = phone;
+        this.fullName = fullName;
+        this.bio = bio;
+    }
+
+    public User(int userId, String email, String passwordHash, String phone, String fullName, boolean isVerified, String otpCode, Timestamp otpExpiry, Timestamp createdAt, String bio, String imgPath) {
+        this.userId = userId;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.phone = phone;
+        this.fullName = fullName;
+        this.isVerified = isVerified;
+        this.otpCode = otpCode;
+        this.otpExpiry = otpExpiry;
+        this.createdAt = createdAt;
         this.bio = bio;
         this.imgPath = imgPath;
     }
