@@ -13,6 +13,7 @@ import java.sql.Timestamp;
  */
 public class AppointmentDetailDTO {
     private int appointmentId;
+    private String patientName;
     private String patientPhone;
     private String doctorId;
     private String slot;
@@ -25,8 +26,9 @@ public class AppointmentDetailDTO {
     public AppointmentDetailDTO() {
     }
 
-    public AppointmentDetailDTO(int appointmentId, String patientPhone, String doctorId, String slot, Date appointmentDate, String status, Timestamp createdAt, String description, String examinationPackage) {
+    public AppointmentDetailDTO(int appointmentId, String patientName, String patientPhone, String doctorId, String slot, Date appointmentDate, String status, Timestamp createdAt, String description, String examinationPackage) {
         this.appointmentId = appointmentId;
+        this.patientName = patientName;
         this.patientPhone = patientPhone;
         this.doctorId = doctorId;
         this.slot = slot;
@@ -35,6 +37,14 @@ public class AppointmentDetailDTO {
         this.createdAt = createdAt;
         this.description = description;
         this.examinationPackage = examinationPackage;
+    }
+
+    public String getPatientName() {
+        return patientName;
+    }
+
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
     }
 
     public int getAppointmentId() {

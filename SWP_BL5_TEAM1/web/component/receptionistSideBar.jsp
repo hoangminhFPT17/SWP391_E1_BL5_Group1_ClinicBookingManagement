@@ -11,9 +11,17 @@
         </div>
 
         <ul class="sidebar-menu pt-3">
-            <li><a href="index.html"><i class="uil uil-dashboard me-2 d-inline-block"></i>Dashboard</a></li>
-            <li><a href="appointment.html"><i class="uil uil-stethoscope me-2 d-inline-block"></i>Appointment</a></li>
+            
 
+            <li class="sidebar-dropdown">
+                <a href="AppointmentManager"><i class="uil uil-file me-2 d-inline-block"></i>Appointment Manager</a>
+                
+            </li>
+
+            <li class="sidebar-dropdown">
+                <a href="PatientCheckin"><i class="uil uil-sign-in-alt me-2 d-inline-block"></i>Patient Check-in</a>
+                
+            </li>
         </ul>
         <!-- sidebar-menu  -->
     </div>

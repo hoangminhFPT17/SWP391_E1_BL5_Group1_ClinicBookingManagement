@@ -24,6 +24,14 @@ public class ExaminationPackage {
         this.specialtyId = specialtyId;
     }
 
+    public ExaminationPackage(String name, String description, int specialtyId) {
+        this.name = name;
+        this.description = description;
+        this.specialtyId = specialtyId;
+    }
+    
+    
+
     public int getPackageId() {
         return packageId;
     }

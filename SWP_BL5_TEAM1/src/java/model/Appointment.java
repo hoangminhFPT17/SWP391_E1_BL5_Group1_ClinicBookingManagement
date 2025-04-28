@@ -47,6 +47,19 @@ public class Appointment {
         this.packageId = packageId;
     }
 
+    public Appointment(String patientPhone, int doctorId, int slotId, Date appointmentDate, String status, Timestamp createdAt, String description, Integer packageId) {
+        this.patientPhone = patientPhone;
+        this.doctorId = doctorId;
+        this.slotId = slotId;
+        this.appointmentDate = appointmentDate;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.description = description;
+        this.packageId = packageId;
+    }
+    
+    
+
     public int getAppointmentId() {
         return appointmentId;
     }
