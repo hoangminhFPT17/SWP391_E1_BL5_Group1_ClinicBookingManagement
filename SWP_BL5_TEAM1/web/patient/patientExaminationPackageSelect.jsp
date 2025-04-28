@@ -13,7 +13,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <jsp:include page="/includes/patientHead.jsp" />
-        <title>JSP Page</title>
+        <title>Select a package</title>
     </head>
     <body>
         <!-- Loader -->

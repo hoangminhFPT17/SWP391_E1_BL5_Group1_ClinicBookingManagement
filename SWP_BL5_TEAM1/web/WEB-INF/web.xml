@@ -46,8 +46,6 @@
         <servlet-name>PatientCheckin</servlet-name>
         <servlet-class>controller.staff.PatientCheckin</servlet-class>
     </servlet>
-
-    <!-- Manager Controllers -->
     <servlet>
         <servlet-name>ExaminationPackageManager</servlet-name>
         <servlet-class>controller.manager.ExaminationPackageManager</servlet-class>
@@ -80,8 +78,6 @@
         <servlet-name>ManagerAnalyticServlet</servlet-name>
         <servlet-class>controller.manager.ManagerAnalyticServlet</servlet-class>
     </servlet>
-
-    <!-- Doctor Controllers -->
     <servlet>
         <servlet-name>QueueManager</servlet-name>
         <servlet-class>controller.doctor.QueueManager</servlet-class>
@@ -109,10 +105,6 @@
     <servlet>
         <servlet-name>MedicalRecordsServlet</servlet-name>
         <servlet-class>controller.doctor.MedicalRecordsServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ManagerAnalyticServlet</servlet-name>
-        <servlet-class>controller.manager.ManagerAnalyticServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>HomePageServlet</servlet-name>
@@ -217,5 +209,9 @@
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homePage</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManagerAnalyticServlet</servlet-name>
+        <url-pattern>/ManagerAnalyticServlet</url-pattern>
     </servlet-mapping>
 </web-app>

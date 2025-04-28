@@ -1,6 +1,3 @@
-
-
-
 <nav id="sidebar" class="sidebar-wrapper">
     <div class="sidebar-content" data-simplebar style="height: calc(100% - 60px);">
         <div class="sidebar-brand">
