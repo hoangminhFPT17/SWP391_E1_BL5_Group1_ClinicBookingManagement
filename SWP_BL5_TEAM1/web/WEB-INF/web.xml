@@ -166,10 +166,6 @@
         <url-pattern>/QueueManager</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>MedicalRecordsServlet</servlet-name>
-        <url-pattern>/doctor/medical-records</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>PatientListServlet</servlet-name>
         <url-pattern>/doctor/patients-list</url-pattern>
     </servlet-mapping>
