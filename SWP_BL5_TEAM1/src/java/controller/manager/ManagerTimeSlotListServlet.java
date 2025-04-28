@@ -21,7 +21,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import model.StaffAccount;
 import model.TimeSlot;
+import model.User;
 
 /**
  *
@@ -68,9 +70,32 @@ public class ManagerTimeSlotListServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // 1. Get logged-in user from session
+        User loggedInUser = (User) request.getSession().getAttribute("user");
+        if (loggedInUser == null) {
+            // User not logged in, redirect to login
+            response.sendRedirect("/SWP_BL5_TEAM1/login");
+            return;
+        }
+
+// 2. Check if user has a StaffAccount
+        StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
+        StaffAccount staffAccount = staffAccountDAO.getStaffByUserId(loggedInUser.getUserId());
+        if (staffAccount == null) {
+            // User is not a staff member, redirect to login
+            response.sendRedirect("/SWP_BL5_TEAM1/login");
+            return;
+        }
+
+        // 3. Check if StaffAccount role is "Manager"
+        if (!"Manager".equalsIgnoreCase(staffAccount.getRole())) {
+            // User is a staff, but not a Manager, redirect or show error
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied. Manager role required.");
+            return;
+        }
+
         TimeSlotDAO timeSlotDAO = new TimeSlotDAO();
         DoctorTimeSlotDAO doctorTimeSlotDAO = new DoctorTimeSlotDAO();
-        StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
 
         // Get filters from parameters
         String keyword = request.getParameter("keyword");
@@ -142,7 +167,7 @@ public class ManagerTimeSlotListServlet extends HttpServlet {
             String json = objectMapper.writeValueAsString(doctors);
             assignedDoctorsJsonMap.put(slot.getSlotId(), json);
         }
-        
+
         List<DoctorAssignDTO> doctorAssignDTOs = staffAccountDAO.getAllDoctors();
         String doctorAssignDTOsJson = objectMapper.writeValueAsString(doctorAssignDTOs);
         request.setAttribute("doctorAssignDTOsJson", doctorAssignDTOsJson);

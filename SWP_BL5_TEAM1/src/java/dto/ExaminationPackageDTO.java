@@ -23,17 +23,15 @@ public class ExaminationPackageDTO {
     private int packageId;
     private String name;
     private String description;
-    private BigDecimal price;
     private String specialty;
 
     public ExaminationPackageDTO() {
     }
 
-    public ExaminationPackageDTO(int packageId, String name, String description, BigDecimal price, String specialty) {
+    public ExaminationPackageDTO(int packageId, String name, String description, String specialty) {
         this.packageId = packageId;
         this.name = name;
         this.description = description;
-        this.price = price;
         this.specialty = specialty;
     }
 
@@ -61,14 +59,6 @@ public class ExaminationPackageDTO {
         this.description = description;
     }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
     public String getSpecialty() {
         return specialty;
     }
@@ -79,7 +69,7 @@ public class ExaminationPackageDTO {
 
     @Override
     public String toString() {
-        return "ExaminationPackage{" + "packageId=" + packageId + ", name=" + name + ", description=" + description + ", price=" + price + ", specialtyId=" + specialty + '}';
+        return "ExaminationPackage{" + "packageId=" + packageId + ", name=" + name + ", description=" + description + ", price=" +  ", specialtyId=" + specialty + '}';
     }
 
 }

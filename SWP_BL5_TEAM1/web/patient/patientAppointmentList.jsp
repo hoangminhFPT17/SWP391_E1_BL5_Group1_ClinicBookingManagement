@@ -23,6 +23,7 @@
         %>
         <jsp:useBean id="now" class="java.util.Date" scope="page" />
         <jsp:include page="/common/patientHeaderNav.jsp" />
+       
 
         <!-- Start Hero -->
         <section class="bg-dashboard">
@@ -92,7 +93,6 @@
                                                 <tr>
                                                     <th class="border-bottom p-3" style="min-width: 50px;">#</th>
                                                     <th class="border-bottom p-3" style="min-width: 180px;">Name</th>
-                                                    <th class="border-bottom p-3" style="min-width: 150px;">Date of Birth</th>
                                                     <th class="border-bottom p-3" style="min-width: 150px;">Appointment Date</th>
                                                     <th class="border-bottom p-3">Time Slot</th>
                                                     <th class="border-bottom p-3" style="min-width: 220px;">Doctor</th>
@@ -122,9 +122,6 @@
                                                                     </a>
                                                                 </td>
                                                                 <td class="p-3">
-                                                                    <fmt:formatDate value="${dto.patientDateOfBirth}" pattern="dd MMM yyyy" />
-                                                                </td>
-                                                                <td class="p-3">
                                                                     <fmt:formatDate value="${dto.appointmentDate}" pattern="dd MMM yyyy" />
                                                                 </td>
                                                                 <td class="p-3">${dto.timeSlotName}</td>
@@ -150,7 +147,15 @@
                                                                     </c:choose>
                                                                 </td>
                                                                 <td class="text-start p-3">
-                                                                    <a href="#" class="btn btn-icon btn-pills btn-soft-primary" data-bs-toggle="modal" data-bs-target="#viewappointment">
+                                                                    <a href="#" 
+                                                                       class="btn btn-icon btn-pills btn-soft-primary view-appointment-btn" 
+                                                                       data-bs-toggle="modal" 
+                                                                       data-bs-target="#viewappointment"
+                                                                       data-patient-name="${patient.fullName}"
+                                                                       data-patient-dob="${patient.dateOfBirth}"
+                                                                       data-appointment-date="${dto.appointmentDate}"
+                                                                       data-timeslot="${dto.timeSlotName}"
+                                                                       data-doctor-name="${dto.doctorFullName}">
                                                                         <i class="uil uil-eye"></i>
                                                                     </a>
 
@@ -167,8 +172,8 @@
                                                                            data-dob="${patient.dateOfBirth}"
                                                                            data-gender="${patient.gender}"
                                                                            data-doctorid="${appointment.doctorId}"
-                                                                           data-date="${appointment.appointmentDate}"
-                                                                           data-slotid="${appointment.slotId}">
+                                                                           data-date="${dto.appointmentDate}"
+                                                                           data-slotid="${appointment.timeSlotId}">
                                                                             <i class="uil uil-edit"></i>
                                                                         </a>
                                                                     </c:if>
@@ -272,42 +277,32 @@
                     <div class="modal-body p-3 pt-4">
                         <div class="d-flex align-items-center">
                             <img src="${pageContext.request.contextPath}/assets/images/client/01.jpg" class="avatar avatar-small rounded-pill" alt="">
-                            <h5 class="mb-0 ms-3">Howard Tanner</h5>
+                            <h5 class="mb-0 ms-3" id="viewPatientName">Patient Name</h5> <!-- ID added -->
                         </div>
                         <ul class="list-unstyled mb-0 d-md-flex justify-content-between mt-4">
                             <li>
                                 <ul class="list-unstyled mb-0">
                                     <li class="d-flex">
                                         <h6>Age:</h6>
-                                        <p class="text-muted ms-2">25 year old</p>
+                                        <p class="text-muted ms-2" id="viewPatientDob">Patient DOB</p> <!-- ID added -->
                                     </li>
 
                                     <li class="d-flex">
-                                        <h6>Gender:</h6>
-                                        <p class="text-muted ms-2">Male</p>
+                                        <h6>Date:</h6>
+                                        <p class="text-muted ms-2" id="viewAppointmentDate">Appointment Date</p> <!-- ID added -->
                                     </li>
 
                                     <li class="d-flex">
-                                        <h6 class="mb-0">Department:</h6>
-                                        <p class="text-muted ms-2 mb-0">Cardiology</p>
+                                        <h6 class="mb-0">Time Slot:</h6>
+                                        <p class="text-muted ms-2 mb-0" id="viewTimeSlot">Time Slot</p> <!-- ID added -->
                                     </li>
                                 </ul>
                             </li>
                             <li>
                                 <ul class="list-unstyled mb-0">
                                     <li class="d-flex">
-                                        <h6>Date:</h6>
-                                        <p class="text-muted ms-2">20th Dec 2020</p>
-                                    </li>
-
-                                    <li class="d-flex">
-                                        <h6>Time:</h6>
-                                        <p class="text-muted ms-2">11:00 AM</p>
-                                    </li>
-
-                                    <li class="d-flex">
-                                        <h6 class="mb-0">Doctor:</h6>
-                                        <p class="text-muted ms-2 mb-0">Dr. Calvin Carlo</p>
+                                        <h6>Doctor:</h6>
+                                        <p class="text-muted ms-2" id="viewDoctorName">Doctor Name</p> <!-- ID added -->
                                     </li>
                                 </ul>
                             </li>
@@ -528,30 +523,100 @@
                 bsToast.show();
             </script>
         </c:if>
+            
+        <jsp:include page="/component/footer.jsp" />
+
+        <script> //view button script
+            document.addEventListener('DOMContentLoaded', function () {
+                const viewButtons = document.querySelectorAll('.view-appointment-btn');
+
+                viewButtons.forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        const patientName = this.getAttribute('data-patient-name');
+                        const patientDob = this.getAttribute('data-patient-dob');
+                        const appointmentDate = this.getAttribute('data-appointment-date');
+                        const timeSlot = this.getAttribute('data-timeslot');
+                        const doctorName = this.getAttribute('data-doctor-name');
+
+                        // 🔥 Debug logs
+                        console.log("Clicked view appointment button:");
+                        console.log("Patient Name:", patientName);
+                        console.log("Patient DOB:", patientDob);
+                        console.log("Appointment Date:", appointmentDate);
+                        console.log("Time Slot:", timeSlot);
+                        console.log("Doctor Name:", doctorName);
+
+                        // Check if any value is null or empty
+                        if (!patientName || !patientDob || !appointmentDate || !timeSlot || !doctorName) {
+                            console.warn("⚠️ Some data attributes are missing or null!");
+                        }
+
+                        // Fill modal
+                        document.getElementById('viewPatientName').textContent = patientName || 'Unknown';
+                        document.getElementById('viewPatientDob').textContent = formatDOB(patientDob) || 'Unknown';
+                        document.getElementById('viewAppointmentDate').textContent = formatDate(appointmentDate) || 'Unknown';
+                        document.getElementById('viewTimeSlot').textContent = timeSlot || 'Unknown';
+                        document.getElementById('viewDoctorName').textContent = doctorName || 'Unknown';
+                    });
+                });
+
+                function formatDate(dateStr) {
+                    if (!dateStr)
+                        return '';
+                    const date = new Date(dateStr);
+                    if (isNaN(date.getTime()))
+                        return '';
+                    return date.toLocaleDateString('en-GB', {day: 'numeric', month: 'short', year: 'numeric'});
+                }
+
+                function formatDOB(dobStr) {
+                    if (!dobStr)
+                        return '';
+                    const dob = new Date(dobStr);
+                    if (isNaN(dob.getTime()))
+                        return '';
+                    const today = new Date();
+                    let age = today.getFullYear() - dob.getFullYear();
+                    const m = today.getMonth() - dob.getMonth();
+                    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                        age--;
+                    }
+                    return age + " years old";
+                }
+            });
+        </script>
 
 
-        <script>
+        <script> //edit button script
             document.addEventListener('DOMContentLoaded', function () {
                 const slotSelectModal = document.getElementById('editSlotId');
                 const doctorSelectModal = document.getElementById('editDoctorId');
+                const appointmentDateInputModal = document.getElementById('editAppointmentDate');
 
-                if (!slotSelectModal || !doctorSelectModal) {
-                    console.log('Edit modal dropdowns not found!');
+                if (!slotSelectModal || !doctorSelectModal || !appointmentDateInputModal) {
+                    console.log('Edit modal dropdowns or date input not found!');
                     return;
                 }
 
-                function loadDoctorsForModal(slotId, selectedDoctorId = null) {
-                    console.log('Loading doctors for slotId (modal):', slotId);
+                function loadDoctorsForModal(slotId, appointmentDate, selectedDoctorId = null) {
+                    console.log('Loading doctors for slotId (modal):', slotId, 'on date:', appointmentDate);
 
-                    fetch(`/SWP_BL5_TEAM1/doctor-by-slot?slotId=` + slotId)
+                    if (!slotId || !appointmentDate) {
+                        console.log('Missing slot or date in modal');
+                        doctorSelectModal.innerHTML = '<option value="">Select a time slot and date</option>';
+                        return;
+                    }
+
+                    fetch("/SWP_BL5_TEAM1/doctor-by-slot-and-date?slotId=" + slotId + "&appointmentDate=" + appointmentDate)
                             .then(response => response.json())
                             .then(data => {
+                                console.log('Doctors fetched (modal):', data);
                                 doctorSelectModal.innerHTML = '';
 
                                 if (data.length === 0) {
                                     const opt = document.createElement('option');
                                     opt.value = '';
-                                    opt.text = 'No doctors on duty';
+                                    opt.text = 'No doctors available';
                                     doctorSelectModal.appendChild(opt);
                                 } else {
                                     data.forEach(doctor => {
@@ -572,23 +637,29 @@
                             .catch(error => console.error('Error fetching doctors (modal):', error));
                 }
 
-                // Load doctors when slot changes in modal
-                slotSelectModal.addEventListener('change', function () {
-                    const slotId = this.value;
-                    loadDoctorsForModal(slotId);
-                });
+                function triggerLoadModal() {
+                    const slotId = slotSelectModal.value;
+                    const appointmentDate = appointmentDateInputModal.value;
+                    const selectedDoctorId = doctorSelectModal.getAttribute('data-selected-id');
+                    loadDoctorsForModal(slotId, appointmentDate, selectedDoctorId);
+                }
 
-                // Optional: When the modal opens, load doctors based on current slot & doctor
+                // Load doctors when slot changes in modal
+                slotSelectModal.addEventListener('change', triggerLoadModal);
+
+                // Load doctors when appointment date changes in modal
+                appointmentDateInputModal.addEventListener('change', triggerLoadModal);
+
+                // When the modal opens, load doctors based on current slot & date
                 const editModal = document.getElementById('editAppointmentModal');
                 editModal.addEventListener('show.bs.modal', function () {
-                    const slotId = slotSelectModal.value;
-                    const selectedDoctorId = doctorSelectModal.getAttribute('data-selected-id');
-                    if (slotId) {
-                        loadDoctorsForModal(slotId, selectedDoctorId);
+                    if (slotSelectModal.value && appointmentDateInputModal.value) {
+                        triggerLoadModal();
                     }
                 });
             });
         </script>
+
 
         <script>
             function fillEditModal(button) {

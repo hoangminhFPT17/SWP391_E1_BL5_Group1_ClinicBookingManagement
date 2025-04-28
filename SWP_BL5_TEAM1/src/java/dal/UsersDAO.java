@@ -376,4 +376,56 @@ public class UsersDAO extends DBContext {
         }
         return false;
     }
+    
+    public List<User> getAllUsers(String filter)  {
+        List<User> list = new ArrayList<>();
+        String sql =
+          "SELECT @rownum := @rownum + 1 AS idx, " +
+          "       u.user_id, u.email, u.phone, u.full_name, u.is_verified, u.created_at " +
+          "  FROM (SELECT @rownum := 0) vars " +
+          "  JOIN `User` u ON 1=1 " +
+          " WHERE (? = '' OR LOWER(u.full_name) LIKE ? OR LOWER(u.email) LIKE ?) " +
+          " ORDER BY u.created_at DESC";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            String f = filter == null ? "" : filter.toLowerCase();
+            ps.setString(1, f);
+            ps.setString(2, "%" + f + "%");
+            ps.setString(3, "%" + f + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new User(
+                        rs.getInt("user_id"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getString("full_name"),
+                        rs.getBoolean("is_verified"),
+                        rs.getTimestamp("created_at")
+                    ));
+                }
+            }
+        }
+        catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error checking if email exists", ex);
+        }
+        return list;
+    }
+    
+    public boolean updateUser(int userId, String email, String phone,
+                              String fullName, boolean isVerified) {
+        String sql = "UPDATE `User` " +
+                     "   SET email = ?, phone = ?, full_name = ?, is_verified = ? " +
+                     " WHERE user_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ps.setString(2, phone);
+            ps.setString(3, fullName);
+            ps.setBoolean(4, isVerified);
+            ps.setInt(5, userId);
+            return ps.executeUpdate() == 1;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error checking if email exists", ex);
+        }
+        return false;
+    }
 }

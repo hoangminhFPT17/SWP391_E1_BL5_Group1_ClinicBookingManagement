@@ -4,6 +4,7 @@
  */
 package dal;
 
+import dto.ExaminationPackageDTO;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +74,59 @@ public class ExaminationPackageDAO extends DBContext {
             ps.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(ExaminationPackageDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public List<ExaminationPackageDTO> getAllPackagesByDTO() {
+        List<ExaminationPackageDTO> packages = new ArrayList<>();
+        String sql = ""
+            + "SELECT ep.package_id, ep.name, ep.description, s.name AS specialty "
+            + "FROM ExaminationPackage ep "
+            + "JOIN Specialty s ON ep.specialty_id = s.specialty_id";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                ExaminationPackageDTO pkg = new ExaminationPackageDTO();
+                pkg.setPackageId(rs.getInt("package_id"));
+                pkg.setName(rs.getString("name"));
+                pkg.setDescription(rs.getString("description"));
+                pkg.setSpecialty(rs.getString("specialty"));
+                packages.add(pkg);
+            }
+
+        } catch (SQLException ex) {
+            System.out.println("getAllPackages: " + ex.getMessage());
+        }
+
+        return packages;
+    }
+    
+    public boolean insertPackage(ExaminationPackage pkg) {
+        String sql = "INSERT INTO ExaminationPackage (name, description, specialty_id) VALUES (?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, pkg.getName());
+            ps.setString(2, pkg.getDescription());
+            ps.setInt(3, pkg.getSpecialtyId());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            System.out.println("insertPackage: " + ex.getMessage());
+            return false;
+        }
+    }
+    
+    public boolean updatePackage(ExaminationPackage pkg) {
+        String sql = "UPDATE ExaminationPackage SET name = ?, description = ?, specialty_id = ? WHERE package_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, pkg.getName());
+            ps.setString(2, pkg.getDescription());
+            ps.setInt(4, pkg.getSpecialtyId());
+            ps.setInt(5, pkg.getPackageId());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            System.out.println("updatePackage: " + ex.getMessage());
+            return false;
         }
     }
 }

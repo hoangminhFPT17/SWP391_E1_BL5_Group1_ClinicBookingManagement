@@ -11,7 +11,7 @@
 </head>
 <body>
   <div class="page-wrapper doctris-theme toggled">
-    <%@ include file="../component/sideBar.jsp" %>
+    <%@ include file="../component/doctorSideBar.jsp" %>
     <main class="page-content bg-light">
       <%@ include file="../component/header.jsp" %>
       <div class="container-fluid" style="margin-top:50px;">

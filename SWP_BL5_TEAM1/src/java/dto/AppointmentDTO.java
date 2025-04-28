@@ -4,6 +4,8 @@
  */
 package dto;
 
+import java.sql.Date;
+
 /**
  *
  * @author LENOVO
@@ -16,6 +18,7 @@ public class AppointmentDTO {
     private String timeSlotName;
     private String doctorFullName;
     private String status;
+    private int timeSlotId;
     
     // Optionally: appointmentId, if needed for action buttons
     private int appointmentId;
@@ -33,6 +36,18 @@ public class AppointmentDTO {
         this.timeSlotName = timeSlotName;
         this.doctorFullName = doctorFullName;
         this.status = status;
+        this.appointmentId = appointmentId;
+    }
+
+    public AppointmentDTO(int index, String patientName, Date patientDateOfBirth, Date appointmentDate, String timeSlotName, String doctorFullName, String status, int timeSlotId, int appointmentId) {
+        this.index = index;
+        this.patientName = patientName;
+        this.patientDateOfBirth = patientDateOfBirth;
+        this.appointmentDate = appointmentDate;
+        this.timeSlotName = timeSlotName;
+        this.doctorFullName = doctorFullName;
+        this.status = status;
+        this.timeSlotId = timeSlotId;
         this.appointmentId = appointmentId;
     }
 
@@ -98,5 +113,13 @@ public class AppointmentDTO {
 
     public void setAppointmentId(int appointmentId) {
         this.appointmentId = appointmentId;
+    }
+
+    public int getTimeSlotId() {
+        return timeSlotId;
+    }
+
+    public void setTimeSlotId(int timeSlotId) {
+        this.timeSlotId = timeSlotId;
     }
 }

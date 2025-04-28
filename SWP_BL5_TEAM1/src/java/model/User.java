@@ -71,6 +71,19 @@ public class User {
         this.imgPath = imgPath;
     }
 
+    public User(int userId, String email, String phone, String fullName, boolean isVerified, Timestamp createdAt) {
+        this.userId = userId;
+        this.email = email;
+        this.phone = phone;
+        this.fullName = fullName;
+        this.isVerified = isVerified;
+        this.createdAt = createdAt;
+    }
+
+    
+    
+    
+
     public String getBio() {
         return bio;
     }

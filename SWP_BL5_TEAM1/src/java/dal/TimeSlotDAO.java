@@ -45,6 +45,20 @@ public class TimeSlotDAO extends DBContext {
         return slots;
     }
 
+    public List<TimeSlot> getAllActiveTimeSlots() {
+        List<TimeSlot> slots = new ArrayList<>();
+        String query = "SELECT * FROM TimeSlot WHERE is_active = 1";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                slots.add(mapToTimeSlot(rs));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TimeSlotDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return slots;
+    }
+
     public boolean insertTimeSlot(TimeSlot slot) {
         String query = "INSERT INTO TimeSlot (name, start_time, end_time, is_active) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
