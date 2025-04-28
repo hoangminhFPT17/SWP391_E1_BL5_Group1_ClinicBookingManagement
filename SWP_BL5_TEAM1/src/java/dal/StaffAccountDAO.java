@@ -137,6 +137,20 @@ public class StaffAccountDAO extends DBContext {
         }
         return null;
     }
+    
+     public StaffAccount getReceptionById(int id) {
+        String query = "SELECT * FROM StaffAccount WHERE user_id = ? AND role = 'Receptionist'";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return mapToStaffAccount(rs);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(StaffAccountDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
 
     private StaffAccount mapToStaffAccount(ResultSet rs) throws SQLException {
         StaffAccount staff = new StaffAccount();
