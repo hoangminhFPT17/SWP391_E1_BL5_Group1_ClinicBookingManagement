@@ -1,5 +1,19 @@
+<%-- 
+    Document   : PaymentStatus
+    Created on : Apr 29, 2025, 1:29:15 AM
+    Author     : JackGarland
+--%>
 
-
+<%@page import="model.StaffAccount"%>
+<%@page import="model.Patient"%>
+<%@page import="dal.DAOUser"%>
+<%@page import="dal.StaffAccountDAO"%>
+<%@page import="dal.InvoiceDAO"%>
+<%@page import="dal.AppointmentDAO"%>
+<%@page import="dal.PatientDAO"%>
+<%@page import="model.User"%>
+<%@page import="dal.DAOPayment"%>
+<%@page import="model.Payment"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -11,18 +25,18 @@
     <head>
 
         <%
-          // Get current date
-          SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-          String currentDate = sdf.format(new Date());
+            // Get current date
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String currentDate = sdf.format(new Date());
 
-          // Calculate date 1 month into the future
-          Calendar cal = Calendar.getInstance();
-          cal.add(Calendar.MONTH, 1); // Add 1 month
-          String futureDate = sdf.format(cal.getTime());
+            // Calculate date 1 month into the future
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.MONTH, 1); // Add 1 month
+            String futureDate = sdf.format(cal.getTime());
         %>
 
         <!-- Example URL with both dates -->
-    <a href="NextPage.jsp?currentDate=<%= currentDate %>&futureDate=<%= futureDate %>">
+    <a href="NextPage.jsp?currentDate=<%= currentDate%>&futureDate=<%= futureDate%>">
         View Data Range
     </a>
     <meta charset="utf-8"/>
@@ -54,7 +68,7 @@
             <%@ include file="../component/doctorHeader.jsp" %>
             <div class="container-fluid">
                 <div class="d-flex justify-content-between align-items-center mb-3" style="margin-top:80px;">
-                    <h2 class="mb-0">Reception's Appointments List for Invoice</h2>
+                    <h2 class="mb-0">Patient's Payment History</h2>
                 </div>
 
                 <div class="d-flex justify-content-end mb-2">
@@ -70,60 +84,65 @@
                                 <input class="filter-input form-control" data-col="0" placeholder="Filter #"/>
                             </th>
                             <th>
-                                Patient Phone <button data-col="1">↕</button>
-                                <input class="filter-input form-control" data-col="1" placeholder="Filter Phone"/>
+                                Payment Amount <button data-col="1">↕</button>
+                                <input class="filter-input form-control" data-col="1" placeholder="Filter Amount"/>
                             </th>
                             <th>
-                                Patient Name <button data-col="2">↕</button>
-                                <input class="filter-input form-control" data-col="2" placeholder="Filter Name"/>
+                                Payment Date <button data-col="2">↕</button>
+                                <input class="filter-input form-control" data-col="2" placeholder="Filter Date"/>
                             </th>
                             <th>
-                                Time Slot <button data-col="4">↕</button>
-                                <input class="filter-input form-control" data-col="3" placeholder="Filter Slot"/>
-                            </th>
-                            <th>
-                                Doctor Name<button data-col="5">↕</button>
-                                <input class="filter-input form-control" data-col="4" placeholder="Filter Doctor"/>
-                            </th>
-                            <th>
-                                Package <button data-col="6">↕</button>
-                                <input class="filter-input form-control" data-col="5" placeholder="Filter Package"/>
-                            </th>
-                            <th>
-                                Description <button data-col="6">↕</button>
-                                <input class="filter-input form-control" data-col="6" placeholder="Filter Description"/>
-                            </th>
-                            <th>
-                                Action
+                                Status <button data-col="4">↕</button>
+                                <input class="filter-input form-control" data-col="3" placeholder="Filter Status"/>
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% 
-                          List<ReceptionAppointmentDTO> appointments = (List<ReceptionAppointmentDTO>) request.getAttribute("appointments");
-                          if (appointments != null && !appointments.isEmpty()) { 
-                            for (ReceptionAppointmentDTO app : appointments) { 
+                        <%
+                            PatientDAO dao = new PatientDAO();
+                            AppointmentDAO appoint_dao = new AppointmentDAO();
+                            InvoiceDAO invoice_dao = new InvoiceDAO();
+                            User user = (User) session.getAttribute("user");
+                            StaffAccountDAO SA_dao = new StaffAccountDAO();
+                            DAOUser user_dao = new DAOUser();
+
+                            if (user == null) {
+                                response.sendRedirect("login.jsp");
+                                return;
+                            }
+
+                           
+                            StaffAccount account = SA_dao.getReceptionById(user.getUserId());
+                            if (account == null) {
+                                response.sendRedirect("home.jsp");
+                                return;
+                            }
+
+                            DAOPayment p_dao = new DAOPayment();
+                            List<Payment> payments = p_dao.getPayments2();
+                            if (payments != null && !payments.isEmpty()) {
+                                for (Payment p : payments) {
+                                    // Example conversion rate (adjust as needed)
+                                    double usdToVndRate = 24000; // 1 USD = 24,000 VND
+                                    double totalVnd = p.getAmount() / usdToVndRate;
                         %>
                         <tr>
-                            <td><%= app.getAppointment_id()%></td>
-                            <td><%= app.getPatient_phone()%></td>
-                            <td><%= app.getPatient_fullName()%></td>
-                            <td><%= app.getSlot_startTime()%> ~ <%= app.getSlot_endTime()%></td>
-                            <td><%= app.getDoctor_fullName()%></td>                          
-                            <td><%= app.getPackage_name() != null ? app.getPackage_name() : "N/A" %></td>
-                            <td><%= app.getAppointment_description()%></td>
-                            <td><a class="btn btn-primary" href="Invoice.jsp?id=<%= app.getAppointment_id()%>&packageName=<%= app.getPackage_name()%>&patientName=<%= app.getPatient_fullName()%>&currentDate=<%= currentDate %>&futureDate=<%= futureDate %>&doctorName=<%= app.getDoctor_fullName()%>&patientPhone=<%= app.getPatient_phone()%>">Write Invoice</a></td>
+                            <td><%= p.getPaymentId()%></td>
+                            <td><%= totalVnd%>$</td>
+                            <td><%= p.getPaymentDate()%></td>         
+                            <td><%= p.getStatus()%></td>                          
+
                         </tr>
-                        <% 
-                            } 
-                          } else { 
+                        <%
+                            }
+                        } else {
                         %>
                         <tr>
                             <td colspan="8" class="text-center text-muted">
-                                No appointments ready for invoice.
+                                ?????????????????????/
                             </td>
                         </tr>
-                        <% } %>
+                        <% }%>
                     </tbody>
                 </table>
 
@@ -266,3 +285,4 @@
     });
 </script>
 </html>
+
