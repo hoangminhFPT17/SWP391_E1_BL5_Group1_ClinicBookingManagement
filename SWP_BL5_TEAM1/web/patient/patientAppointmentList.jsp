@@ -23,6 +23,7 @@
         %>
         <jsp:useBean id="now" class="java.util.Date" scope="page" />
         <jsp:include page="/common/patientHeaderNav.jsp" />
+       
 
         <!-- Start Hero -->
         <section class="bg-dashboard">
@@ -522,6 +523,8 @@
                 bsToast.show();
             </script>
         </c:if>
+            
+        <jsp:include page="/component/footer.jsp" />
 
         <script> //view button script
             document.addEventListener('DOMContentLoaded', function () {

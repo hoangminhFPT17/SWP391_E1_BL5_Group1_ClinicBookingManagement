@@ -72,6 +72,10 @@
         <servlet-name>RemoveUnavailabilityServlet</servlet-name>
         <servlet-class>controller.doctor.RemoveUnavailabilityServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ManagerAnalyticServlet</servlet-name>
+        <servlet-class>controller.manager.ManagerAnalyticServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <url-pattern>/PatientBookAppointmentServlet</url-pattern>
@@ -159,5 +163,9 @@
     <servlet-mapping>
         <servlet-name>RemoveUnavailabilityServlet</servlet-name>
         <url-pattern>/RemoveUnavailabilityServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManagerAnalyticServlet</servlet-name>
+        <url-pattern>/ManagerAnalyticServlet</url-pattern>
     </servlet-mapping>
 </web-app>
