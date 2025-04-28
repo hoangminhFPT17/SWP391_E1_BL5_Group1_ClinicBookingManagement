@@ -115,7 +115,7 @@ VALUES
 -- Insert Appointments
 INSERT INTO Appointment (patient_phone, doctor_id, slot_id, appointment_date, status, package_id, description)
 VALUES
-('2223334444', 1, 1, '2025-04-25', 'Approved', 1, 'House diagnostic evaluation'),
+('2223334444', 1, 1, '2025-04-25', 'Pending', 1, 'House diagnostic evaluation'),
 ('3334445555', 3, 2, '2025-04-26', 'Pending', 2, 'Oncology initial consult');
 
 -- Insert Medical Records
@@ -133,7 +133,7 @@ VALUES
 -- Insert Doctor Handoff
 INSERT INTO DoctorHandoff (from_doctor_id, to_doctor_id, appointment_id, reason, status)
 VALUES
-(1, 4, 1, 'House busy with another case', 'Received');
+(1, 4, 1, 'House busy with another case', 'In Progress');
 
 -- Insert Token (example only)
 INSERT INTO token (token, expiryTime, isUsed, userId)
