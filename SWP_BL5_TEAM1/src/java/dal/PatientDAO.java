@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Patient;
+import model.User;
 
 /**
  * Data Access Object for Patient operations
@@ -128,6 +129,21 @@ public class PatientDAO extends DBContext {
             return false;
         }
     }
+    
+    public boolean updatePatientPhone(String phone, int id) {
+        String sql = "UPDATE patient SET phone = ? WHERE patient_account_id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, phone);
+            stmt.setInt(2, id);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error updating patient name", ex);
+            return false;
+        }
+    }
 
     /**
      * Update patient profile information without changing the phone number
@@ -219,6 +235,26 @@ public class PatientDAO extends DBContext {
             stmt.setString(5, patient.getGender());
             stmt.setString(6, patient.getEmail());
             stmt.setTimestamp(7, patient.getCreatedAt());
+
+            int rowsInserted = stmt.executeUpdate();
+            return rowsInserted > 0;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error inserting new patient", ex);
+            return false;
+        }
+    }
+
+    public boolean connectPatient(int num1, int num2) {
+        String sql = "INSERT INTO `swp_clinic`.`patientaccount`\n"
+                + "(`patient_account_id`,\n"
+                + "`user_id`)\n"
+                + "VALUES\n"
+                + "(?,\n"
+                + "?);";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, num1);
+            stmt.setInt(2, num2);
 
             int rowsInserted = stmt.executeUpdate();
             return rowsInserted > 0;

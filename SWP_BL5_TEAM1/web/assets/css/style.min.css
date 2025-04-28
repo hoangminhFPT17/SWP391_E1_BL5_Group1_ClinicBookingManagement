@@ -3525,7 +3525,7 @@ tbody tr.hide td img {
 
 thead th span.icon-arrow {
     display: inline-block;
-    
+
 }
 
 thead th {
@@ -3553,4 +3553,33 @@ thead th.asc span.icon-arrow {
 
 .export__file input {
     display: none;
+}
+
+
+.error {
+    color: red;
+    font-size: 0.875rem;
+}
+.success {
+    color: green;
+    font-size: 0.875rem;
+}
+.submit-btn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1rem;
+    opacity: 0.6; /* Initially disabled */
+    pointer-events: none; /* Initially disabled */
+}
+.submit-btn.enabled {
+    opacity: 1; /* Enabled */
+    pointer-events: auto; /* Enabled */
+}
+.submit-btn:hover {
+    background-color: #0056b3;
 }

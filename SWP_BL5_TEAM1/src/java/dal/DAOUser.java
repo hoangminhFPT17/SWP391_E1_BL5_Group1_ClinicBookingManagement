@@ -109,7 +109,9 @@ public class DAOUser extends DBContext {
                         rs.getBoolean("is_verified"),
                         rs.getString("otp_code"),
                         rs.getTimestamp("otp_expiry"),
-                        rs.getTimestamp("created_at")
+                        rs.getTimestamp("created_at"),
+                        rs.getString("user_bio"),
+                        rs.getString("img_path")
                 );
                 Logger.getLogger(DAOUser.class.getName()).log(Level.INFO, "Login successful for: " + loginInput);
             } else {
@@ -140,6 +142,7 @@ public class DAOUser extends DBContext {
         }
         return null;
     }
+
     // Phương thức lấy thông tin người dùng bằng UserID
     public User getUserById(int userId) {
         if (connection == null) {
@@ -177,6 +180,36 @@ public class DAOUser extends DBContext {
         }
     }
 
+    public void updateImagePath(int userId, String path) {
+        if (connection == null) {
+            Logger.getLogger(DAOUser.class.getName()).log(Level.SEVERE, "Database connectionection is null");
+            return;
+        }
+        String sql = "UPDATE user SET img_path = ? WHERE user_id = ?";
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
+            st.setString(1, path);
+            st.setInt(2, userId);
+            st.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getLogger(DAOUser.class.getName()).log(Level.SEVERE, "Error updating password", e);
+        }
+    }
+    
+    public void updatePdfPath(int userId, String path) {
+        if (connection == null) {
+            Logger.getLogger(DAOUser.class.getName()).log(Level.SEVERE, "Database connectionection is null");
+            return;
+        }
+        String sql = "UPDATE user SET pdf_path = ? WHERE user_id = ?";
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
+            st.setString(1, path);
+            st.setInt(2, userId);
+            st.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getLogger(DAOUser.class.getName()).log(Level.SEVERE, "Error updating password", e);
+        }
+    }
+
     // Phương thức trích xuất thông tin người dùng từ ResultSet
     private User extractUserFromResultSet(ResultSet rs) throws SQLException {
         return new User(
@@ -188,7 +221,7 @@ public class DAOUser extends DBContext {
                 rs.getBoolean("is_verified"),
                 rs.getString("otp_code"),
                 rs.getTimestamp("otp_expiry"),
-                        rs.getTimestamp("created_at")
+                rs.getTimestamp("created_at")
         );
     }
 
@@ -282,12 +315,39 @@ public class DAOUser extends DBContext {
         }
     }
 
+    public boolean updateUser2(User user) {
+        if (connection == null) {
+            Logger.getLogger(DAOUser.class.getName()).log(Level.SEVERE, "Database connectionection is null");
+            return false;
+        }
+        String img_path = getUserById(user.getUserId()).getImgPath();
+        String sql = "UPDATE `swp_clinic`.`user`\n"
+                + "SET\n"
+                + "`email` = ?,\n"
+                + "`phone` = ?,\n"
+                + "`full_name` = ?,\n"
+                + "`user_bio` = ?\n"
+                + "WHERE `user_id` = ?;";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, user.getEmail());
+            ps.setString(2, user.getPhone());
+            ps.setString(3, user.getFullName());
+            ps.setString(4, user.getBio());
+            ps.setInt(5, user.getUserId());
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            Logger.getLogger(DAOUser.class.getName()).log(Level.SEVERE, "Error updating user", e);
+            return false;
+        }
+    }
+
     // Phương thức kiểm tra Email trùng lặp
     public boolean isEmailExists(String email) throws SQLException {
         if (connection == null) {
             throw new SQLException("Database connectionection is not initialized.");
         }
-        String sql = "SELECT COUNT(*) FROM User WHERE Email = ?";
+        String sql = "SELECT COUNT(*) FROM user WHERE email = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, email);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -321,7 +381,7 @@ public class DAOUser extends DBContext {
         if (connection == null) {
             throw new SQLException("Database connectionection is not initialized.");
         }
-        String sql = "SELECT COUNT(*) FROM User WHERE Phone = ? AND UserID != ?";
+        String sql = "SELECT COUNT(*) FROM User WHERE phone = ? AND user_id != ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, phone);
             stmt.setInt(2, excludeUserId);
@@ -404,7 +464,7 @@ public class DAOUser extends DBContext {
 //            return;
 //        }
         int n = 0;
-        
+
         if (n > 0) {
             System.out.println("User registered successfully!");
         } else {
