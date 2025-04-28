@@ -92,8 +92,12 @@
         <servlet-name>MedicalRecordsServlet</servlet-name>
         <servlet-class>controller.doctor.MedicalRecordsServlet</servlet-class>
     </servlet>
-
+    <servlet>
+        <servlet-name>ManagerAnalyticServlet</servlet-name>
+        <servlet-class>controller.manager.ManagerAnalyticServlet</servlet-class>
+    </servlet>
     <!-- Servlet Mappings -->
+   
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <url-pattern>/PatientBookAppointmentServlet</url-pattern>
@@ -166,17 +170,4 @@
         <servlet-name>RemoveUnavailabilityServlet</servlet-name>
         <url-pattern>/RemoveUnavailabilityServlet</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ReceptionAppointmentsListServlet</servlet-name>
-        <url-pattern>/ReceptionAppointmentsListServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>MedicalRecordsServlet</servlet-name>
-        <url-pattern>/doctor/medical-records</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>PatientListServlet</servlet-name>
-        <url-pattern>/doctor/patients-list</url-pattern>
-    </servlet-mapping>
-
 </web-app>

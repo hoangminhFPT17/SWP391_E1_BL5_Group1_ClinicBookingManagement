@@ -6,7 +6,9 @@ import dto.ReceptionAppointmentDTO;
 import jakarta.servlet.ServletException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import model.Appointment;
 
 public class AppointmentDAO extends DBContext {
@@ -226,6 +228,25 @@ public class AppointmentDAO extends DBContext {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public Map<Integer, Integer> countAppointmentsByTimeSlot() {
+        Map<Integer, Integer> result = new HashMap<>();
+        String sql = "SELECT slot_id, COUNT(*) AS booking_count "
+                + "FROM Appointment "
+                + "GROUP BY slot_id";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                int slotId = rs.getInt("slot_id");
+                int bookingCount = rs.getInt("booking_count");
+                result.put(slotId, bookingCount);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     private Appointment extractAppointment(ResultSet rs) throws SQLException {
