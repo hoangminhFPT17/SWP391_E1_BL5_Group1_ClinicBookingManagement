@@ -36,34 +36,72 @@
 
                     <!-- Step 2: Patient form (new or existing) -->
                     <c:if test="${showPatientForm}">
-                        <form method="post" action="${pageContext.request.contextPath}/PatientCheckin">
-                            <input type="hidden" name="phone" value="${param.phone}" />
-                            <div class="form-group">
-                                <label for="fullName">Full Name</label>
-                                <input type="text" id="fullName" name="fullName" class="form-control"
-                                       value="${patient.fullName}" readonly required />
-                            </div>
-                            <div class="form-group">
-                                <label for="dob">Date of Birth</label>
-                                <input type="date" id="dob" name="dob" class="form-control"
-                                       value="${patient.dateOfBirth}" readonly required />
-                            </div>
-                            <div class="form-group">
-                                <label>Gender</label>
-                                <input type="text" name="gender" class="form-control"
-                                       value="${patient.gender}" readonly required />
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" id="email" name="email" class="form-control"
-                                       value="${patient.email}" readonly />
-                            </div>
-                            <button type="submit" name="action" value="createPatient" class="btn btn-primary">
-                                Next: Book Appointment
-                            </button>
-                        </form>
-                    </c:if>
+                        <c:choose>
+                            <c:when test="${not empty patient}">
+                                <form method="post" action="${pageContext.request.contextPath}/PatientCheckin">
+                                    <input type="hidden" name="phone" value="${param.phone}"/>
 
+                                    <div class="form-group">
+                                        <label>Full Name</label>
+                                        <input type="text" class="form-control"
+                                               value="${patient.fullName}" readonly/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Date of Birth</label>
+                                        <input type="date" class="form-control"
+                                               value="${patient.dateOfBirth}" readonly/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Gender</label>
+                                        <input type="text" class="form-control"
+                                               value="${patient.gender}" readonly/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" class="form-control"
+                                               value="${patient.email}" readonly/>
+                                    </div>
+
+                                    <button type="submit" name="action" value="createPatient"
+                                            class="btn btn-primary">
+                                        Next: Book Appointment
+                                    </button>
+                                </form>
+                            </c:when>
+
+                            <c:otherwise>
+                                <form method="post" action="${pageContext.request.contextPath}/PatientCheckin">
+                                    <input type="hidden" name="phone" value="${param.phone}"/>
+
+                                    <div class="form-group">
+                                        <label>Full Name</label>
+                                        <input type="text" name="fullName" class="form-control" required/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Date of Birth</label>
+                                        <input type="date" name="dob" class="form-control" required/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Gender</label>
+                                        <select name="gender" class="form-control" required>
+                                            <option value="">-- select --</option>
+                                            <option>Male</option>
+                                            <option>Female</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" name="email" class="form-control"/>
+                                    </div>
+
+                                    <button type="submit" name="action" value="createPatient"
+                                            class="btn btn-primary">
+                                        Create Patient & Next
+                                    </button>
+                                </form>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:if>
                     <!-- Step 3: Appointment form -->
                     <c:if test="${showAppointmentForm}">
                         <form method="post" action="${pageContext.request.contextPath}/PatientCheckin">

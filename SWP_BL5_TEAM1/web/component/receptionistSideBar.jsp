@@ -13,12 +13,12 @@
         <ul class="sidebar-menu pt-3">
             
 
-            <li class="sidebar-dropdown">
+            <li>
                 <a href="AppointmentManager"><i class="uil uil-file me-2 d-inline-block"></i>Appointment Manager</a>
                 
             </li>
 
-            <li class="sidebar-dropdown">
+            <li>
                 <a href="PatientCheckin"><i class="uil uil-sign-in-alt me-2 d-inline-block"></i>Patient Check-in</a>
                 
             </li>

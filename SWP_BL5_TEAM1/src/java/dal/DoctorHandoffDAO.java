@@ -4,7 +4,12 @@
  */
 package dal;
 
+import dto.DoctorHandoffDTO;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -30,5 +35,43 @@ public class DoctorHandoffDAO extends DBContext {
             System.err.println("updateAppointmentStatus: " + e.getMessage());
         }
         return result;
+    }
+    
+    
+    public List<DoctorHandoffDTO> getHandoffsForDoctor(int doctorId) {
+        String sql =
+          "SELECT dh.handoff_id, dh.from_doctor_id, dh.to_doctor_id, dh.appointment_id, " +
+          "       dh.reason, dh.status, dh.created_at, " +
+          "       u_from.full_name AS fromDoctorName, " +
+          "       u_to.full_name   AS toDoctorName " +
+          "  FROM DoctorHandoff dh " +
+          "  JOIN StaffAccount sa_from ON dh.from_doctor_id = sa_from.staff_id " +
+          "  JOIN `User` u_from        ON sa_from.user_id      = u_from.user_id " +
+          "  JOIN StaffAccount sa_to   ON dh.to_doctor_id   = sa_to.staff_id " +
+          "  JOIN `User` u_to          ON sa_to.user_id      = u_to.user_id " +
+          " WHERE dh.to_doctor_id = ? " +
+          " ORDER BY dh.created_at DESC";
+
+        List<DoctorHandoffDTO> list = new ArrayList<>();
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, doctorId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new DoctorHandoffDTO(
+                        rs.getInt("handoff_id"),
+                        rs.getInt("from_doctor_id"),
+                        rs.getInt("to_doctor_id"),
+                        rs.getInt("appointment_id"),
+                        rs.getString("reason"),
+                        rs.getString("status"),
+                        rs.getTimestamp("created_at"),
+                        rs.getString("fromDoctorName"),
+                        rs.getString("toDoctorName")
+                    ));
+                }
+            } 
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorTimeSlotDAO.class.getName()).log(Level.SEVERE, null, ex);        }
+        return list;
     }
 }

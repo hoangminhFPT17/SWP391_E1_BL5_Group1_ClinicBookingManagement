@@ -22,7 +22,6 @@
             <main class="page-content bg-light">
                 <%@ include file="../component/header.jsp" %>
                 <div class="container-fluid">
-                    
                                     
                 </div><!--end container-->
 

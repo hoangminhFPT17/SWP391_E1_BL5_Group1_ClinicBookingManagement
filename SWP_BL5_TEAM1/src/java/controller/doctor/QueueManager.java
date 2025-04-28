@@ -35,7 +35,7 @@ public class QueueManager extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-        System.out.println((Integer) session.getAttribute("userId"));
+        
 
         // 2) Pull doctorId from session
         Integer userId = (Integer) session.getAttribute("userId");
@@ -48,6 +48,7 @@ public class QueueManager extends HttpServlet {
         Integer doctorId = staffDao.getDoctorByUserId(userId).getStaffId();
 
         Integer nextId = dao.getNextAppointmentIdForCurrentSlot(doctorId);
+        System.out.println(dao.getAppointmentDetailById(nextId));
         if (nextId != null) {
             detail = dao.getAppointmentDetailById(nextId);
         }

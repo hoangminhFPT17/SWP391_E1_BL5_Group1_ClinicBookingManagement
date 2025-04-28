@@ -372,39 +372,48 @@ public class AppointmentDAO extends DBContext {
     }
 
     public AppointmentDetailDTO getAppointmentDetailById(int id) {
-        String sql = "SELECT a.appointment_id, a.patient_phone, u_doc.full_name AS doctorFullName, "
-                   + "ts.name AS slot, a.appointment_date, a.status, a.created_at, "
-                   + "a.description, ep.name AS examinationPackage "
-                   + "FROM Appointment a "
-                   + "JOIN TimeSlot ts ON a.slot_id = ts.slot_id "
-                   + "JOIN ExaminationPackage ep ON a.package_id = ep.package_id "
-                   + "JOIN StaffAccount sa ON a.doctor_id = sa.staff_id "
-                   + "JOIN User u_doc ON sa.user_id = u_doc.user_id "
-                   + "WHERE a.appointment_id = ?";
+    String sql =
+        "SELECT a.appointment_id, " +
+        "       p.full_name       AS patientName, " +
+        "       a.patient_phone, " +
+        "       u_doc.full_name   AS doctorFullName, " +
+        "       ts.name           AS slot, " +
+        "       a.appointment_date, " +
+        "       a.status, " +
+        "       a.created_at, " +
+        "       a.description, " +
+        "       ep.name           AS examinationPackage " +
+        "  FROM Appointment a " +
+        "  JOIN Patient p          ON a.patient_phone = p.phone " +
+        "  JOIN TimeSlot ts        ON a.slot_id        = ts.slot_id " +
+        "  JOIN ExaminationPackage ep ON a.package_id   = ep.package_id " +
+        "  JOIN StaffAccount sa    ON a.doctor_id      = sa.staff_id " +
+        "  JOIN `User` u_doc       ON sa.user_id        = u_doc.user_id " +
+        " WHERE a.appointment_id = ?";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return new AppointmentDetailDTO(
-                            rs.getInt("appointment_id"),
-                            rs.getString("patientName"), // ← new
-                            rs.getString("patient_phone"),
-                            rs.getString("doctorFullName"),
-                            rs.getString("slot"),
-                            rs.getDate("appointment_date"),
-                            rs.getString("status"),
-                            rs.getTimestamp("created_at"),
-                            rs.getString("description"),
-                            rs.getString("examinationPackage")
-                    );
-                }
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setInt(1, id);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return new AppointmentDetailDTO(
+                    rs.getInt("appointment_id"),
+                    rs.getString("patientName"),       // now available
+                    rs.getString("patient_phone"),
+                    rs.getString("doctorFullName"),
+                    rs.getString("slot"),
+                    rs.getDate("appointment_date"),
+                    rs.getString("status"),
+                    rs.getTimestamp("created_at"),
+                    rs.getString("description"),
+                    rs.getString("examinationPackage")
+                );
             }
-        } catch (SQLException e) {
-            System.out.println("getAppointmentDetailById error: " + e.getMessage());
         }
-        return null;
+    } catch (SQLException e) {
+        System.err.println("getAppointmentDetailById error: " + e.getMessage());
     }
+    return null;
+}
 
     public Integer getNextAppointmentIdForCurrentSlot(int doctorId) {
         String sql
