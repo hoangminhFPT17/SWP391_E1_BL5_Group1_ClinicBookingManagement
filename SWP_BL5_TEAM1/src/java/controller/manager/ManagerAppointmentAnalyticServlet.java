@@ -5,22 +5,26 @@
 package controller.manager;
 
 import dal.AppointmentDAO;
-import dal.InvoiceDAO;
-import dal.PatientDAO;
+import dal.DoctorTimeSlotDAO;
+import dal.ExaminationPackageDAO;
+import dal.StaffAccountDAO;
+import dto.DoctorAssignDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.Year;
+import java.util.List;
+import java.util.Map;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
+import model.ExaminationPackage;
 
 /**
  *
  * @author LENOVO
  */
-public class ManagerAnalyticServlet extends HttpServlet {
+public class ManagerAppointmentAnalyticServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +43,10 @@ public class ManagerAnalyticServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ManagerAnalyticServlet</title>");
+            out.println("<title>Servlet ManagerAppointmentAnalyticServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ManagerAnalyticServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ManagerAppointmentAnalyticServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -60,36 +64,36 @@ public class ManagerAnalyticServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        AppointmentDAO appointmentDAO = new AppointmentDAO();
-        PatientDAO patientDAO = new PatientDAO();
-        InvoiceDAO invoiceDAO = new InvoiceDAO();
-        
-        //Data for info box
-        int patientCount = patientDAO.countPatients();
-        request.setAttribute("patientCount", patientCount);
-        
-        double totalRevenue = invoiceDAO.getTotalRevenue();
-        request.setAttribute("totalRevenue", totalRevenue);
-        
-        int appointmentCount = appointmentDAO.countAppointments();
-        request.setAttribute("appointmentCount", appointmentCount);
-        
-            
-        Map<String, Integer> demographics = patientDAO.getPatientDemographics();
-        request.setAttribute("demographics", demographics);
+        String doctorIdParam = request.getParameter("doctorId");
+        String packageIdParam = request.getParameter("packageId");
+        String yearParam = request.getParameter("year");
 
-        // Data for pie chart
-        Map<String, Integer> timeSlotBookedCountMap = appointmentDAO.countAppointmentsByTimeSlot();
-        request.setAttribute("timeSlotBookedCountMap", timeSlotBookedCountMap);
-       
-        // Data for column chart
-        List<Map<String, Object>> appointmentCountByDoctor = appointmentDAO.getAppointmentCountsByDoctor();
-        for (Map<String, Object> data : appointmentCountByDoctor) {
-            System.out.println("Doctor: " + data.get("doctor_name") + ", Appointments: " + data.get("appointment_count"));
-        }
-        request.setAttribute("appointmentCountByDoctor", appointmentCountByDoctor);
-        
-         request.getRequestDispatcher("/manager/managerAnalytic.jsp").forward(request, response);
+        Integer doctorId = (doctorIdParam != null && !doctorIdParam.isEmpty()) ? Integer.parseInt(doctorIdParam) : null;
+        Integer packageId = (packageIdParam != null && !packageIdParam.isEmpty()) ? Integer.parseInt(packageIdParam) : null;
+        Integer year = (yearParam != null && !yearParam.isEmpty()) ? Integer.parseInt(yearParam) : Year.now().getValue();
+
+        AppointmentDAO appointmentDAO = new AppointmentDAO();
+        StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
+        ExaminationPackageDAO examinationPackageDAO = new ExaminationPackageDAO();
+
+        //Data for dropbox
+        List<ExaminationPackage> examinationPackages = examinationPackageDAO.getAllPackages();
+        request.setAttribute("examinationPackages", examinationPackages);
+
+        List<DoctorAssignDTO> allDoctors = staffAccountDAO.getAllDoctors();
+        request.setAttribute("allDoctors", allDoctors);
+
+        request.setAttribute("currentYear", Year.now().getValue());
+
+        // Data for graph
+        Map<Integer, Integer> monthlyAppointmentCountsMap = appointmentDAO.getMonthlyAppointmentCounts(year, packageId, doctorId);
+        request.setAttribute("monthlyAppointmentCountsMap", monthlyAppointmentCountsMap);
+
+        request.setAttribute("selectedDoctorId", doctorId);
+        request.setAttribute("selectedPackageId", packageId);
+        request.setAttribute("currentYear", year);
+        request.getRequestDispatcher("/manager/managerAppointmentAnalytic.jsp").forward(request, response);
+
     }
 
     /**

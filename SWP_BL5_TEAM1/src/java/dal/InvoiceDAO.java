@@ -211,6 +211,26 @@ public class InvoiceDAO extends DBContext {
 //
 //        return total;
 //    }
+    
+    public double getTotalRevenue() {
+        double totalRevenue = 0.0;
+        String sql = "SELECT SUM(ii.total_price) AS total_revenue " +
+                     "FROM InvoiceItem ii " +
+                     "JOIN Invoice i ON ii.invoice_id = i.invoice_id " +
+                     "WHERE i.status = 'Completed'"; // Only count completed invoices
+
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                totalRevenue = rs.getDouble("total_revenue");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return totalRevenue;
+    }
+    
     private Invoice extractAppointment(ResultSet rs) throws SQLException {
         return new Invoice(
                 rs.getInt("invoice_id"),

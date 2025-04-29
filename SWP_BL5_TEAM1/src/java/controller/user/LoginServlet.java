@@ -13,6 +13,8 @@ import dal.DAOUser;
 import model.GoogleAccount;
 import model.User;
 import dal.DAOToken;
+import dal.PatientAccountDAO;
+import dal.StaffAccountDAO;
 import model.Token;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -22,6 +24,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.PatientAccount;
+import model.StaffAccount;
 import util.MD5Util; // Import MD5Util
 
 @WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
@@ -104,6 +108,7 @@ public class LoginServlet extends HttpServlet {
 
     private void handleUserLogin(HttpServletRequest request, HttpServletResponse response, HttpSession session, DAOUser dao, DAOHistoryLog logDAO)
             throws ServletException, IOException {
+
         String submit = request.getParameter("submit");
         if (submit == null) {
             request.getRequestDispatcher("login.jsp").forward(request, response);
@@ -111,27 +116,55 @@ public class LoginServlet extends HttpServlet {
             String loginInput = request.getParameter("loginInput");
             String password = request.getParameter("password");
 
-            System.out.println("Login attempt: loginInput=" + loginInput + ", password=" + password); // Debug
+            System.out.println("Login attempt: loginInput=" + loginInput + ", password=" + password);
 
-            User user = dao.Login(loginInput, password); // Truyền mật khẩu thô, DAO sẽ mã hóa
+            User user = dao.Login(loginInput, password);
             if (user == null) {
                 System.out.println("Login failed: No user found or incorrect credentials");
                 request.setAttribute("error", "Thông tin đăng nhập hoặc mật khẩu không chính xác");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
-            } else if (user.isIsVerified() == false) {
+            } else if (!user.isIsVerified()) {
                 System.out.println("Login failed: User is deactivated, UserID=" + user.getUserId());
-//                handleDeactivatedAccount(user, request, response);
-                redirectBasedOnRole(user, request, response);
+                request.setAttribute("error", "Tài khoản của bạn đã bị vô hiệu hóa.");
+                request.getRequestDispatcher("login.jsp").forward(request, response);
             } else {
-                //System.out.println("Login successful: UserID=" + user.getUserID() + ", RoleID=" + user.getRoleID());
                 session.setAttribute("user", user);
                 session.setAttribute("userId", user.getUserId());
+
                 try {
                     logDAO.logLogin(user.getUserId());
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                redirectBasedOnRole(user, request, response);
+
+                // Check whether user is staff or patient
+                StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
+                PatientAccountDAO patientAccountDAO = new PatientAccountDAO();
+
+                StaffAccount staff = staffAccountDAO.getStaffByUserId(user.getUserId());
+                //PatientAccount patient = patientAccountDAO.getPatientByUserId(user.getUserId());
+
+                if (staff != null) {
+                    session.setAttribute("staffAccount", staff);
+                    switch (staff.getRole()) {
+                        case "Manager":
+                            response.sendRedirect("ManagerAnalyticServlet");
+                            break;
+                        case "Receptionist":
+                            response.sendRedirect("ReceptionistDashboardServlet");
+                            break;
+                        case "Doctor":
+                            response.sendRedirect(" doctor/medical-records");
+                            break;
+                        default:
+                            request.setAttribute("error", "Vai trò nhân viên không xác định.");
+                            request.getRequestDispatcher("login.jsp").forward(request, response);
+                            break;
+                    }
+                } else {
+                    //session.setAttribute("patientAccount", patient);
+                    response.sendRedirect("home.jsp");
+                }
             }
         }
     }
@@ -149,7 +182,6 @@ public class LoginServlet extends HttpServlet {
 //            request.getRequestDispatcher("login.jsp").forward(request, response);
 //        }
 //    }
-
     // Phương thức gửi email nhắc nhở kích hoạt
 //    private void sendActivationReminder(User user, HttpServletRequest request, HttpServletResponse response)
 //            throws ServletException, IOException {
@@ -181,7 +213,6 @@ public class LoginServlet extends HttpServlet {
 //        }
 //        request.getRequestDispatcher("login.jsp").forward(request, response);
 //    }
-
     private void redirectBasedOnRole(User user, HttpServletRequest request, HttpServletResponse response) throws IOException {
         int roleId = user.getUserId();
         String contextPath = request.getContextPath();

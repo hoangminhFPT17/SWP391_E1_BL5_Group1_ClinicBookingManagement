@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import model.Appointment;
@@ -241,17 +242,62 @@ public class AppointmentDAO extends DBContext {
         return 0;
     }
 
-    public Map<Integer, Integer> countAppointmentsByTimeSlot() {
-        Map<Integer, Integer> result = new HashMap<>();
-        String sql = "SELECT slot_id, COUNT(*) AS booking_count "
-                + "FROM Appointment "
-                + "GROUP BY slot_id";
+    public Map<String, Integer> countAppointmentsByTimeSlot() {
+        Map<String, Integer> result = new HashMap<>();
+        String sql = "SELECT CONCAT('Slot ', s.name, ': ', DATE_FORMAT(s.start_time, '%H:%i'), '-', DATE_FORMAT(s.end_time, '%H:%i')) AS slot_name, "
+                + "COUNT(a.appointment_id) AS booking_count "
+                + "FROM Appointment a "
+                + "JOIN TimeSlot s ON a.slot_id = s.slot_id "
+                + "GROUP BY s.slot_id, s.name, s.start_time, s.end_time";
 
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                int slotId = rs.getInt("slot_id");
+                String slotName = rs.getString("slot_name");
                 int bookingCount = rs.getInt("booking_count");
-                result.put(slotId, bookingCount);
+                result.put(slotName, bookingCount);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    public Map<Integer, Integer> getMostBookedDoctors() {
+        Map<Integer, Integer> result = new LinkedHashMap<>(); //Linked to keep Order by and not get shuffle
+        String sql = "SELECT doctor_id, COUNT(*) AS booking_count "
+                + "FROM Appointment "
+                + "GROUP BY doctor_id "
+                + "ORDER BY booking_count DESC";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                int doctorId = rs.getInt("doctor_id");
+                int bookingCount = rs.getInt("booking_count");
+                result.put(doctorId, bookingCount);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    public List<Map<String, Object>> getAppointmentCountsByDoctor() {
+        List<Map<String, Object>> result = new ArrayList<>();
+        String sql = "SELECT u.full_name AS doctor_name, COUNT(a.appointment_id) AS appointment_count\n"
+                + "FROM Appointment a\n"
+                + "JOIN StaffAccount s ON a.doctor_id = s.staff_id\n"
+                + "JOIN User u ON s.user_id = u.user_id\n"
+                + "GROUP BY s.staff_id\n"
+                + "ORDER BY appointment_count DESC;";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Map<String, Object> appointmentData = new HashMap<>();
+                appointmentData.put("doctor_name", rs.getString("doctor_name"));
+                appointmentData.put("appointment_count", rs.getInt("appointment_count"));
+                result.add(appointmentData);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -349,30 +395,30 @@ public class AppointmentDAO extends DBContext {
         List<ReceptionAppointmentDTO> list = new ArrayList<>();
 
         String sql = "SELECT a.appointment_id, p.phone AS patient_phone, p.full_name AS patient_fullName, "
-                   + "u.user_id AS doctor_userId, u.full_name AS doctor_fullName, ts.start_time AS slot_startTime, "
-                   + "ts.end_time AS slot_endTime, ep.name AS package_name, a.description AS appointment_description "
-                   + "FROM Appointment a "
-                   + "INNER JOIN Patient p ON a.patient_phone = p.phone "
-                   + "INNER JOIN StaffAccount sa ON a.doctor_id = sa.staff_id "
-                   + "INNER JOIN User u ON sa.user_id = u.user_id "
-                   + "INNER JOIN TimeSlot ts ON a.slot_id = ts.slot_id "
-                   + "LEFT JOIN ExaminationPackage ep ON a.package_id = ep.package_id "
-                   + "WHERE a.status = 'Completed' "
-                   + "ORDER BY a.appointment_date;";
+                + "u.user_id AS doctor_userId, u.full_name AS doctor_fullName, ts.start_time AS slot_startTime, "
+                + "ts.end_time AS slot_endTime, ep.name AS package_name, a.description AS appointment_description "
+                + "FROM Appointment a "
+                + "INNER JOIN Patient p ON a.patient_phone = p.phone "
+                + "INNER JOIN StaffAccount sa ON a.doctor_id = sa.staff_id "
+                + "INNER JOIN User u ON sa.user_id = u.user_id "
+                + "INNER JOIN TimeSlot ts ON a.slot_id = ts.slot_id "
+                + "LEFT JOIN ExaminationPackage ep ON a.package_id = ep.package_id "
+                + "WHERE a.status = 'Completed' "
+                + "ORDER BY a.appointment_date;";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     ReceptionAppointmentDTO dto = new ReceptionAppointmentDTO(
-                        rs.getInt("appointment_id"),
-                        rs.getString("patient_phone"),
-                        rs.getString("patient_fullName"),
-                        rs.getInt("doctor_userId"),
-                        rs.getString("doctor_fullName"),
-                        rs.getTime("slot_startTime"),
-                        rs.getString("package_name"),
-                        rs.getString("appointment_description"),
-                        rs.getTime("slot_endTime")
+                            rs.getInt("appointment_id"),
+                            rs.getString("patient_phone"),
+                            rs.getString("patient_fullName"),
+                            rs.getInt("doctor_userId"),
+                            rs.getString("doctor_fullName"),
+                            rs.getTime("slot_startTime"),
+                            rs.getString("package_name"),
+                            rs.getString("appointment_description"),
+                            rs.getTime("slot_endTime")
                     );
                     list.add(dto);
                 }
@@ -605,7 +651,6 @@ public class AppointmentDAO extends DBContext {
         return list;
     }
 
-    
     public boolean create(Appointment appt) {
         String sql = "INSERT INTO Appointment"
                 + " (patient_phone, doctor_id, slot_id, appointment_date, status, created_at, description, package_id)"
@@ -641,4 +686,67 @@ public class AppointmentDAO extends DBContext {
         return false;
     }
 
+    public int countAppointments() {
+        int totalAppointments = 0;
+        String sql = "SELECT COUNT(*) AS total_appointments FROM Appointment";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                totalAppointments = rs.getInt("total_appointments");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return totalAppointments;
+    }
+
+    public Map<Integer, Integer> getMonthlyAppointmentCounts(int year, Integer packageId, Integer doctorId) {
+        Map<Integer, Integer> monthlyCounts = new HashMap<>();
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT MONTH(appointment_date) AS month, COUNT(*) AS appointment_count "
+                + "FROM Appointment "
+                + "WHERE YEAR(appointment_date) = ? "
+        );
+
+        // Dynamically add filters if values are provided
+        if (packageId != null && packageId != 0) {
+            sql.append("AND package_id = ? ");
+        }
+        if (doctorId != null && doctorId != 0) {
+            sql.append("AND doctor_id = ? ");
+        }
+        sql.append("GROUP BY MONTH(appointment_date) ORDER BY month ASC");
+
+        try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql.toString())) {
+
+            int paramIndex = 1;
+            ps.setInt(paramIndex++, year);
+
+            if (packageId != null && packageId != 0) {
+                ps.setInt(paramIndex++, packageId);
+            }
+            if (doctorId != null && doctorId != 0) {
+                ps.setInt(paramIndex++, doctorId);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int month = rs.getInt("month");
+                    int count = rs.getInt("appointment_count");
+                    monthlyCounts.put(month, count);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Ensure all months are present (even if zero)
+        for (int i = 1; i <= 12; i++) {
+            monthlyCounts.putIfAbsent(i, 0);
+        }
+
+        return monthlyCounts;
+    }
 }
