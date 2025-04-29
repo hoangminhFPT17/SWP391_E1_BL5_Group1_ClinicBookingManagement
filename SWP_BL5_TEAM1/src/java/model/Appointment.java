@@ -137,3 +137,4 @@ public class Appointment {
         return "Appointment{" + "appointmentId=" + appointmentId + ", patientPhone=" + patientPhone + ", doctorId=" + doctorId + ", slotId=" + slotId + ", appointmentDate=" + appointmentDate + ", status=" + status + ", createdAt=" + createdAt + ", description=" + description + ", packageId=" + packageId + '}';
     }
 }
+    
