@@ -377,6 +377,61 @@ public class MedicalDAO extends DBContext{
         }
     }
     
+    public List<MedicalRecord> getMedicalRecordsByPatientPhoneNew(String patientPhone) {
+        List<MedicalRecord> records = new ArrayList<>();
+        String sql = """
+            SELECT record_id,
+                   patient_phone,
+                   diagnosis,
+                   prescription,
+                   notes,
+                   created_at
+              FROM MedicalRecord
+             WHERE patient_phone = ?
+             ORDER BY created_at DESC
+            """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, patientPhone);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    MedicalRecord rec = new MedicalRecord();
+                    rec.setRecordId(rs.getInt("record_id"));
+                    rec.setPatientPhone(rs.getString("patient_phone"));
+                    rec.setDiagnosis(rs.getString("diagnosis"));
+                    rec.setPrescription(rs.getString("prescription"));
+                    rec.setNotes(rs.getString("notes"));
+                    rec.setCreatedAt(rs.getTimestamp("created_at"));
+                    records.add(rec);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("getMedicalRecordsByPatientPhoneNew: " + e.getMessage());
+        }
+        return records;
+    }
+    
+    
+    public boolean addMedicalRecord(MedicalRecord rec) {
+        String sql = """
+            INSERT INTO MedicalRecord
+                (patient_phone, diagnosis, prescription, notes)
+            VALUES (?, ?, ?, ?)
+            """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, rec.getPatientPhone());
+            ps.setString(2, rec.getDiagnosis());
+            ps.setString(3, rec.getPrescription());
+            ps.setString(4, rec.getNotes());
+            return ps.executeUpdate() == 1;
+        } catch (SQLException e) {
+            System.out.println("addMedicalRecord: " + e.getMessage());
+        }
+        return false;
+    }
+
+    
     public static void main(String[] args) {
         MedicalDAO dao = new MedicalDAO();
         int userId = 4;

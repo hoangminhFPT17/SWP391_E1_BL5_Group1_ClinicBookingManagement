@@ -2,243 +2,328 @@
 <web-app version="6.0"
          xmlns="https://jakarta.ee/xml/ns/jakartaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
 
-    <!-- Patient Controllers -->
+    <!-- ========================= -->
+    <!-- 1) Servlet Declarations  -->
+    <!-- ========================= -->
+
     <servlet>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <servlet-class>controller.patient.PatientBookAppointmentServlet</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>DoctorBySlotServlet</servlet-name>
         <servlet-class>controller.patient.DoctorBySlotServlet</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>PatientAppointmentsListServlet</servlet-name>
         <servlet-class>controller.patient.PatientAppointmentsListServlet</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>DeleteAppointmentServlet</servlet-name>
         <servlet-class>controller.patient.DeleteAppointmentServlet</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>UpdateAppointmentServlet</servlet-name>
         <servlet-class>controller.patient.UpdateAppointmentServlet</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>PatientExaminationPackageSelectServlet</servlet-name>
         <servlet-class>controller.patient.PatientExaminationPackageSelectServlet</servlet-class>
     </servlet>
 
-    <!-- Staff Controllers -->
     <servlet>
         <servlet-name>queueRecordController</servlet-name>
         <servlet-class>controller.staff.queueRecordController</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>ReceptionAppointmentsListServlet</servlet-name>
         <servlet-class>controller.staff.ReceptionAppointmentsListServlet</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>PatientListServlet</servlet-name>
         <servlet-class>controller.staff.PatientListServlet</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>AppointmentManager</servlet-name>
         <servlet-class>controller.staff.AppointmentManager</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>PatientCheckin</servlet-name>
         <servlet-class>controller.staff.PatientCheckin</servlet-class>
     </servlet>
 
-    <!-- Manager Controllers -->
     <servlet>
         <servlet-name>ExaminationPackageManager</servlet-name>
         <servlet-class>controller.manager.ExaminationPackageManager</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>ManagerTimeSlotListServlet</servlet-name>
         <servlet-class>controller.manager.ManagerTimeSlotListServlet</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>UpdateDoctorAssignmentServlet</servlet-name>
         <servlet-class>controller.manager.UpdateDoctorAssignmentServlet</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>DeleteDoctorAssignmentServlet</servlet-name>
         <servlet-class>controller.manager.DeleteDoctorAssignmentServlet</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>InsertDoctorAssignmentServlet</servlet-name>
         <servlet-class>controller.manager.InsertDoctorAssignmentServlet</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>StaffManager</servlet-name>
         <servlet-class>controller.manager.StaffManager</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>AccountManager</servlet-name>
         <servlet-class>controller.manager.AccountManager</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>ManagerAnalyticServlet</servlet-name>
         <servlet-class>controller.manager.ManagerAnalyticServlet</servlet-class>
     </servlet>
 
-    <!-- Doctor Controllers -->
     <servlet>
         <servlet-name>QueueManager</servlet-name>
         <servlet-class>controller.doctor.QueueManager</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>DoctorAppointmentDetail</servlet-name>
         <servlet-class>controller.doctor.DoctorAppointmentDetail</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>DoctorTimeSlotListServlet</servlet-name>
         <servlet-class>controller.doctor.DoctorTimeSlotListServlet</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>UpdateDoctorTimeSlotServlet</servlet-name>
         <servlet-class>controller.doctor.UpdateDoctorTimeSlotServlet</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>AddUnavailabilityServlet</servlet-name>
         <servlet-class>controller.doctor.AddUnavailabilityServlet</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>RemoveUnavailabilityServlet</servlet-name>
         <servlet-class>controller.doctor.RemoveUnavailabilityServlet</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>MedicalRecordsServlet</servlet-name>
         <servlet-class>controller.doctor.MedicalRecordsServlet</servlet-class>
     </servlet>
 
-    <!-- Servlet Mappings -->
-
-    <servlet-mapping>
-        <servlet-name>PatientBookAppointmentServlet</servlet-name>
-        <url-pattern>/PatientBookAppointmentServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DoctorBySlotServlet</servlet-name>
-        <url-pattern>/doctor-by-slot-and-date</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>PatientAppointmentsListServlet</servlet-name>
-        <url-pattern>/PatientAppointmentsListServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DeleteAppointmentServlet</servlet-name>
-        <url-pattern>/DeleteAppointmentServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateAppointmentServlet</servlet-name>
-        <url-pattern>/UpdateAppointmentServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>queueRecordController</servlet-name>
-        <url-pattern>/queueRecordController</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ExaminationPackageManager</servlet-name>
-        <url-pattern>/ExaminationPackageManager</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ManagerTimeSlotListServlet</servlet-name>
-        <url-pattern>/ManagerTimeSlotListServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateDoctorAssignmentServlet</servlet-name>
-        <url-pattern>/UpdateDoctorAssignmentServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DeleteDoctorAssignmentServlet</servlet-name>
-        <url-pattern>/DeleteDoctorAssignmentServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>InsertDoctorAssignmentServlet</servlet-name>
-        <url-pattern>/InsertDoctorAssignmentServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>QueueManager</servlet-name>
-        <url-pattern>/QueueManager</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>MedicalRecordsServlet</servlet-name>
-        <url-pattern>/doctor/medical-records</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>PatientListServlet</servlet-name>
-        <url-pattern>/doctor/patients-list</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DoctorAppointmentDetail</servlet-name>
-        <url-pattern>/DoctorAppointmentDetail</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AppointmentManager</servlet-name>
-        <url-pattern>/AppointmentManager</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>PatientCheckin</servlet-name>
-        <url-pattern>/PatientCheckin</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>StaffManager</servlet-name>
-        <url-pattern>/StaffManager</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AccountManager</servlet-name>
-        <url-pattern>/AccountManager</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DoctorTimeSlotListServlet</servlet-name>
-        <url-pattern>/DoctorTimeSlotListServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateDoctorTimeSlotServlet</servlet-name>
-        <url-pattern>/UpdateDoctorTimeSlotServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>PatientExaminationPackageSelectServlet</servlet-name>
-        <url-pattern>/PatientExaminationPackageSelectServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AddUnavailabilityServlet</servlet-name>
-        <url-pattern>/AddUnavailabilityServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RemoveUnavailabilityServlet</servlet-name>
-        <url-pattern>/RemoveUnavailabilityServlet</url-pattern>
-    </servlet-mapping>
+    <servlet>
+        <servlet-name>TransferPatient</servlet-name>
+        <servlet-class>controller.doctor.TransferPatient</servlet-class>
+    </servlet>
 
     <servlet>
         <servlet-name>PaymentBookingServlet</servlet-name>
         <servlet-class>controller.patient.PaymentBookingServlet</servlet-class>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>PaymentBookingServlet</servlet-name>
-        <url-pattern>/payment</url-pattern>
-    </servlet-mapping>
+
     <servlet>
         <servlet-name>VnpayReturnBooking</servlet-name>
         <servlet-class>controller.patient.VnpayReturnBooking</servlet-class>
     </servlet>
+
+    <servlet>
+        <servlet-name>InvoiceServlet</servlet-name>
+        <servlet-class>controller.patient.InvoiceServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>PatientInvoiceServlet</servlet-name>
+        <servlet-class>controller.patient.PatientInvoiceServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>InvoiceDetailsServlet</servlet-name>
+        <servlet-class>controller.patient.InvoiceDetailsServlet</servlet-class>
+    </servlet>
+
+
+    <!-- =========================== -->
+    <!-- 2) Servlet-to-URL Mappings  -->
+    <!-- =========================== -->
+
+    <servlet-mapping>
+        <servlet-name>PatientBookAppointmentServlet</servlet-name>
+        <url-pattern>/PatientBookAppointmentServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>DoctorBySlotServlet</servlet-name>
+        <url-pattern>/doctor-by-slot-and-date</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>PatientAppointmentsListServlet</servlet-name>
+        <url-pattern>/PatientAppointmentsListServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>DeleteAppointmentServlet</servlet-name>
+        <url-pattern>/DeleteAppointmentServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>UpdateAppointmentServlet</servlet-name>
+        <url-pattern>/UpdateAppointmentServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>queueRecordController</servlet-name>
+        <url-pattern>/queueRecordController</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ReceptionAppointmentsListServlet</servlet-name>
+        <url-pattern>/ReceptionAppointmentsListServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>PatientListServlet</servlet-name>
+        <url-pattern>/doctor/patients-list</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>AppointmentManager</servlet-name>
+        <url-pattern>/AppointmentManager</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>PatientCheckin</servlet-name>
+        <url-pattern>/PatientCheckin</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ExaminationPackageManager</servlet-name>
+        <url-pattern>/ExaminationPackageManager</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ManagerTimeSlotListServlet</servlet-name>
+        <url-pattern>/ManagerTimeSlotListServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>UpdateDoctorAssignmentServlet</servlet-name>
+        <url-pattern>/UpdateDoctorAssignmentServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>DeleteDoctorAssignmentServlet</servlet-name>
+        <url-pattern>/DeleteDoctorAssignmentServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>InsertDoctorAssignmentServlet</servlet-name>
+        <url-pattern>/InsertDoctorAssignmentServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>StaffManager</servlet-name>
+        <url-pattern>/StaffManager</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>AccountManager</servlet-name>
+        <url-pattern>/AccountManager</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ManagerAnalyticServlet</servlet-name>
+        <url-pattern>/ManagerAnalyticServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>QueueManager</servlet-name>
+        <url-pattern>/QueueManager</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>DoctorAppointmentDetail</servlet-name>
+        <url-pattern>/DoctorAppointmentDetail</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>DoctorTimeSlotListServlet</servlet-name>
+        <url-pattern>/DoctorTimeSlotListServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>UpdateDoctorTimeSlotServlet</servlet-name>
+        <url-pattern>/UpdateDoctorTimeSlotServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>AddUnavailabilityServlet</servlet-name>
+        <url-pattern>/AddUnavailabilityServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RemoveUnavailabilityServlet</servlet-name>
+        <url-pattern>/RemoveUnavailabilityServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>MedicalRecordsServlet</servlet-name>
+        <url-pattern>/doctor/medical-records</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>TransferPatient</servlet-name>
+        <url-pattern>/TransferPatient</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>PaymentBookingServlet</servlet-name>
+        <url-pattern>/payment</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>VnpayReturnBooking</servlet-name>
         <url-pattern>/vnpayReturn</url-pattern>
     </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>InvoiceServlet</servlet-name>
         <url-pattern>/InvoiceServlet</url-pattern>
     </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>PatientInvoiceServlet</servlet-name>
         <url-pattern>/PatientInvoiceServlet</url-pattern>
     </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>InvoiceDetailsServlet</servlet-name>
         <url-pattern>/InvoiceDetailsServlet</url-pattern>
