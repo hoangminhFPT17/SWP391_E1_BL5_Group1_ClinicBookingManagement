@@ -179,10 +179,6 @@
         <servlet-name>InvoiceDetailsServlet</servlet-name>
         <servlet-class>controller.patient.InvoiceDetailsServlet</servlet-class>
     </servlet>
-
-    <!-- =========================== -->
-    <!-- 2) Servlet-to-URL Mappings  -->
-    <!-- =========================== -->
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <url-pattern>/PatientBookAppointmentServlet</url-pattern>
@@ -312,7 +308,10 @@
         <servlet-name>ManagerAppointmentAnalyticServlet</servlet-name>
         <url-pattern>/ManagerAppointmentAnalyticServlet</url-pattern>
     </servlet-mapping>
-
+    <servlet-mapping>
+        <servlet-name>PatientExaminationPackageSelectServlet</servlet-name>
+        <url-pattern>/PatientExaminationPackageSelectServlet</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
         <welcome-file>home.jsp</welcome-file>
     </welcome-file-list>
