@@ -151,10 +151,10 @@ public class LoginServlet extends HttpServlet {
                             response.sendRedirect("ManagerAnalyticServlet");
                             break;
                         case "Receptionist":
-                            response.sendRedirect("ReceptionistDashboardServlet");
+                            response.sendRedirect("PatientCheckin");
                             break;
                         case "Doctor":
-                            response.sendRedirect(" doctor/medical-records");
+                            response.sendRedirect("QueueManager");
                             break;
                         default:
                             request.setAttribute("error", "Vai trò nhân viên không xác định.");

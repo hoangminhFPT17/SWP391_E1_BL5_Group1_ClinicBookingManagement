@@ -14,13 +14,17 @@
             
 
             <li>
-                <a href="AppointmentManager"><i class="uil uil-file me-2 d-inline-block"></i>Appointment Manager</a>
+                <a href="/SWP_BL5_TEAM1/AppointmentManager"><i class="uil uil-file me-2 d-inline-block"></i>Appointment Manager</a>
                 
             </li>
 
             <li>
-                <a href="PatientCheckin"><i class="uil uil-sign-in-alt me-2 d-inline-block"></i>Patient Check-in</a>
+                <a href="/SWP_BL5_TEAM1/PatientCheckin"><i class="uil uil-sign-in-alt me-2 d-inline-block"></i>Patient Check-in</a>
                 
+            </li>
+            
+            <li>
+                <a href="/SWP_BL5_TEAM1/appointmentsReception"><i class="uil uil-sign-in-alt me-2 d-inline-block"></i>Invoice</a>
             </li>
         </ul>
         <!-- sidebar-menu  -->
