@@ -6,6 +6,7 @@ package controller.doctor;
 
 import dal.AppointmentDAO;
 import dal.DoctorHandoffDAO;
+import dal.MedicalDAO;
 import dal.StaffAccountDAO;
 import dto.AppointmentDTO;
 import dto.AppointmentDetailDTO;
@@ -18,6 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
+import model.MedicalRecord;
 
 /**
  *
@@ -25,7 +27,6 @@ import java.util.List;
  */
 public class QueueManager extends HttpServlet {
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -35,27 +36,24 @@ public class QueueManager extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-        
 
-        // 2) Pull doctorId from session
         Integer userId = (Integer) session.getAttribute("userId");
-
-        // 3) Look up the next appointment’s ID, then its full DTO
         AppointmentDAO dao = new AppointmentDAO();
         AppointmentDetailDTO detail = null;
         StaffAccountDAO staffDao = new StaffAccountDAO();
-        
         Integer doctorId = staffDao.getDoctorByUserId(userId).getStaffId();
 
         Integer nextId = dao.getNextAppointmentIdForCurrentSlot(doctorId);
-        System.out.println(dao.getAppointmentDetailById(nextId));
         if (nextId != null) {
             detail = dao.getAppointmentDetailById(nextId);
+            // NEW: fetch medical records for this patient
+            MedicalDAO mrDao = new MedicalDAO();
+            List<MedicalRecord> records = mrDao.getMedicalRecordsByPatientPhoneNew(detail.getPatientPhone());
+            request.setAttribute("medicalRecords", records);
         }
+
         List<DoctorAssignDTO> doctors = staffDao.getAllDoctors();
         request.setAttribute("doctorList", doctors);
-
-        // 4) Push into request and forward to JSP
         request.setAttribute("appointmentDetail", detail);
         request.getRequestDispatcher("/doctor/QueueManager.jsp")
                 .forward(request, response);
@@ -65,16 +63,30 @@ public class QueueManager extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        int loggedDoctor = 1; //temp
-        int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("userId") == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
+        // 2) Pull doctorId from session
+        Integer userId = (Integer) session.getAttribute("userId");
+
+        // 3) Look up the next appointment’s ID, then its full DTO
+        AppointmentDAO dao = new AppointmentDAO();
+        StaffAccountDAO staffDao = new StaffAccountDAO();
+
+        Integer loggedDoctor = staffDao.getDoctorByUserId(userId).getStaffId();
+
         String action = request.getParameter("action");
 
-        AppointmentDAO dao = new AppointmentDAO();
         DoctorHandoffDAO doctorHandoffDao = new DoctorHandoffDAO();
 
         if ("start".equals(action)) {
+            int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
             dao.updateAppointmentStatus(appointmentId, "In progress");
         } else if ("sendService".equals(action)) {
+            int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
             // form fields from modal
             int toDoctorId = Integer.parseInt(request.getParameter("toDoctorId"));
             String reason = request.getParameter("reason");
@@ -83,7 +95,24 @@ public class QueueManager extends HttpServlet {
             // 2) insert handoff record
             doctorHandoffDao.insert(loggedDoctor, toDoctorId, appointmentId, reason);
         } else if ("finish ".equals(action)) {
+            int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
             dao.updateAppointmentStatus(appointmentId, "Waiting payment");
+        } else if ("addRecord".equals(action)) {
+            String patientPhone = request.getParameter("patientPhone");
+            String diagnosis = request.getParameter("diagnosis");
+            String prescription = request.getParameter("prescription");
+            String notes = request.getParameter("notes");
+
+            MedicalDAO mrDao = new MedicalDAO();
+            mrDao.addMedicalRecord(new MedicalRecord(
+                    0, // recordId auto
+                    patientPhone,
+                    diagnosis,
+                    prescription,
+                    notes,
+                    null // createdAt default
+            ));
+
         }
 
         // reload to show updated next appointment

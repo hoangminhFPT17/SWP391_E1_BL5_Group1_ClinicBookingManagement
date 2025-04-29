@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package controller.doctor;
 
+import dal.AppointmentDAO;
 import dal.DoctorHandoffDAO;
 import dal.StaffAccountDAO;
 import dto.DoctorHandoffDTO;
@@ -22,30 +22,6 @@ import java.util.List;
  * @author Admin
  */
 public class TransferPatient extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet TransferPatient</title>");  
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet TransferPatient at " + request.getContextPath () + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     @Override
@@ -59,35 +35,55 @@ public class TransferPatient extends HttpServlet {
         }
         int userId = (Integer) session.getAttribute("userId");
 
-            // look up staff_id for this user
-            StaffAccountDAO saDao = new StaffAccountDAO();
-            int doctorId = saDao.getDoctorByUserId(userId).getStaffId();
+        // look up staff_id for this user
+        StaffAccountDAO saDao = new StaffAccountDAO();
+        int doctorId = saDao.getDoctorByUserId(userId).getStaffId();
 
-            DoctorHandoffDAO dao = new DoctorHandoffDAO();
-            List<DoctorHandoffDTO> handoffs = dao.getHandoffsForDoctor(doctorId);
+        DoctorHandoffDAO dao = new DoctorHandoffDAO();
+        List<DoctorHandoffDTO> handoffs = dao.getHandoffsForDoctor(doctorId);
 
-            req.setAttribute("handoffs", handoffs);
+        req.setAttribute("handoffs", handoffs);
 
         req.getRequestDispatcher("/doctor/transferPatient.jsp")
-           .forward(req, resp);
+                .forward(req, resp);
     }
 
-
-    /** 
-     * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        processRequest(request, response);
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
+        HttpSession session = req.getSession(false);
+        if (session == null || session.getAttribute("userId") == null) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
+
+        int handoffId = Integer.parseInt(req.getParameter("handoffId"));
+        String action = req.getParameter("action");
+
+        // You’ll need instances of both DAOs:
+        DoctorHandoffDAO handoffDao = new DoctorHandoffDAO();
+        AppointmentDAO apptDao = new AppointmentDAO();
+
+            if ("start".equals(action)) {
+                // 1) Mark handoff In Progress
+                handoffDao.updateHandoffStatus(handoffId, "In Progress");
+
+            } else if ("finish".equals(action)) {
+                // 1) Mark handoff Completed
+                handoffDao.updateHandoffStatus(handoffId, "Completed");
+                // 2) Fetch linked appointment and mark it back-from-hand-off
+                int apptId = handoffDao.getAppointmentIdForHandoff(handoffId);
+                apptDao.updateAppointmentStatus(apptId, "Back-from-hand-off");
+            }
+
+        // Redirect back to the GET to refresh the table
+        resp.sendRedirect(req.getContextPath() + "/TransferPatient");
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override

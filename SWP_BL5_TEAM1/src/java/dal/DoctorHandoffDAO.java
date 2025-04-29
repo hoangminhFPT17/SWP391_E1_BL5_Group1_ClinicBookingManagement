@@ -74,4 +74,35 @@ public class DoctorHandoffDAO extends DBContext {
             Logger.getLogger(DoctorTimeSlotDAO.class.getName()).log(Level.SEVERE, null, ex);        }
         return list;
     }
+    
+    
+    public boolean updateHandoffStatus(int handoffId, String newStatus)  {
+        String sql = "UPDATE DoctorHandoff SET status = ? WHERE handoff_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, newStatus);
+            ps.setInt(2, handoffId);
+            return ps.executeUpdate() == 1;
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorTimeSlotDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    
+    public int getAppointmentIdForHandoff(int handoffId) {
+        String sql = "SELECT appointment_id FROM DoctorHandoff WHERE handoff_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, handoffId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("appointment_id");
+                } else {
+                    throw new SQLException("No handoff with ID " + handoffId);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorTimeSlotDAO.class.getName()).log(Level.SEVERE, null, ex);        
+        }
+        return -1;
+    }
 }

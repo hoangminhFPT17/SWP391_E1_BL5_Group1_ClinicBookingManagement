@@ -429,7 +429,6 @@ public class AppointmentDAO extends DBContext {
                 + "  JOIN TimeSlot ts  ON a.slot_id        = ts.slot_id "
                 + " WHERE a.doctor_id         = ? "
                 + "   AND a.appointment_date  = CURDATE() "
-                + "   AND CURTIME() BETWEEN ts.start_time AND ts.end_time "
                 + "   AND a.status IN ('Back-from-hand-off','Pending','Waiting', 'In progress') "
                 + " ORDER BY CASE a.status "
                 + "            WHEN 'In progress'        THEN 1 "

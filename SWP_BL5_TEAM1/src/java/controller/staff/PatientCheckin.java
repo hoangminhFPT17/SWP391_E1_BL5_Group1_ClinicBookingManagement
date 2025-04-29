@@ -100,5 +100,7 @@ public class PatientCheckin extends HttpServlet {
         req.getRequestDispatcher("/receptionist/patientCheckin.jsp")
                 .forward(req, resp);
     }
+    
+    
 
 }
