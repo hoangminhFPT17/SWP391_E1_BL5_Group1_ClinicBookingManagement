@@ -208,4 +208,34 @@
         <servlet-name>TransferPatient</servlet-name>
         <url-pattern>/TransferPatient</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>PaymentBookingServlet</servlet-name>
+        <servlet-class>controller.patient.PaymentBookingServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PaymentBookingServlet</servlet-name>
+        <url-pattern>/payment</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>VnpayReturnBooking</servlet-name>
+        <servlet-class>controller.patient.VnpayReturnBooking</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>VnpayReturnBooking</servlet-name>
+        <url-pattern>/vnpayReturn</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InvoiceServlet</servlet-name>
+        <url-pattern>/InvoiceServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PatientInvoiceServlet</servlet-name>
+        <url-pattern>/PatientInvoiceServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InvoiceDetailsServlet</servlet-name>
+        <url-pattern>/InvoiceDetailsServlet</url-pattern>
+    </servlet-mapping>
+
 </web-app>

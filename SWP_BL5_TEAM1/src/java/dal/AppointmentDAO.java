@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import model.Appointment;
+import model.InvoiceDetailed;
 
 public class AppointmentDAO extends DBContext {
 
@@ -31,6 +32,16 @@ public class AppointmentDAO extends DBContext {
             ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println("insert: " + e.getMessage());
+        }
+    }
+
+    public void updatePaymentToWaitingPayment(int id) {
+        String sql = "UPDATE `swp_clinic`.`appointment` SET `status` = 'Waiting-Payment' WHERE (`appointment_id` = ?);";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -363,6 +374,80 @@ public class AppointmentDAO extends DBContext {
                         rs.getString("appointment_description"),
                         rs.getTime("slot_endTime")
                     );
+                    list.add(dto);
+                }
+            }
+        }
+
+        return list;
+    }
+
+    public InvoiceDetailed getInvoiceByAppointmentId(int appointmentId) {
+        InvoiceDetailed invoice = null;
+        String sql = "SELECT * FROM invoices WHERE appointment_id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, appointmentId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    invoice = new InvoiceDetailed();
+                    invoice.setInvoiceId(rs.getInt("invoice_id"));
+                    invoice.setAppointmentId(rs.getInt("appointment_id"));
+                    invoice.setAddress(rs.getString("address"));
+                    invoice.setPatientName(rs.getString("patient_name"));
+                    invoice.setPatientPhone(rs.getString("patient_phone"));
+                    invoice.setDoctorName(rs.getString("doctor_name"));
+                    invoice.setIssueDate(rs.getDate("issue_date"));
+                    invoice.setDueDate(rs.getDate("due_date"));
+                    invoice.setItem1Description(rs.getString("item1_description"));
+                    invoice.setItem1Rate(rs.getInt("item1_rate"));
+                    invoice.setItem2Description(rs.getString("item2_description"));
+                    invoice.setItem2Rate(rs.getInt("item2_rate"));
+                    invoice.setItem3Description(rs.getString("item3_description"));
+                    invoice.setItem3Rate(rs.getInt("item3_rate"));
+                    invoice.setPackageName(rs.getString("package"));
+                    // subtotal and total are calculated inside the model's getter, if you designed it that way
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Or log the error
+        }
+
+        return invoice;
+    }
+
+    public List<ReceptionAppointmentDTO> getAwaitingPaymentAppointments() throws SQLException {
+        List<ReceptionAppointmentDTO> list = new ArrayList<>();
+
+        String sql
+                = "SELECT\n"
+                + "    a.appointment_id as appointment_id,\n"
+                + "    p.phone AS patient_phone,\n"
+                + "    p.full_name AS patient_fullName,\n"
+                + "    u.user_id AS doctor_userId,\n"
+                + "    u.full_name AS doctor_fullName,\n"
+                + "    ts.start_time AS slot_startTime,\n"
+                + "    ts.end_time AS slot_endTime,\n"
+                + "    ep.name AS package_name,\n"
+                + "    a.description AS appointment_description\n"
+                + "FROM Appointment a\n"
+                + "INNER JOIN Patient p ON a.patient_phone = p.phone\n"
+                + "INNER JOIN StaffAccount sa ON a.doctor_id = sa.staff_id\n"
+                + "INNER JOIN User u ON sa.user_id = u.user_id\n"
+                + "INNER JOIN TimeSlot ts ON a.slot_id = ts.slot_id\n"
+                + "LEFT JOIN ExaminationPackage ep ON a.package_id = ep.package_id\n"
+                + "WHERE a.status = 'Waiting-Payment' \n"
+                + "ORDER BY a.appointment_date;";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ReceptionAppointmentDTO dto = new ReceptionAppointmentDTO(rs.getInt("appointment_id"), rs.getString("patient_phone"),
+                            rs.getString("patient_fullName"), rs.getInt("doctor_userId"), rs.getString("doctor_fullName"),
+                            rs.getTime("slot_startTime"), rs.getString("package_name"), rs.getString("appointment_description"), rs.getTime("slot_endTime"));
                     list.add(dto);
                 }
             }
