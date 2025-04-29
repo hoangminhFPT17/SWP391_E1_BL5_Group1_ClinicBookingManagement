@@ -35,7 +35,7 @@ public class HomePageServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet HomePageServlet</title>");            
+            out.println("<title>Servlet HomePageServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet HomePageServlet at " + request.getContextPath() + "</h1>");
@@ -56,11 +56,8 @@ public class HomePageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        User loggedInUser = (User) request.getSession().getAttribute("user");
-        if (loggedInUser != null) {
-            request.getRequestDispatcher("login.jsp").forward(request, response);
-            return;
-        }
+
+        request.getRequestDispatcher("home.jsp").forward(request, response);
     }
 
     /**

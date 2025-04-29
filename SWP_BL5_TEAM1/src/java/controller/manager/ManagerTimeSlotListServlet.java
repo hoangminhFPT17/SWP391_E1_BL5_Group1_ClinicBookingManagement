@@ -78,7 +78,7 @@ public class ManagerTimeSlotListServlet extends HttpServlet {
             return;
         }
 
-// 2. Check if user has a StaffAccount
+        // 2. Check if user has a StaffAccount
         StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
         StaffAccount staffAccount = staffAccountDAO.getStaffByUserId(loggedInUser.getUserId());
         if (staffAccount == null) {
@@ -89,11 +89,12 @@ public class ManagerTimeSlotListServlet extends HttpServlet {
 
         // 3. Check if StaffAccount role is "Manager"
         if (!"Manager".equalsIgnoreCase(staffAccount.getRole())) {
-            // User is a staff, but not a Manager, redirect or show error
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied. Manager role required.");
+            // User is a staff, but not a Manager, forward to error.jsp
+            request.setAttribute("errorMessage", "Access denied. Manager role required.");
+            request.getRequestDispatcher("/error.jsp").forward(request, response);
             return;
         }
-
+        
         TimeSlotDAO timeSlotDAO = new TimeSlotDAO();
         DoctorTimeSlotDAO doctorTimeSlotDAO = new DoctorTimeSlotDAO();
 
