@@ -5,7 +5,6 @@
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
                              https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
 
-    <!-- Patient Controllers -->
     <servlet>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <servlet-class>controller.patient.PatientBookAppointmentServlet</servlet-class>
@@ -34,9 +33,7 @@
     <servlet>
         <servlet-name>PatientExaminationPackageSelectServlet</servlet-name>
         <servlet-class>controller.patient.PatientExaminationPackageSelectServlet</servlet-class>
-    </servlet>
-
-    <!-- Staff Controllers -->
+    </servlet>x`
     <servlet>
         <servlet-name>queueRecordController</servlet-name>
         <servlet-class>controller.staff.queueRecordController</servlet-class>
@@ -61,8 +58,6 @@
         <servlet-name>PatientCheckin</servlet-name>
         <servlet-class>controller.staff.PatientCheckin</servlet-class>
     </servlet>
-
-    <!-- Manager Controllers -->
     <servlet>
         <servlet-name>ExaminationPackageManager</servlet-name>
         <servlet-class>controller.manager.ExaminationPackageManager</servlet-class>
@@ -102,8 +97,6 @@
         <servlet-name>ManagerAnalyticServlet</servlet-name>
         <servlet-class>controller.manager.ManagerAnalyticServlet</servlet-class>
     </servlet>
-
-    <!-- Doctor Controllers -->
     <servlet>
         <servlet-name>QueueManager</servlet-name>
         <servlet-class>controller.doctor.QueueManager</servlet-class>
@@ -138,8 +131,6 @@
         <servlet-name>MedicalRecordsServlet</servlet-name>
         <servlet-class>controller.doctor.MedicalRecordsServlet</servlet-class>
     </servlet>
-
-    <!-- Additional Controllers -->
     <servlet>
         <servlet-name>HomePageServlet</servlet-name>
         <servlet-class>controller.HomePageServlet</servlet-class>
@@ -179,10 +170,6 @@
         <servlet-name>InvoiceDetailsServlet</servlet-name>
         <servlet-class>controller.patient.InvoiceDetailsServlet</servlet-class>
     </servlet>
-
-    <!-- =========================== -->
-    <!-- 2) Servlet-to-URL Mappings  -->
-    <!-- =========================== -->
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <url-pattern>/PatientBookAppointmentServlet</url-pattern>
@@ -312,7 +299,22 @@
         <servlet-name>ManagerAppointmentAnalyticServlet</servlet-name>
         <url-pattern>/ManagerAppointmentAnalyticServlet</url-pattern>
     </servlet-mapping>
-
+    <servlet-mapping>
+        <servlet-name>PatientExaminationPackageSelectServlet</servlet-name>
+        <url-pattern>/PatientExaminationPackageSelectServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MedicalRecordsServlet</servlet-name>
+        <url-pattern>/doctor/medical-records</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TransferPatient</servlet-name>
+        <url-pattern>/TransferPatient</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InvoiceDetailsServlet</servlet-name>
+        <url-pattern>/InvoiceDetailsServlet</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
         <welcome-file>home.jsp</welcome-file>
     </welcome-file-list>

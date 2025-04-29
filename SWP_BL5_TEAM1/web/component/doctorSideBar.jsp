@@ -11,11 +11,9 @@
         </div>
 
         <ul class="sidebar-menu pt-3">
-            <li><a href="ManagerAnalyticServlet"><i class="uil uil-dashboard me-2 d-inline-block"></i>Dashboard</a></li>
-            <li><a href="appointment.html"><i class="uil uil-stethoscope me-2 d-inline-block"></i>Appointment</a></li>
             <li><a href="/SWP_BL5_TEAM1/DoctorTimeSlotListServlet"><i class="uil uil-schedule me-2 d-inline-block"></i>Time Slot Selection</a></li>
-            <li><a href="QueueManager"><i class="uil uil-stethoscope me-2 d-inline-block"></i>Appointment</a></li>
-            <li><a href="TransferPatient"><i class="uil uil-sign-in-alt me-2 d-inline-block"></i>Hand-off to</a></li>
+            <li><a href="/SWP_BL5_TEAM1/QueueManager"><i class="uil uil-stethoscope me-2 d-inline-block"></i>Appointment</a></li>
+            <li><a href="/SWP_BL5_TEAM1/TransferPatient"><i class="uil uil-sign-in-alt me-2 d-inline-block"></i>Hand-off to</a></li>
         </ul>
         <!-- sidebar-menu  -->
     </div>

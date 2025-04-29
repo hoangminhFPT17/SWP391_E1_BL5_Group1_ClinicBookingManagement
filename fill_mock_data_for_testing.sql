@@ -159,6 +159,19 @@ VALUES
 (2, 'Oncology Consultation', 1, 400.00),
 (2, 'MRI Scan', 1, 500.00);
 
+INSERT INTO swp_clinic.`user` (email,password_hash,phone,full_name,is_verified,otp_code,otp_expiry,created_at,img_path,user_bio,pdf_path) VALUES
+	 ('test2@gmail.com','32c9583de09461a7210cf28cfe80aa2c','3334445557','Kiet2',1,NULL,NULL,'2025-04-28 13:39:46',NULL,NULL,NULL),
+('test@gmail.com','32c9583de09461a7210cf28cfe80aa2c','3334445556','Kiet',1,NULL,NULL,'2025-04-28 13:39:46',NULL,NULL,NULL);
+
+INSERT INTO StaffAccount (user_id, role, department) VALUES
+((SELECT user_id FROM User WHERE email = 'test@gmail.com'), 'Doctor', 'Neurology'),
+((SELECT user_id FROM User WHERE email = 'test2@gmail.com'), 'Doctor', 'Neurology'),
+((SELECT user_id FROM User WHERE email = 'test3@gmail.com'), 'Manager', 'Administration'),
+((SELECT user_id FROM User WHERE email = 'test4@gmail.com'), 'Receptionist', 'Front desk');
+
+INSERT INTO swp_clinic.`user` (email,password_hash,phone,full_name,is_verified,otp_code,otp_expiry,created_at,img_path,user_bio,pdf_path) VALUES
+('test3@gmail.com','32c9583de09461a7210cf28cfe80aa2c','3334445557','Kiet2',1,NULL,NULL,'2025-04-28 13:39:46',NULL,NULL,NULL),
+('test4@gmail.com','32c9583de09461a7210cf28cfe80aa2c','3334445556','Kiet',1,NULL,NULL,'2025-04-28 13:39:46',NULL,NULL,NULL);
 /*
 -- Full DoctorTimeSlot coverage: 5 doctors × 5 slots × 7 days = 175 entries
 INSERT INTO DoctorTimeSlot (staff_id, slot_id, day_of_week, max_appointments)

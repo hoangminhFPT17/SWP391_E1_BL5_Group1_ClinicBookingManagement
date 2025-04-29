@@ -146,9 +146,12 @@
                     <ul class="submenu">
                         <li><a href="PatientAppointmentsListServlet" class="sub-menu-item">Your Appointment List</a></li>
                         <li><a href="PatientExaminationPackageSelectServlet" class="sub-menu-item">Book an appointment</a></li>
-                        <li><a href="patient-invoice.html" class="sub-menu-item">Invoice</a></li>
+                       
                     </ul>
                 </li>
+                <li><a href="MedicalHistory.jsp" class="sub-menu-item">Medical History</a></li>
+                <li><a href="InvoiceDetailsServlet" class="sub-menu-item">Invoices</a></li>
+                <li><a href="PaymentHistory.jsp" class="sub-menu-item">Payment History</a></li>                
             </ul><!--end navigation menu-->
         </div><!--end navigation-->
     </div><!--end container-->
