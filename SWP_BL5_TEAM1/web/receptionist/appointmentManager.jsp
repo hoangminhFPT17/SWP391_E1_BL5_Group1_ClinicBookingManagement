@@ -43,7 +43,7 @@
     </head>
     <body>
         <div class="page-wrapper doctris-theme toggled">
-            <%@ include file="../component/sideBar.jsp" %>
+            <%@ include file="../component/receptionistSideBar.jsp" %>
             <main class="page-content bg-light">
                 <%@ include file="../component/header.jsp" %>
                 <div class="container-fluid" style="margin-top:80px;">

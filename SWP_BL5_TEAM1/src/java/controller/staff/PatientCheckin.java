@@ -30,13 +30,13 @@ public class PatientCheckin extends HttpServlet {
     private final PatientDAO patientDao = new PatientDAO();
     private final AppointmentDAO apptDao = new AppointmentDAO();
     private final TimeSlotDAO slotDao = new TimeSlotDAO();
-    private final ExaminationPackageDAO pkgDao  = new ExaminationPackageDAO();
-    private final StaffAccountDAO staffDao      = new StaffAccountDAO();
+    private final ExaminationPackageDAO pkgDao = new ExaminationPackageDAO();
+    private final StaffAccountDAO staffDao = new StaffAccountDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        
+
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("userId") == null) {
             resp.sendRedirect(req.getContextPath() + "/login");
@@ -49,17 +49,40 @@ public class PatientCheckin extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+
         String action = req.getParameter("action");
         String phone = req.getParameter("phone");
+        PatientDAO patientDao = new PatientDAO();
+        // always reload the lists
+        req.setAttribute("timeSlots", slotDao.getAllTimeSlots());
+        req.setAttribute("packages", pkgDao.getAllPackages());
+        req.setAttribute("doctors", staffDao.getDoctorsBySpecialty(6));
+
         if ("checkPhone".equals(action)) {
             Patient p = patientDao.getPatientByPhone(phone);
-            req.setAttribute("patient", p);
-            req.setAttribute("showPatientForm", true);
+            if (p != null) {
+                // existing patient → skip to appointment form
+                req.setAttribute("patient", p);
+                req.setAttribute("showAppointmentForm", true);
+            } else {
+                // new patient → show editable form
+                req.setAttribute("showPatientForm", true);
+            }
+
         } else if ("createPatient".equals(action)) {
-            // patient is existing (readonly), skip create
-            Patient p = patientDao.getPatientByPhone(phone);
-            req.setAttribute("patient", p);
+            // only create if truly new
+            Patient existing = patientDao.getPatientByPhone(phone);
+            if (existing == null) {
+                String fullName = req.getParameter("fullName");
+                Date dob = Date.valueOf(req.getParameter("dob"));
+                String gender = req.getParameter("gender");
+                String email = req.getParameter("email");
+                patientDao.insertPatient(new Patient(phone, null, fullName, dob, gender, email, null));
+                existing = patientDao.getPatientByPhone(phone);
+            }
+            req.setAttribute("patient", existing);
             req.setAttribute("showAppointmentForm", true);
+
         } else if ("createAppointment".equals(action)) {
             Appointment appt = new Appointment(
                     phone,
@@ -73,12 +96,11 @@ public class PatientCheckin extends HttpServlet {
             );
             apptDao.create(appt);
         }
-        System.out.println(slotDao.getAllTimeSlots());
-        // preload dropdown data
-        req.setAttribute("timeSlots", slotDao.getAllTimeSlots());
-        req.setAttribute("packages", pkgDao.getAllPackages());
-        req.setAttribute("doctors", staffDao.getDoctorsBySpecialty(1));
-        req.getRequestDispatcher("/receptionist/patientCheckin.jsp").forward(req, resp);
+
+        req.getRequestDispatcher("/receptionist/patientCheckin.jsp")
+                .forward(req, resp);
     }
+    
+    
 
 }
