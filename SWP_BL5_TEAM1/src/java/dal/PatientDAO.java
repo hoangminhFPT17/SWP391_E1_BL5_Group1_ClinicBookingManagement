@@ -30,11 +30,62 @@ public class PatientDAO extends DBContext {
      * @param userId the user ID to retrieve
      * @return Patient object with data or null if not found
      */
-    public List<Patient> getAllPatients() throws SQLException {
-        List<Patient> patients = new ArrayList<>();
-        String sql = "SELECT * FROM patient ORDER BY full_name";
+    public int getTotalPatientsByPhoneAndGender(String phone, String gender) throws SQLException {
+    String sql = "SELECT COUNT(*) FROM patient WHERE phone LIKE ? AND gender = ?";
+    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setString(1, "%" + phone + "%");  // Partial matching for phone
+        stmt.setString(2, gender);             // Exact matching for gender
+        try (ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+    }
+    return 0;  // Return 0 if no results
+}
+    public List<Patient> getPatientsByPhoneAndGender(String phone, String gender, int page, int pageSize) throws SQLException {
+    List<Patient> patients = new ArrayList<>();
+    String sql = "SELECT * FROM patient WHERE phone LIKE ? AND gender = ? ORDER BY full_name LIMIT ? OFFSET ?";
+    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setString(1, "%" + phone + "%");  // Partial matching for phone
+        stmt.setString(2, gender);             // Exact matching for gender
+        stmt.setInt(3, pageSize);              // Number of records to return
+        stmt.setInt(4, (page - 1) * pageSize); // Calculate offset (page starts at 1)
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Patient patient = new Patient();
+                patient.setPhone(rs.getString("phone"));
+                patient.setPatientAccountId(rs.getInt("patient_account_id") != 0 ? rs.getInt("patient_account_id") : null);
+                patient.setFullName(rs.getString("full_name"));
+                patient.setDateOfBirth(rs.getDate("date_of_birth"));
+                patient.setGender(rs.getString("gender"));
+                patient.setEmail(rs.getString("email"));
+                patient.setCreatedAt(rs.getTimestamp("created_at"));
+                patients.add(patient);
+            }
+        }
+    }
+    return patients;
+}
+    public Patient updateBasicInfo(String phone, String fullName, String email, Date dob) throws SQLException {
+        String sql = "UPDATE Patients SET fullName = ?, email = ?, dateOfBirth = ? WHERE phone = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, fullName);
+            ps.setString(2, email);
+            ps.setDate(3, dob);
+            ps.setString(4, phone);
+            ps.executeUpdate();
+        }
+        return getPatientByPhone(phone); // fetch fresh record
+    }
 
+    // Modified to support pagination
+    public List<Patient> getAllPatients(int page, int pageSize) throws SQLException {
+        List<Patient> patients = new ArrayList<>();
+        String sql = "SELECT * FROM patient ORDER BY full_name LIMIT ? OFFSET ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, pageSize);
+            stmt.setInt(2, (page - 1) * pageSize);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Patient patient = new Patient();
@@ -53,6 +104,92 @@ public class PatientDAO extends DBContext {
             throw ex;
         }
         return patients;
+    }
+
+    // New method for total patient count
+    public int getTotalPatients() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM patient";
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
+
+    // New method for search by phone with pagination
+    public List<Patient> getPatientsByPhone(String phone, int page, int pageSize) throws SQLException {
+        List<Patient> patients = new ArrayList<>();
+        String sql = "SELECT * FROM patient WHERE phone LIKE ? ORDER BY full_name LIMIT ? OFFSET ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, "%" + phone + "%");
+            stmt.setInt(2, pageSize);
+            stmt.setInt(3, (page - 1) * pageSize);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Patient patient = new Patient();
+                patient.setPhone(rs.getString("phone"));
+                patient.setPatientAccountId(rs.getInt("patient_account_id") != 0 ? rs.getInt("patient_account_id") : null);
+                patient.setFullName(rs.getString("full_name"));
+                patient.setDateOfBirth(rs.getDate("date_of_birth"));
+                patient.setGender(rs.getString("gender"));
+                patient.setEmail(rs.getString("email"));
+                patient.setCreatedAt(rs.getTimestamp("created_at"));
+                patients.add(patient);
+            }
+        }
+        return patients;
+    }
+
+    // New method for total patients by phone
+    public int getTotalPatientsByPhone(String phone) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM patient WHERE phone LIKE ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, "%" + phone + "%");
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
+
+    // New method for filter by gender with pagination
+    public List<Patient> getPatientsByGender(String gender, int page, int pageSize) throws SQLException {
+        List<Patient> patients = new ArrayList<>();
+        String sql = "SELECT * FROM patient WHERE gender = ? ORDER BY full_name LIMIT ? OFFSET ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, gender);
+            stmt.setInt(2, pageSize);
+            stmt.setInt(3, (page - 1) * pageSize);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Patient patient = new Patient();
+                patient.setPhone(rs.getString("phone"));
+                patient.setPatientAccountId(rs.getInt("patient_account_id") != 0 ? rs.getInt("patient_account_id") : null);
+                patient.setFullName(rs.getString("full_name"));
+                patient.setDateOfBirth(rs.getDate("date_of_birth"));
+                patient.setGender(rs.getString("gender"));
+                patient.setEmail(rs.getString("email"));
+                patient.setCreatedAt(rs.getTimestamp("created_at"));
+                patients.add(patient);
+            }
+        }
+        return patients;
+    }
+
+    // New method for total patients by gender
+    public int getTotalPatientsByGender(String gender) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM patient WHERE gender = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, gender);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
     }
 
     public Patient getPatientByUserId(int userId) {
