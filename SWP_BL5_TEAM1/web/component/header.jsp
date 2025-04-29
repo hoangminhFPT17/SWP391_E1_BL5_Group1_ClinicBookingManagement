@@ -42,7 +42,7 @@
                         </a>
                         <a class="dropdown-item text-dark" href="#"><i class="uil uil-dashboard align-middle me-1"></i> Profile</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item text-dark" href="#"><i class="uil uil-sign-out-alt align-middle me-1"></i> Logout</a>
+                        <a class="dropdown-item text-dark" href="-logout"><span class="mb-0 d-inline-block me-1"><i class="uil uil-sign-out-alt align-middle h6"></i></span> Logout</a>
                     </div>
                 </div>
             </li>

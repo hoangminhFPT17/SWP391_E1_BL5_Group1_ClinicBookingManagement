@@ -84,7 +84,7 @@ public class QueueManager extends HttpServlet {
 
         if ("start".equals(action)) {
             int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
-            dao.updateAppointmentStatus(appointmentId, "In progress");
+            dao.updateAppointmentStatus(appointmentId, "In Progress");
         } else if ("sendService".equals(action)) {
             int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
             // form fields from modal
