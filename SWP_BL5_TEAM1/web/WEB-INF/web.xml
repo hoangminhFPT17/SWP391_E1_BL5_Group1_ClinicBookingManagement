@@ -163,7 +163,7 @@
 
     <servlet>
         <servlet-name>PatientInvoiceServlet</servlet-name>
-        <servlet-class>controller.patient.PatientInvoiceServlet</servlet-class>
+        <servlet-class>controllers.patient.PatientInvoiceServlet</servlet-class>
     </servlet>
 
     <servlet>
@@ -314,6 +314,10 @@
     <servlet-mapping>
         <servlet-name>InvoiceDetailsServlet</servlet-name>
         <url-pattern>/InvoiceDetailsServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PatientInvoiceServlet</servlet-name>
+        <url-pattern>/PatientInvoiceServlet</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>home.jsp</welcome-file>

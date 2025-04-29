@@ -22,10 +22,15 @@
                 <a href="/SWP_BL5_TEAM1/PatientCheckin"><i class="uil uil-sign-in-alt me-2 d-inline-block"></i>Patient Check-in</a>
                 
             </li>
-            
+           
             <li>
-                <a href="/SWP_BL5_TEAM1/appointmentsReception"><i class="uil uil-sign-in-alt me-2 d-inline-block"></i>Invoice</a>
+                <a href="/SWP_BL5_TEAM1/ReceptionAppointmentsListServlet"><i class="uil uil-sign-in-alt me-2 d-inline-block"></i>Appointments Waiting</a>
             </li>
+            <li>
+                <a href="PaymentStatus.jsp"><i class="uil uil-sign-in-alt me-2 d-inline-block"></i>Payment Waiting</a>
+            </li>
+            
+
         </ul>
         <!-- sidebar-menu  -->
     </div>

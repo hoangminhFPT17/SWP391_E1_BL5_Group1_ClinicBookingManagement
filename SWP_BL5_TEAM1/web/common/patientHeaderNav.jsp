@@ -149,8 +149,8 @@
                        
                     </ul>
                 </li>
-                <li><a href="MedicalHistory.jsp" class="sub-menu-item">Medical History</a></li>
-                <li><a href="InvoiceDetailsServlet" class="sub-menu-item">Invoices</a></li>
+                <li><a href="PatientMedicalHistory.jsp" class="sub-menu-item">Medical History</a></li>
+                <li><a href="PatientInvoiceServlet" class="sub-menu-item">Invoices</a></li>
                 <li><a href="PaymentHistory.jsp" class="sub-menu-item">Payment History</a></li>                
             </ul><!--end navigation menu-->
         </div><!--end navigation-->
