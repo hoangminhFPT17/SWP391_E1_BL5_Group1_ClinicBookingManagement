@@ -183,5 +183,62 @@ CREATE TABLE InvoiceItem (
 
 ALTER TABLE `swp_clinic`.`user` 
 ADD COLUMN `img_path` VARCHAR(255) NULL AFTER `created_at`,
-ADD COLUMN `user_bio` VARCHAR(255) NULL AFTER `img_path`,
-ADD COLUMN `pdf_path` VARCHAR(255) NULL AFTER `user_bio`;
+ADD COLUMN `user_bio` VARCHAR(45) NULL AFTER `img_path`,
+ADD COLUMN `pdf_path` VARCHAR(45) NULL AFTER `user_bio`;
+
+
+
+-- MySQL 8.0 DDL for storing condensed invoices (fixed 3 line items)
+
+-- Single table to store all invoice data, including exactly three items
+CREATE TABLE `invoices` (
+  `invoice_id` INT NOT NULL AUTO_INCREMENT,
+  `appointment_id` INT NOT NULL,
+  `address` VARCHAR(255) NOT NULL,
+  `patient_name` VARCHAR(100) NOT NULL,
+  `patient_phone` VARCHAR(20) NOT NULL,
+  `doctor_name` VARCHAR(100) NOT NULL,
+  `issue_date` DATE NOT NULL,
+  `due_date` DATE NOT NULL,
+  -- Item 1
+  `item1_description` VARCHAR(255) NOT NULL,
+  `item1_rate` int NOT NULL,
+  -- Item 2
+  `item2_description` VARCHAR(255) NOT NULL,
+  `item2_rate` int NOT NULL,
+  -- Item 3
+  `item3_description` VARCHAR(255) NOT NULL,
+  `item3_rate` int NOT NULL,
+  -- Computed totals
+  `subtotal` int AS (
+    item1_rate + item2_rate + item3_rate
+  ) STORED,
+  `total` int AS (subtotal) STORED,
+
+  PRIMARY KEY (`invoice_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `invoices`
+  ADD COLUMN `package` NVARCHAR(100) NOT NULL DEFAULT '' AFTER `patient_phone`;
+  
+  ALTER TABLE invoices
+MODIFY COLUMN item1_rate INT NOT NULL,
+MODIFY COLUMN item2_rate INT NOT NULL,
+MODIFY COLUMN item3_rate INT NOT NULL,
+MODIFY COLUMN subtotal INT AS (item1_rate + item2_rate + item3_rate) STORED,
+MODIFY COLUMN total INT AS (subtotal) STORED;
+
+CREATE TABLE `payment` (
+  `payment_id`     INT            NOT NULL AUTO_INCREMENT,
+  `user_id`        INT            NULL,
+  `amount`         DECIMAL(10,2)  NULL,
+  `payment_date`   DATETIME       NULL,
+  `appointment_id` INT            NULL,
+  `status`         ENUM('Processing','Completed','Failed') NOT NULL DEFAULT 'Processing',
+  PRIMARY KEY (`payment_id`)
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `swp_clinic`.`appointment` 
+CHANGE COLUMN `status` `status` ENUM('Pending', 'Approved', 'Cancelled', 'Completed', 'No-show', 'Waiting-Payment', 'Payment-Complete') NULL DEFAULT 'Pending' ;
