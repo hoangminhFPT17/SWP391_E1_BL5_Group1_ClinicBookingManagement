@@ -3,33 +3,215 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8" />
     <title>Doctris - Patient List</title>
     <%@ include file="../assets/css/css-js.jsp" %>
     <style>
-        .error { color: red; }
-        tr.clickable-row { cursor: pointer; }
+        :root {
+            --primary-color: #007bff;
+            --text-color: #333;
+            --border-color: #e9ecef;
+            --bg-light: #f8f9fa;
+            --hover-bg: #e6f0fa;
+            --error-color: #dc3545;
+        }
+
+        /* Patient List Table */
+        .table-responsive {
+            margin-top: 1.5rem;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .table {
+            margin-bottom: 0;
+            font-size: 0.95rem;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table thead th {
+            background-color: var(--bg-light);
+            color: var(--text-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .table tbody tr:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+
+        .clickable-row {
+            cursor: pointer;
+        }
+
+        .clickable-row:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: -2px;
+        }
+
+        .error {
+            color: var(--error-color);
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        /* Modal Styling */
+        .modal-content {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            background-color: var(--bg-light);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.25rem 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .modal-body h6 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            border-left: 3px solid var(--primary-color);
+            padding-left: 0.75rem;
+        }
+
+        .modal-body p {
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body p strong {
+            flex: 0 0 30%;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .modal-body p span {
+            flex: 0 0 65%;
+            color: #555;
+        }
+
+        .modal-body hr {
+            margin: 1.5rem 0;
+            border-color: var(--border-color);
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 28px;
+            height: 28px;
+            border: 4px solid var(--primary-color);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 1rem auto;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Appointments Table */
+        #apptsContent .table {
+            font-size: 0.9rem;
+            background-color: #fff;
+        }
+
+        #apptsContent .table th,
+        #apptsContent .table td {
+            padding: 0.75rem;
+        }
+
+        #apptsContent .table th {
+            background-color: var(--bg-light);
+            font-weight: 600;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .table thead {
+                display: none;
+            }
+
+            .table tbody tr {
+                display: block;
+                margin-bottom: 1rem;
+                border: 1px solid var(--border-color);
+                border-radius: 6px;
+            }
+
+            .table td {
+                display: flex;
+                justify-content: space-between;
+                padding: 0.75rem;
+                border: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .table td:before {
+                content: attr(data-label);
+                font-weight: 500;
+                color: var(--text-color);
+                flex: 0 0 40%;
+            }
+
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+        }
     </style>
 </head>
-
 <body>
     <div class="page-wrapper doctris-theme toggled">
         <%@ include file="../component/sideBar.jsp" %>
-
-        <!-- Start Page Content -->
         <main class="page-content bg-light">
             <%@ include file="../component/header.jsp" %>
             <div class="container-fluid">
                 <h1 class="mb-4">Patient List</h1>
-
                 <c:if test="${not empty error}">
                     <p class="error mb-3">${error}</p>
                 </c:if>
-
                 <div class="table-responsive">
-                    <table class="table table-bordered table-hover table-striped">
+                    <table class="table table-hover">
                         <thead class="table-light">
                             <tr>
                                 <th>Phone</th>
@@ -42,16 +224,15 @@
                             <c:forEach var="patient" items="${patients}">
                                 <tr class="clickable-row"
                                     data-phone="${patient.phone}"
-                                    data-patient-account-id="${patient.patientAccountId}"
                                     data-full-name="${patient.fullName}"
                                     data-email="${patient.email}"
                                     data-gender="${patient.gender}"
-                                    data-date-of-birth='<fmt:formatDate value="${patient.dateOfBirth}" pattern="yyyy-MM-dd"/>'
-                                    data-created-at='<fmt:formatDate value="${patient.createdAt}" pattern="yyyy-MM-dd HH:mm:ss"/>'>
-                                    <td>${patient.phone}</td>
-                                    <td>${patient.fullName}</td>
-                                    <td>${patient.email}</td>
-                                    <td>${patient.gender}</td>
+                                    data-date-of-birth="<fmt:formatDate value='${patient.dateOfBirth}' pattern='yyyy-MM-dd'/>"
+                                    data-created-at="<fmt:formatDate value='${patient.createdAt}' pattern='yyyy-MM-dd HH:mm:ss'/>">
+                                    <td data-label="Phone">${patient.phone}</td>
+                                    <td data-label="Full Name">${patient.fullName}</td>
+                                    <td data-label="Email">${patient.email}</td>
+                                    <td data-label="Gender">${patient.gender}</td>
                                 </tr>
                             </c:forEach>
                             <c:if test="${empty patients}">
@@ -63,75 +244,98 @@
                     </table>
                 </div>
 
-                <!-- Bootstrap Modal for Patient Details -->
-                <div class="modal fade" id="patientDetailModal" tabindex="-1" aria-labelledby="patientDetailModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
+                <!-- Modal -->
+                <div class="modal fade" id="patientDetailModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="patientDetailModalLabel">Patient Details</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <h5 class="modal-title">Patient & Record Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                             <div class="modal-body">
+                                <h6>Patient Information</h6>
                                 <p><strong>Phone:</strong> <span id="modalPhone"></span></p>
-                                <p><strong>Patient Account ID:</strong> <span id="modalPatientAccountId"></span></p>
                                 <p><strong>Full Name:</strong> <span id="modalFullName"></span></p>
                                 <p><strong>Email:</strong> <span id="modalEmail"></span></p>
                                 <p><strong>Gender:</strong> <span id="modalGender"></span></p>
-                                <p><strong>Date of Birth:</strong> <span id="modalDateOfBirth"></span></p>
+                                <p><strong>DOB:</strong> <span id="modalDateOfBirth"></span></p>
                                 <p><strong>Created At:</strong> <span id="modalCreatedAt"></span></p>
+                                <hr/>
+                                <h6>Medical Record</h6>
+                                <div id="recordSpinner" class="spinner hidden"></div>
+                                <p><strong>Record ID:</strong> <span id="modalRecordId"></span></p>
+                                <p><strong>Diagnosis:</strong> <span id="modalDiagnosis"></span></p>
+                                <p><strong>Prescription:</strong> <span id="modalPrescription"></span></p>
+                                <p><strong>Notes:</strong> <span id="modalNotes"></span></p>
+                                <p><strong>Record Created At:</strong> <span id="modalRecordCreatedAt"></span></p>
+                                <hr/>
+                                <h6>Appointments</h6>
+                                <div id="apptsSpinner" class="spinner hidden"></div>
+                                <div id="apptsContent"></div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div><!--end container-->
-
-            <!-- Footer Start -->
-            <footer class="bg-white shadow py-3">
-                <div class="container-fluid">
-                    <div class="row align-items-center">
-                        <div class="col">
-                            <div class="text-sm-start text-center">
-                                <p class="mb-0 text-muted"><script>document.write(new Date().getFullYear())</script> © Doctris. Design with <i class="mdi mdi-heart text-danger"></i> by <a href="../../../index.html" target="_blank" class="text-reset">Shreethemes</a>.</p>
-                            </div>
-                        </div><!--end col-->
-                    </div><!--end row-->
-                </div><!--end container-->
-            </footer><!--end footer-->
-            <!-- End -->
+            </div>
+            <footer class="bg-white shadow py-3 text-center">
+                <small>© <script>document.write(new Date().getFullYear())</script> Doctris</small>
+            </footer>
         </main>
-        <!--End page-content-->
     </div>
 
-    <!-- JavaScript to Handle Modal -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const rows = document.querySelectorAll('.clickable-row');
-            rows.forEach(row => {
-                row.addEventListener('click', function () {
-                    // Extract data from the row's data attributes
-                    const phone = this.getAttribute('data-phone');
-                    const patientAccountId = this.getAttribute('data-patient-account-id');
-                    const fullName = this.getAttribute('data-full-name');
-                    const email = this.getAttribute('data-email');
-                    const gender = this.getAttribute('data-gender');
-                    const dateOfBirth = this.getAttribute('data-date-of-birth');
-                    const createdAt = this.getAttribute('data-created-at');
-
-                    // Populate the modal with the data
-                    document.getElementById('modalPhone').textContent = phone || 'Not provided';
-                    document.getElementById('modalPatientAccountId').textContent = patientAccountId || 'Not provided';
-                    document.getElementById('modalFullName').textContent = fullName || 'Not provided';
-                    document.getElementById('modalEmail').textContent = email || 'Not provided';
-                    document.getElementById('modalGender').textContent = gender || 'Not provided';
-                    document.getElementById('modalDateOfBirth').textContent = dateOfBirth || 'Not provided';
-                    document.getElementById('modalCreatedAt').textContent = createdAt || 'Not provided';
-
-                    // Show the modal
-                    const modal = new bootstrap.Modal(document.getElementById('patientDetailModal'));
-                    modal.show();
+        document.addEventListener('DOMContentLoaded', function() {
+            const baseUrl = '${pageContext.request.contextPath}';
+            document.querySelectorAll('.clickable-row').forEach(row => {
+                row.addEventListener('click', function() {
+                    // Populate patient info
+                    const infoMap = [
+                        ['modalPhone','phone'],
+                        ['modalFullName','fullName'],
+                        ['modalEmail','email'],
+                        ['modalGender','gender'],
+                        ['modalDateOfBirth','dateOfBirth'],
+                        ['modalCreatedAt','createdAt']
+                    ];
+                    infoMap.forEach(([id,key]) => {
+                        document.getElementById(id).textContent = row.dataset[key] || '—';
+                    });
+                    // Fetch medical record
+                    const recSpinner = document.getElementById('recordSpinner');
+                    recSpinner.classList.remove('hidden');
+                    fetch(baseUrl + '/doctor/medical-records-json?patientPhone=' + encodeURIComponent(row.dataset.phone))
+                        .then(res => res.json())
+                        .then(data => {
+                            recSpinner.classList.add('hidden');
+                            const r = data[0] || {};
+                            document.getElementById('modalRecordId').textContent = r.recordId || '—';
+                            document.getElementById('modalDiagnosis').textContent = r.diagnosis || '—';
+                            document.getElementById('modalPrescription').textContent = r.prescription || '—';
+                            document.getElementById('modalNotes').textContent = r.notes || '—';
+                            document.getElementById('modalRecordCreatedAt').textContent = r.createdAt || '—';
+                        })
+                        .catch(() => recSpinner.classList.add('hidden'));
+                    // Fetch appointments
+                    const apptSpinner = document.getElementById('apptsSpinner');
+                    apptSpinner.classList.remove('hidden');
+                    document.getElementById('apptsContent').innerHTML = '';
+                    fetch(baseUrl + '/doctor/appointments?patientPhone=' + encodeURIComponent(row.dataset.phone))
+                        .then(res => res.json())
+                        .then(data => {
+                            apptSpinner.classList.add('hidden');
+                            let table = '<table class="table table-sm"><thead><tr>' +
+                                        '<th>ID</th><th>Date</th><th>Status</th><th>Created At</th></tr></thead><tbody>';
+                            data.forEach(a => {
+                                table += '<tr><td>' + a.appointmentId + '</td><td>' + a.appointmentDate + '</td><td>' + a.status + '</td><td>' + a.createdAt + '</td></tr>';
+                            });
+                            table += '</tbody></table>';
+                            document.getElementById('apptsContent').innerHTML = table;
+                        })
+                        .catch(() => apptSpinner.classList.add('hidden'));
+                    new bootstrap.Modal(document.getElementById('patientDetailModal')).show();
                 });
             });
         });

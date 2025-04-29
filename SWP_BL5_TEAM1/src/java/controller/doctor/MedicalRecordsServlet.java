@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.annotation.WebServlet;
 
-@WebServlet("/staff/medical-records")
+
 public class MedicalRecordsServlet extends HttpServlet {
     private MedicalDAO medicalDAO;
 
