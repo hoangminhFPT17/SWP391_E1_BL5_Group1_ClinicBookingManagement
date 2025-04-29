@@ -110,6 +110,10 @@
         <servlet-name>HomePageServlet</servlet-name>
         <servlet-class>controller.HomePageServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ManagerAppointmentAnalyticServlet</servlet-name>
+        <servlet-class>controller.manager.ManagerAppointmentAnalyticServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <url-pattern>/PatientBookAppointmentServlet</url-pattern>
@@ -213,5 +217,9 @@
     <servlet-mapping>
         <servlet-name>ManagerAnalyticServlet</servlet-name>
         <url-pattern>/ManagerAnalyticServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManagerAppointmentAnalyticServlet</servlet-name>
+        <url-pattern>/ManagerAppointmentAnalyticServlet</url-pattern>
     </servlet-mapping>
 </web-app>

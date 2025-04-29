@@ -592,13 +592,12 @@ public class AppointmentDAO extends DBContext {
         }
         return false;
     }
-    
+
     public int countAppointments() {
         int totalAppointments = 0;
         String sql = "SELECT COUNT(*) AS total_appointments FROM Appointment";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 totalAppointments = rs.getInt("total_appointments");
             }
@@ -607,5 +606,54 @@ public class AppointmentDAO extends DBContext {
         }
 
         return totalAppointments;
+    }
+
+    public Map<Integer, Integer> getMonthlyAppointmentCounts(int year, Integer packageId, Integer doctorId) {
+        Map<Integer, Integer> monthlyCounts = new HashMap<>();
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT MONTH(appointment_date) AS month, COUNT(*) AS appointment_count "
+                + "FROM Appointment "
+                + "WHERE YEAR(appointment_date) = ? "
+        );
+
+        // Dynamically add filters if values are provided
+        if (packageId != null && packageId != 0) {
+            sql.append("AND package_id = ? ");
+        }
+        if (doctorId != null && doctorId != 0) {
+            sql.append("AND doctor_id = ? ");
+        }
+        sql.append("GROUP BY MONTH(appointment_date) ORDER BY month ASC");
+
+        try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql.toString())) {
+
+            int paramIndex = 1;
+            ps.setInt(paramIndex++, year);
+
+            if (packageId != null && packageId != 0) {
+                ps.setInt(paramIndex++, packageId);
+            }
+            if (doctorId != null && doctorId != 0) {
+                ps.setInt(paramIndex++, doctorId);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int month = rs.getInt("month");
+                    int count = rs.getInt("appointment_count");
+                    monthlyCounts.put(month, count);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Ensure all months are present (even if zero)
+        for (int i = 1; i <= 12; i++) {
+            monthlyCounts.putIfAbsent(i, 0);
+        }
+
+        return monthlyCounts;
     }
 }
