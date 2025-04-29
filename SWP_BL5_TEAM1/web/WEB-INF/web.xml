@@ -169,7 +169,6 @@
         <servlet-class>controller.patient.InvoiceDetailsServlet</servlet-class>
     </servlet>
 
-
     <!-- =========================== -->
     <!-- 2) Servlet-to-URL Mappings  -->
     <!-- =========================== -->
@@ -205,29 +204,6 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>ExaminationPackageManager</servlet-name>
-        <url-pattern>/ExaminationPackageManager</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ManagerTimeSlotListServlet</servlet-name>
-        <url-pattern>/ManagerTimeSlotListServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateDoctorAssignmentServlet</servlet-name>
-        <url-pattern>/UpdateDoctorAssignmentServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DeleteDoctorAssignmentServlet</servlet-name>
-        <url-pattern>/DeleteDoctorAssignmentServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>InsertDoctorAssignmentServlet</servlet-name>
-        <url-pattern>/InsertDoctorAssignmentServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>QueueManager</servlet-name>
-        <url-pattern>/QueueManager</url-pattern>
-    </servlet-mapping>
         <servlet-name>ReceptionAppointmentsListServlet</servlet-name>
         <url-pattern>/ReceptionAppointmentsListServlet</url-pattern>
     </servlet-mapping>
@@ -315,10 +291,6 @@
     <servlet-mapping>
         <servlet-name>RemoveUnavailabilityServlet</servlet-name>
         <url-pattern>/RemoveUnavailabilityServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>MedicalRecordsServlet</servlet-name>
-        <url-pattern>/doctor/medical-records</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

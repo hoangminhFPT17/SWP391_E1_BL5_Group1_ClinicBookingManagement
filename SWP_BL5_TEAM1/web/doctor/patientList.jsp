@@ -17,7 +17,6 @@
             --error-color: #dc3545;
         }
 
-        /* Patient List Table */
         .table-responsive {
             margin-top: 1.5rem;
             border-radius: 8px;
@@ -72,7 +71,6 @@
             margin-bottom: 1rem;
         }
 
-        /* Modal Styling */
         .modal-content {
             border-radius: 12px;
             border: none;
@@ -129,7 +127,6 @@
             border-color: var(--border-color);
         }
 
-        /* Spinner */
         .spinner {
             width: 28px;
             height: 28px;
@@ -150,7 +147,6 @@
             }
         }
 
-        /* Appointments Table */
         #apptsContent .table {
             font-size: 0.9rem;
             background-color: #fff;
@@ -166,7 +162,6 @@
             font-weight: 600;
         }
 
-        /* Responsive Adjustments */
         @media (max-width: 768px) {
             .table thead {
                 display: none;
@@ -210,6 +205,27 @@
                 <c:if test="${not empty error}">
                     <p class="error mb-3">${error}</p>
                 </c:if>
+
+                <!-- Search and Filter Controls -->
+                <form class="mb-3" id="searchForm">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="searchPhone" placeholder="Search by Phone" value="${param.phone}">
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="filterGender">
+                                <option value="">All Genders</option>
+                                <option value="Male" ${param.gender == 'Male' ? 'selected' : ''}>Male</option>
+                                <option value="Female" ${param.gender == 'Female' ? 'selected' : ''}>Female</option>
+                                <option value="Other" ${param.gender == 'Other' ? 'selected' : ''}>Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </div>
+                </form>
+
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead class="table-light">
@@ -218,6 +234,7 @@
                                 <th>Full Name</th>
                                 <th>Email</th>
                                 <th>Gender</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -233,18 +250,76 @@
                                     <td data-label="Full Name">${patient.fullName}</td>
                                     <td data-label="Email">${patient.email}</td>
                                     <td data-label="Gender">${patient.gender}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary edit-btn" data-bs-toggle="modal" data-bs-target="#editPatientModal">Edit</button>
+                                    </td>
                                 </tr>
                             </c:forEach>
                             <c:if test="${empty patients}">
                                 <tr>
-                                    <td colspan="4" class="text-center">No patients found.</td>
+                                    <td colspan="5" class="text-center">No patients found.</td>
                                 </tr>
                             </c:if>
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Modal -->
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <c:if test="${currentPage > 1}">
+                            <li class="page-item">
+                                <a class="page-link" href="?page=${currentPage - 1}&phone=${param.phone}&gender=${param.gender}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        </c:if>
+                        <c:forEach begin="1" end="${totalPages}" var="i">
+                            <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                <a class="page-link" href="?page=${i}&phone=${param.phone}&gender=${param.gender}">${i}</a>
+                            </li>
+                        </c:forEach>
+                        <c:if test="${currentPage < totalPages}">
+                            <li class="page-item">
+                                <a class="page-link" href="?page=${currentPage + 1}&phone=${param.phone}&gender=${param.gender}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </c:if>
+                    </ul>
+                </nav>
+
+                <!-- Edit Modal -->
+                <div class="modal fade" id="editPatientModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Edit Patient</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editPatientForm">
+                                    <input type="hidden" id="editPhone">
+                                    <div class="mb-3">
+                                        <label for="editFullName" class="form-label">Full Name</label>
+                                        <input type="text" class="form-control" id="editFullName" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editEmail" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="editEmail">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editDateOfBirth" class="form-label">Date of Birth</label>
+                                        <input type="date" class="form-control" id="editDateOfBirth" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patient Detail Modal -->
                 <div class="modal fade" id="patientDetailModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
@@ -289,9 +364,66 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const baseUrl = '${pageContext.request.contextPath}';
+
+            // Search Form Submission
+            document.getElementById('searchForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const phone = document.getElementById('searchPhone').value;
+                const gender = document.getElementById('filterGender').value;
+                window.location.href = '?phone=' + encodeURIComponent(phone) + '&gender=' + encodeURIComponent(gender);
+            });
+
+            // Edit Button Click
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const row = this.closest('tr');
+                    document.getElementById('editPhone').value = row.dataset.phone;
+                    document.getElementById('editFullName').value = row.dataset.fullName;
+                    document.getElementById('editEmail').value = row.dataset.email;
+                    document.getElementById('editDateOfBirth').value = row.dataset.dateOfBirth;
+                });
+            });
+
+            // Edit Form Submission
+            document.getElementById('editPatientForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const phone = document.getElementById('editPhone').value;
+                const fullName = document.getElementById('editFullName').value;
+                const email = document.getElementById('editEmail').value;
+                const dateOfBirth = document.getElementById('editDateOfBirth').value;
+
+                fetch(baseUrl + '/doctor/update-patient', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, fullName, email, dateOfBirth })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Failed to update patient');
+                    }
+                })
+                .then(data => {
+                    alert('Patient updated successfully');
+                    const row = document.querySelector(`tr[data-phone="${phone}"]`);
+                    row.dataset.fullName = data.fullName;
+                    row.dataset.email = data.email;
+                    row.dataset.dateOfBirth = data.dateOfBirth;
+                    row.querySelector('td[data-label="Full Name"]').textContent = data.fullName;
+                    row.querySelector('td[data-label="Email"]').textContent = data.email;
+                    bootstrap.Modal.getInstance(document.getElementById('editPatientModal')).hide();
+                })
+                .catch(error => {
+                    alert('Error updating patient: ' + error.message);
+                });
+            });
+
+            // Patient Detail Modal
             document.querySelectorAll('.clickable-row').forEach(row => {
-                row.addEventListener('click', function() {
-                    // Populate patient info
+                row.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('edit-btn')) return;
                     const infoMap = [
                         ['modalPhone','phone'],
                         ['modalFullName','fullName'],
@@ -303,7 +435,6 @@
                     infoMap.forEach(([id,key]) => {
                         document.getElementById(id).textContent = row.dataset[key] || '—';
                     });
-                    // Fetch medical record
                     const recSpinner = document.getElementById('recordSpinner');
                     recSpinner.classList.remove('hidden');
                     fetch(baseUrl + '/doctor/medical-records-json?patientPhone=' + encodeURIComponent(row.dataset.phone))
@@ -318,7 +449,6 @@
                             document.getElementById('modalRecordCreatedAt').textContent = r.createdAt || '—';
                         })
                         .catch(() => recSpinner.classList.add('hidden'));
-                    // Fetch appointments
                     const apptSpinner = document.getElementById('apptsSpinner');
                     apptSpinner.classList.remove('hidden');
                     document.getElementById('apptsContent').innerHTML = '';
