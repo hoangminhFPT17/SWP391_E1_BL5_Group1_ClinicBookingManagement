@@ -66,7 +66,8 @@
 
 
         <!-- Hero Start -->
-        <jsp:include page="/common/header.jsp" />
+        
+        <jsp:include page="/common/patientHeaderNav.jsp" />
         <section class="bg-home d-flex bg-light align-items-center" style="background: url('${pageContext.request.contextPath}/assets/images/bg/bg-lines-one.png') center;">
             <div class="container">
                 <div class="row justify-content-center">

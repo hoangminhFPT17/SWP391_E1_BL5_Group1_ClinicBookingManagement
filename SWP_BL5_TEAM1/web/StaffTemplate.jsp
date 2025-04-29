@@ -14,8 +14,6 @@
     </head>
 
     <body>
-        
-
         <div class="page-wrapper doctris-theme toggled">
             <%@ include file="../component/sideBar.jsp" %>
             <!-- Start Page Content -->

@@ -4,8 +4,12 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Patient;
@@ -267,7 +271,7 @@ public class PatientDAO extends DBContext {
             return false;
         }
     }
-    
+
     public boolean updatePatientPhone(String phone, int id) {
         String sql = "UPDATE patient SET phone = ? WHERE patient_account_id = ?";
 
@@ -401,4 +405,69 @@ public class PatientDAO extends DBContext {
             return false;
         }
     }
+
+    public int countPatients() {
+        int patientCount = 0;
+        String sql = "SELECT COUNT(*) AS patient_count FROM Patient";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                patientCount = rs.getInt("patient_count");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return patientCount;
+    }
+
+    public Map<String, Integer> getPatientDemographics() {
+        Map<String, Integer> demographics = new HashMap<>();
+        String sql = "SELECT date_of_birth FROM Patient"; // Get patients' date of birth from Patient table
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {   
+            // Process each patient record
+            while (rs.next()) {
+                Date birthDate = rs.getDate("date_of_birth");
+                if (birthDate != null) {
+                    int age = calculateAge(birthDate); // Calculate the patient's age
+
+                    // Determine the age range
+                    String ageRange = getAgeRange(age);
+
+                    // Increment count for the specific age range
+                    demographics.put(ageRange, demographics.getOrDefault(ageRange, 0) + 1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return demographics;
+    }
+
+// Helper method to calculate age from birth date
+    private int calculateAge(Date birthDate) {
+        LocalDate birthLocalDate = birthDate.toLocalDate();
+        LocalDate currentDate = LocalDate.now();
+        return Period.between(birthLocalDate, currentDate).getYears();
+    }
+
+// Helper method to determine age range
+    private String getAgeRange(int age) {
+        if (age >= 18 && age <= 25) {
+            return "18-25";
+        } else if (age >= 26 && age <= 35) {
+            return "26-35";
+        } else if (age >= 36 && age <= 45) {
+            return "36-45";
+        } else if (age >= 46 && age <= 55) {
+            return "46-55";
+        } else if (age >= 56 && age <= 65) {
+            return "56-65";
+        } else {
+            return "66+";
+        }
+    }
+
 }

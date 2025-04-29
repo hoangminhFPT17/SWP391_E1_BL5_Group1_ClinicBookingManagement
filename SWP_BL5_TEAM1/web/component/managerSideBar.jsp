@@ -1,6 +1,3 @@
-
-
-
 <nav id="sidebar" class="sidebar-wrapper">
     <div class="sidebar-content" data-simplebar style="height: calc(100% - 60px);">
         <div class="sidebar-brand">
@@ -11,7 +8,7 @@
         </div>
 
         <ul class="sidebar-menu pt-3">
-            <li><a href="index.html"><i class="uil uil-dashboard me-2 d-inline-block"></i>Dashboard</a></li>
+            <li><a href="ManagerAnalyticServlet"><i class="uil uil-dashboard me-2 d-inline-block"></i>Dashboard</a></li>
             <li><a href="appointment.html"><i class="uil uil-stethoscope me-2 d-inline-block"></i>Appointment</a></li>
 
             <li>
@@ -24,6 +21,14 @@
 
             <li>
                 <a href="ExaminationPackageManager"><i class="uil uil-apps me-2 d-inline-block"></i>Package manager</a>
+            </li>
+            
+            <li>
+                <a href="ManagerAppointmentAnalyticServlet"><i class="uil uil-analytics me-2 d-inline-block"></i>Appointment Analytic</a>
+            </li>
+            
+            <li>
+                <a href="ManagerTimeSlotListServlet"><i class="uil uil-schedule me-2 d-inline-block"></i>Time Slot Management</a>
             </li>
         </ul>
         <!-- sidebar-menu  -->

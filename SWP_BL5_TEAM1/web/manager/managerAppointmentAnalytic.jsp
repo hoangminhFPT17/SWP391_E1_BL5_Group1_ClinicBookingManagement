@@ -1,8 +1,9 @@
 <%-- 
-    Document   : managerAnalytic
-    Created on : 28 Apr 2025, 22:26:56
+    Document   : managerAppointmentAnalyticServlet
+    Created on : 29 Apr 2025, 08:35:37
     Author     : LENOVO
 --%>
+
 
 <%@page import="java.util.List"%>
 <%@page import="java.util.Map"%>
@@ -19,50 +20,15 @@
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
         <!-- Pass data into a JS variable -->
-        <script type="text/javascript"> //god I hate ugly java code in frontend
-            var timeSlotBookedCountMap = {};
-            <%
-                Map<String, Integer> map = (Map<String, Integer>) request.getAttribute("timeSlotBookedCountMap");
-                if (map != null) {
-                    for (Map.Entry<String, Integer> entry : map.entrySet()) {
-            %>
-            timeSlotBookedCountMap["<%= entry.getKey()%>"] = <%= entry.getValue()%>;
-            <%
-                    }
-                }
-            %>
-
-            var appointmentCountByDoctor = [];
-            <%
-                List<Map<String, Object>> appointmentList = (List<Map<String, Object>>) request.getAttribute("appointmentCountByDoctor");
-                if (appointmentList != null) {
-                    for (Map<String, Object> data : appointmentList) {
-            %>
-            appointmentCountByDoctor.push({
-                doctor_name: "<%= data.get("doctor_name")%>",
-                appointment_count: <%= data.get("appointment_count")%>
-            });
-            <%
-                    }
-                }
-            %>
-
-            var demographics = {};
-
-            <%
-                // Retrieve the demographics map
-                Map<String, Integer> demographicsMap = (Map<String, Integer>) request.getAttribute("demographics");
-                if (demographicsMap != null) {
-                    // Loop through the map and populate the JS object
-                    for (Map.Entry<String, Integer> entry : demographicsMap.entrySet()) {
-            %>
-            demographics["<%= entry.getKey()%>"] = <%= entry.getValue()%>;
-            <%
-                            }
-                        }
-            %>
+        <script type="text/javascript">
+            var monthlyAppointmentCountsMap = {};
+            <c:if test="${not empty monthlyAppointmentCountsMap}">
+                <c:forEach var="entry" items="${monthlyAppointmentCountsMap}">
+                    monthlyAppointmentCountsMap[${entry.key}] = ${entry.value};
+                </c:forEach>
+            </c:if>
         </script>
-        <script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/manager_analytic.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/manager_appointment_analytic.js"></script>
         <title>Manager Analytics</title>
     </head>
     <body>
@@ -89,51 +55,55 @@
                         <h5 class="mb-0">Dashboard</h5>
 
                         <div class="row">
-                            <div class="col-xl-2 col-lg-4 col-md-4 mt-4">
-                                <div class="card features feature-primary rounded border-0 shadow p-4">
-                                    <div class="d-flex align-items-center">
-                                        <div class="icon text-center rounded-md">
-                                            <i class="uil uil-bed h3 mb-0"></i>
-                                        </div>
-                                        <div class="flex-1 ms-2">
-                                            <h5 class="mb-0">${patientCount}</h5>
-                                            <p class="text-muted mb-0">Patients</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div><!--end col-->
+                            <!-- LEFT HALF: Filters -->
+                            <div class="col-md-6">
+                                <form action="ManagerAppointmentAnalyticServlet" method="get">
+                                    <div class="row g-3">
 
-                            <div class="col-xl-2 col-lg-4 col-md-4 mt-4">
-                                <div class="card features feature-primary rounded border-0 shadow p-4">
-                                    <div class="d-flex align-items-center">
-                                        <div class="icon text-center rounded-md">
-                                            <i class="uil uil-file-medical-alt h3 mb-0"></i>
+                                        <!-- Doctor Dropdown -->
+                                        <div class="col-4">
+                                            <label class="form-label">Doctor</label>
+                                            <select name="doctorId" class="form-control select2input" style="min-width: 100%;">
+                                                <option value="0">All</option>
+                                                <c:forEach var="doctor" items="${allDoctors}">
+                                                    <option value="${doctor.doctorId}" ${doctor.doctorId == selectedDoctorId ? 'selected' : ''}>
+                                                        ${doctor.fullName} (${doctor.department})
+                                                    </option>
+                                                </c:forEach>
+                                            </select>
                                         </div>
-                                        <div class="flex-1 ms-2">
-                                            <h5 class="mb-0">$${totalRevenue}</h5>
-                                            <p class="text-muted mb-0">Total revenue</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div><!--end col-->
 
-                            <div class="col-xl-2 col-lg-4 col-md-4 mt-4">
-                                <div class="card features feature-primary rounded border-0 shadow p-4">
-                                    <div class="d-flex align-items-center">
-                                        <div class="icon text-center rounded-md">
-                                            <i class="uil uil-medkit h3 mb-0"></i>
+                                        <!-- Package Dropdown -->
+                                        <div class="col-4">
+                                            <label class="form-label">Package</label>
+                                            <select name="packageId" class="form-control select2input" style="min-width: 100%;">
+                                                <option value="0">All</option>
+                                                <c:forEach var="pkg" items="${examinationPackages}">
+                                                    <option value="${pkg.packageId}" ${pkg.packageId == selectedPackageId ? 'selected' : ''}>
+                                                        ${pkg.name}
+                                                    </option>
+                                                </c:forEach>
+                                            </select>
                                         </div>
-                                        <div class="flex-1 ms-2">
-                                            <h5 class="mb-0">${appointmentCount}</h5>
-                                            <p class="text-muted mb-0">Appointment</p>
+
+                                        <!-- Year Input -->
+                                        <div class="col-2">
+                                            <label class="form-label">Year</label>
+                                            <input type="number" name="year" class="form-control" value="${currentYear}" min="2000" max="2100" style="min-width: 100%;" />
                                         </div>
+
+                                        <!-- Search Button -->
+                                        <div class="col-2 d-flex align-items-end">
+                                            <button type="submit" class="btn btn-primary w-100">Search</button>
+                                        </div>
+
                                     </div>
-                                </div>
-                            </div><!--end col-->                
-                        </div><!--end row-->
+                                </form>
+                            </div>
+                        </div>
 
                         <div class="row">
-                            <div class="col-xl-8 col-lg-7 mt-4">
+                            <div class="col-xl-11 col-lg-7 mt-4">
                                 <div class="card shadow border-0 p-4">
                                     <div class="d-flex justify-content-between align-items-center mb-3"  style="height: 190px; overflow: hidden;">
                                         <h6 class="align-items-center mb-0">Doctor appointment amount</h6>
@@ -144,29 +114,10 @@
                                 </div>
                             </div><!--end col-->
 
-                            <div class="col-xl-4 col-lg-5 mt-4">
-                                <div class="card shadow border-0 p-4" style="height: 450px; overflow: hidden;">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h6 class="align-items-center mb-0">Time Slot by Amount Booked</h6>
-                                    </div>
 
-                                    <!-- Chart goes inside here -->
-                                    <div id="piechart" style="height: 100%; width: 100%;"></div>
-                                </div>
-                            </div><!--end col-->
                         </div><!--end row-->
 
                         <div class="row">
-                            <div class="col-xl-8 col-lg-7 mt-4">
-                                <div class="card shadow border-0 p-4">
-                                    <div class="d-flex justify-content-between align-items-center mb-3"  style="height: 190px; overflow: hidden;">
-                                        <h6 class="align-items-center mb-0">Clinic Age Demographics</h6>
-                                    </div>
-
-                                    <!-- Chart goes inside here -->
-                                    <div id="demographicsChart" style="height: 100%; width: 100%;"></div>
-                                </div>
-                            </div><!--end col-->
 
                         </div><!--end row-->
                     </div>
