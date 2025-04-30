@@ -146,7 +146,7 @@
                     <ul class="submenu">
                         <li><a href="PatientAppointmentsListServlet" class="sub-menu-item">Your Appointment List</a></li>
                         <li><a href="PatientExaminationPackageSelectServlet" class="sub-menu-item">Book an appointment</a></li>
-                       
+                       <li><a href="PatientQueueViewer" class="sub-menu-item">Viewer your position in queue</a></li>
                     </ul>
                 </li>
                 <li><a href="PatientMedicalHistory.jsp" class="sub-menu-item">Medical History</a></li>
