@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee                              https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+<web-app version="6.0"
+         xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
 
     <servlet>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
@@ -172,10 +176,6 @@
         <servlet-name>InvoiceDetailsServlet</servlet-name>
         <servlet-class>controller.patient.InvoiceDetailsServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>PatientQueueViewer</servlet-name>
-        <servlet-class>controller.patient.PatientQueueViewer</servlet-class>
-    </servlet>
     <servlet-mapping>
         <servlet-name>PatientBookAppointmentServlet</servlet-name>
         <url-pattern>/PatientBookAppointmentServlet</url-pattern>
@@ -337,11 +337,6 @@
         <servlet-name>VnpayReturnBooking</servlet-name>
         <url-pattern>/vnpayReturn</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>PatientQueueViewer</servlet-name>
-        <url-pattern>/PatientQueueViewer</url-pattern>
-    </servlet-mapping>
-    
     <servlet-mapping>
         <servlet-name>ServiceManager</servlet-name>
         <url-pattern>/ServiceManager</url-pattern>
