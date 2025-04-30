@@ -25,7 +25,7 @@
 
                     <!-- Step 1: Phone input -->
                     <c:if test="${empty showPatientForm and empty showAppointmentForm}">
-                        <form method="post" action="${pageContext.request.contextPath}/PatientCheckin">
+                        <form class="validate-form" method="post" action="${pageContext.request.contextPath}/PatientCheckin">
                             <div class="form-group">
                                 <label for="phone">Phone Number</label>
                                 <input type="text" id="phone" name="phone" class="form-control" required />
@@ -38,7 +38,7 @@
                     <c:if test="${showPatientForm}">
                         <c:choose>
                             <c:when test="${not empty patient}">
-                                <form method="post" action="${pageContext.request.contextPath}/PatientCheckin">
+                                <form class="validate-form" method="post" action="${pageContext.request.contextPath}/PatientCheckin">
                                     <input type="hidden" name="phone" value="${param.phone}"/>
 
                                     <div class="form-group">
@@ -70,7 +70,7 @@
                             </c:when>
 
                             <c:otherwise>
-                                <form method="post" action="${pageContext.request.contextPath}/PatientCheckin">
+                                <form class="validate-form" method="post" action="${pageContext.request.contextPath}/PatientCheckin">
                                     <input type="hidden" name="phone" value="${param.phone}"/>
 
                                     <div class="form-group">
@@ -104,7 +104,7 @@
                     </c:if>
                     <!-- Step 3: Appointment form -->
                     <c:if test="${showAppointmentForm}">
-                        <form method="post" action="${pageContext.request.contextPath}/PatientCheckin">
+                        <form class="validate-form" method="post" action="${pageContext.request.contextPath}/PatientCheckin">
                             <input type="hidden" name="phone" value="${patient.phone}" />
 
                             <!-- Appointment Date -->
@@ -181,5 +181,28 @@
                 </div>
             </main>
         </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+// Attach to all forms you marked
+                document.querySelectorAll('form.validate-form').forEach(form => {
+                    form.addEventListener('submit', e => {
+// find all required controls
+                        const controls = form.querySelectorAll('input[required], textarea[required], select[required]');
+                        for (const ctrl of controls) {
+// if empty or just whitespace
+                            if (ctrl.value.trim() === '') {
+                                alert('Please fill out the "'
+                                        + (ctrl.previousElementSibling?.innerText || ctrl.name)
+                                        + '" field.');
+                                ctrl.focus();
+                                e.preventDefault();
+                                return;
+                            }
+                        }
+// all good → allow submit
+                    });
+                });
+            });
+        </script>
     </body>
 </html>

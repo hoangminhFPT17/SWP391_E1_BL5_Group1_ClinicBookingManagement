@@ -19,7 +19,7 @@
             </li>
 
             <li>
-                <a href="/SWP_BL5_TEAM1/ExaminationPackageManager"><i class="uil uil-apps me-2 d-inline-block"></i>Package manager</a>
+                <a href="/SWP_BL5_TEAM1/ExaminationPackageManager"><i class="uil uil-apps me-2 d-inline-block"></i>Examine Package manager</a>
             </li>
             
             <li>
@@ -37,6 +37,8 @@
             <li>
                 <a href="/SWP_BL5_TEAM1/doctor/patients-list"><i class="uil uil-schedule me-2 d-inline-block"></i>Patient Manager</a>
             </li>
+            
+            
         </ul>
         <!-- sidebar-menu  -->
     </div>
