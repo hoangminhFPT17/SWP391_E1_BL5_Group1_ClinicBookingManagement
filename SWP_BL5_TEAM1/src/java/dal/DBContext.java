@@ -10,15 +10,15 @@ import java.util.logging.Logger;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 /**
  *
  * @author FPT University - PRJ301
  */
 public class DBContext {
+
     protected Connection connection;
-    
-     // Configurable parameters
+
+    // Configurable parameters
     private static final String DB_HOST = "localhost";
     private static final String DB_PORT = "3306";
     private static final String DB_NAME = "swp_clinic";
@@ -27,7 +27,7 @@ public class DBContext {
     private static final String DB_PASSWORD = ""; // Update if needed
 
     private static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
-    
+
     public DBContext() {
         try {
             Class.forName(DB_DRIVER);
@@ -37,13 +37,24 @@ public class DBContext {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-     public boolean isConnected() {
+
+    public boolean isConnected() {
         try {
             return connection != null && !connection.isClosed();
         } catch (SQLException ex) {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
             return false;
+        }
+    }
+
+    public void disconnect() {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close(); // This frees the connection!
+                System.out.println("Connection closed.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -57,9 +68,8 @@ public class DBContext {
         }
 
     }
-    
-    
-     public Connection getConnection() {
+
+    public Connection getConnection() {
         return connection; // Trả về connection để sử dụng
     }
 }
