@@ -160,7 +160,7 @@ VALUES
 (2, 'MRI Scan', 1, 500.00);
 
 INSERT INTO swp_clinic.`user` (email,password_hash,phone,full_name,is_verified,otp_code,otp_expiry,created_at,img_path,user_bio,pdf_path) VALUES
-	 ('test2@gmail.com','32c9583de09461a7210cf28cfe80aa2c','3334445557','Kiet2',1,NULL,NULL,'2025-04-28 13:39:46',NULL,NULL,NULL),
+('test2@gmail.com','32c9583de09461a7210cf28cfe80aa2c','3334445557','Kiet2',1,NULL,NULL,'2025-04-28 13:39:46',NULL,NULL,NULL),
 ('test@gmail.com','32c9583de09461a7210cf28cfe80aa2c','3334445556','Kiet',1,NULL,NULL,'2025-04-28 13:39:46',NULL,NULL,NULL);
 
 INSERT INTO StaffAccount (user_id, role, department) VALUES
