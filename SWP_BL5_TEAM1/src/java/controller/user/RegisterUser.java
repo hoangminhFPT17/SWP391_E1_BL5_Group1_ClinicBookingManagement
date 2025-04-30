@@ -12,6 +12,7 @@ import model.User;
 import model.Patient;
 import dal.DAOUser;
 import dal.DAOToken;
+import dal.PatientAccountDAO;
 import dal.PatientDAO;
 import model.Token; // Sử dụng entity.Token
 import java.io.IOException;
@@ -29,6 +30,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.time.LocalDate;
+import model.PatientAccount;
 
 @WebServlet(name = "UserRegister", urlPatterns = {"/User"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, maxFileSize = 1024 * 1024 * 10, maxRequestSize = 1024 * 1024 * 50)
@@ -68,6 +70,7 @@ public class RegisterUser extends HttpServlet {
 
         DAOUser dao = new DAOUser();
         PatientDAO patient_dao = new PatientDAO();
+        PatientAccountDAO patientAccountDAO = new PatientAccountDAO();
         if (!dao.isConnected()) {
             LOGGER.log(Level.SEVERE, "Database connection is null");
             request.setAttribute("error", "Không thể kết nối cơ sở dữ liệu. Vui lòng thử lại sau.");
@@ -96,9 +99,14 @@ public class RegisterUser extends HttpServlet {
 
             // Tạo đối tượng User với mật khẩu plaintext
             User newUser = new User(0, email, password, phone, fullName, isVerified, otpCode, createAt, otpExpiry);
-
+            PatientAccount newPatientAccount = new PatientAccount();
+            
             // Đăng ký người dùng và lấy UserID
             int userId = dao.registerUser(newUser);
+            
+            //Add new patientAccount when register
+            patientAccountDAO.insertPatientAccount(userId);
+            
             if (userId > 0) {
                 // Tạo token kích hoạt bằng resetService
                 ResetService resetSvc = new ResetService();

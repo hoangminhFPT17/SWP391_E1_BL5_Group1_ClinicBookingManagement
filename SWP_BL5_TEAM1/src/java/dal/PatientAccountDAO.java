@@ -26,9 +26,9 @@ public class PatientAccountDAO extends DBContext {
 
     public PatientAccount getPatientByUserId(int userId) {
         String sql = "SELECT * FROM PatientAccount WHERE user_id = ?";
-        
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            
+
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -43,5 +43,16 @@ public class PatientAccountDAO extends DBContext {
         }
 
         return null; // Not found
+    }
+
+    public void insertPatientAccount(int userId) {
+        String sql = "INSERT INTO PatientAccount (user_id) VALUES (?)";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

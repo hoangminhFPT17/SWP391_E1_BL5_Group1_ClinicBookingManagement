@@ -1,4 +1,4 @@
-/*
+    /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
@@ -25,6 +25,7 @@ import java.util.List;
 import model.DoctorTimeSlot;
 import model.StaffAccount;
 import model.User;
+import util.DAOUtils;
 
 /**
  *
@@ -97,8 +98,8 @@ public class DoctorBySlotServlet extends HttpServlet {
             UserDAO userDAO = new UserDAO();
             System.out.println("DAOs initialized");
 
-            // 4. Get all doctor IDs assigned to this slot on this day
-            List<Integer> workingDoctorIds = doctorTimeSlotDAO.getDoctorIdsBySlotAndDay(slotId, dayOfWeek);
+            // 4. Get all doctor IDs assigned to this slot on this day, order by least to most appointment that day
+            List<Integer> workingDoctorIds = doctorTimeSlotDAO.getDoctorIdsBySlotAndDayOrderedByLeastAppointments(slotId, dayOfWeek, appointmentDate);
             System.out.println("Working doctor IDs: " + workingDoctorIds);
 
             List<DoctorDTO> availableDoctors = new ArrayList<>();
@@ -150,7 +151,9 @@ public class DoctorBySlotServlet extends HttpServlet {
 
                 availableDoctors.add(doctorDTO);
             }
-
+            
+            DAOUtils.disconnectAll(doctorTimeSlotDAO, doctorUnavailabilityDAO, appointmentDAO, staffAccountDAO,userDAO);
+            
             // 9. Output available doctors as JSON
             ObjectMapper mapper = new ObjectMapper();
             response.setContentType("application/json");

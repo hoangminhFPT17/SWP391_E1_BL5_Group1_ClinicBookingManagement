@@ -40,11 +40,11 @@
                                     </div>
                                     <div class="row align-items-end">
                                         <!-- LEFT HALF: Filters and Search -->
-                                        <div class="col-md-6">
+                                        <div class="col-md-7">
                                             <input type="hidden" name="page" id="pageInput" value="${param.page != null ? param.page : 1}" />
                                             <div class="row g-3">
                                                 <!-- Status -->
-                                                <div class="col-2">
+                                                <div class="col-3">
                                                     <label class="form-label">Status</label>
                                                     <select name="status" class="form-control select2input" style="min-width: 100%;">
                                                         <option value="">All</option>
@@ -63,12 +63,7 @@
                                                     <button type="submit" class="btn btn-primary w-100">Search</button>
                                                 </div>
                                             </div>
-                                        </div>
-
-                                        <!-- RIGHT HALF: Appointment Button -->
-                                        <div class="col-md-6 text-end mt-3 mt-md-0">
-                                            <a href="/SWP_BL5_TEAM1/PatientBookAppointmentServlet" class="btn btn-success">+ Time Slot</a>
-                                        </div>  
+                                        </div> 
                                     </div>
                                     <div class="row m-4 ms-5 me-5">
                                         <ul class="nav nav-pills nav-justified flex-column flex-sm-row rounded gap-2" id="pills-tab" role="tablist">

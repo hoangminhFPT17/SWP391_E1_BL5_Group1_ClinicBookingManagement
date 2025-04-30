@@ -6,6 +6,7 @@ package controller.patient;
 
 import dal.AppointmentDAO;
 import dal.ExaminationPackageDAO;
+import dal.PatientAccountDAO;
 import dal.PatientDAO;
 import dal.TimeSlotDAO;
 import java.io.IOException;
@@ -15,7 +16,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.sql.Date;
@@ -24,8 +24,10 @@ import java.util.List;
 import model.Appointment;
 import model.ExaminationPackage;
 import model.Patient;
+import model.PatientAccount;
 import model.TimeSlot;
 import model.User;
+import util.DAOUtils;
 
 /**
  *
@@ -77,12 +79,14 @@ public class PatientBookAppointmentServlet extends HttpServlet {
         if (examPackageStr != null) {
             examPackageId = Integer.parseInt(examPackageStr);
         }
+        PatientDAO patientDAO = new PatientDAO();
         ExaminationPackageDAO examinationPackageDAO = new ExaminationPackageDAO();
+        TimeSlotDAO timeSlotDAO = new TimeSlotDAO();
+
         ExaminationPackage examinationPackage = examinationPackageDAO.getPackageById(examPackageId);
         request.setAttribute("examinationPackage", examinationPackage);
 
         // Get all time slots
-        TimeSlotDAO timeSlotDAO = new TimeSlotDAO();
         List<TimeSlot> timeSlots = timeSlotDAO.getAllActiveTimeSlots();
         request.setAttribute("timeSlots", timeSlots);
 
@@ -90,7 +94,6 @@ public class PatientBookAppointmentServlet extends HttpServlet {
         if (session != null) {
             User user = (User) session.getAttribute("user");
             if (user != null) {
-                PatientDAO patientDAO = new PatientDAO();
                 Patient patient = patientDAO.getPatientByPhone(user.getPhone()); // key is phone
                 if (patient != null) {
                     request.setAttribute("fullName", patient.getFullName());
@@ -102,6 +105,7 @@ public class PatientBookAppointmentServlet extends HttpServlet {
             }
         }
 
+        DAOUtils.disconnectAll(examinationPackageDAO, timeSlotDAO, patientDAO);
         request.getRequestDispatcher("/patient/patientBookingAppointment.jsp")
                 .forward(request, response);
     }
@@ -120,10 +124,19 @@ public class PatientBookAppointmentServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
         
+        //Daos
+        PatientAccountDAO patientAccountDAO = new PatientAccountDAO();
+        PatientDAO patientDAO = new PatientDAO();
+
         HttpSession session = request.getSession(false);
         User user = null;
         if (session != null) {
             user = (User) session.getAttribute("user");
+        }
+
+        PatientAccount patientAccount = null;
+        if (user != null) {
+            patientAccount = patientAccountDAO.getPatientByUserId(user.getUserId());
         }
 
         // Collect form data
@@ -173,8 +186,6 @@ public class PatientBookAppointmentServlet extends HttpServlet {
         int examPackageId = Integer.parseInt(examPackageIdStr);
         Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
-        // Create DAOs
-        PatientDAO patientDAO = new PatientDAO();
         AppointmentDAO appointmentDAO = new AppointmentDAO();
 
         boolean success = false;
@@ -184,16 +195,26 @@ public class PatientBookAppointmentServlet extends HttpServlet {
             Patient patient = patientDAO.getPatientByPhone(phone);
             if (patient == null) {
                 patient = new Patient();
-                patient.setPhone(phone);
-                patient.setFullName(fullName);
-                patient.setEmail(email);
-                patient.setGender(gender);
-                patient.setDateOfBirth(dateOfBirth);
-                patient.setCreatedAt(createdAt);
-                if(user != null) {
-                    patient.setPatientAccountId(user.getUserId());
+                if (patientAccount != null) {
+                    patient.setPatientAccountId(patientAccount.getPatientAccountId());
+                    patient.setPhone(user.getPhone());
+                    patient.setFullName(user.getFullName());
+                    patient.setEmail(user.getEmail());
+                    patient.setGender(gender);
+                    patient.setDateOfBirth(dateOfBirth);
+                    patient.setCreatedAt(createdAt);
+                } else {
+                    patient.setPhone(phone);
+                    patient.setFullName(fullName);
+                    patient.setEmail(email);
+                    patient.setGender(gender);
+                    patient.setDateOfBirth(dateOfBirth);
+                    patient.setCreatedAt(createdAt);
                 }
                 patientDAO.insertPatient(patient);
+                phone = patient.getPhone();
+            }else {
+                phone = patient.getPhone();
             }
 
             Appointment appointment = new Appointment();
@@ -214,7 +235,11 @@ public class PatientBookAppointmentServlet extends HttpServlet {
         }
 
         if (success) {
-            response.sendRedirect(request.getContextPath() + "/PatientBookAppointmentServlet?examPackageId=" + examPackageId +"&status=success");
+            if (user != null) {
+                response.sendRedirect(request.getContextPath() + "/PatientAppointmentsListServlet");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/home.jsp?status=success");
+            }
         } else {
             response.sendRedirect(request.getContextPath() + "/PatientBookAppointmentServlet?examPackageId=" + examPackageId + "&status=fail");
         }

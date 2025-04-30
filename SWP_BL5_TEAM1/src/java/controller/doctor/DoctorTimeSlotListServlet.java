@@ -23,6 +23,7 @@ import model.DoctorUnavailability;
 import model.StaffAccount;
 import model.TimeSlot;
 import model.User;
+import util.DAOUtils;
 
 /**
  *
@@ -68,7 +69,7 @@ public class DoctorTimeSlotListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         // 1. Get logged-in user from session
         User loggedInUser = (User) request.getSession().getAttribute("user");
         if (loggedInUser == null) {
@@ -77,8 +78,13 @@ public class DoctorTimeSlotListServlet extends HttpServlet {
             return;
         }
 
-        // 2. Check if user has a StaffAccount
+        //DAos
         StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
+        TimeSlotDAO timeSlotDAO = new TimeSlotDAO();
+        DoctorTimeSlotDAO doctorTimeSlotDAO = new DoctorTimeSlotDAO();
+        DoctorUnavailabilityDAO doctorUnavailabilityDAO = new DoctorUnavailabilityDAO();
+
+        // 2. Check if user has a StaffAccount
         StaffAccount staffAccount = staffAccountDAO.getStaffByUserId(loggedInUser.getUserId());
         if (staffAccount == null) {
             // User is not a staff member, redirect to login
@@ -93,10 +99,6 @@ public class DoctorTimeSlotListServlet extends HttpServlet {
             request.getRequestDispatcher("/error.jsp").forward(request, response);
             return;
         }
-
-        TimeSlotDAO timeSlotDAO = new TimeSlotDAO();
-        DoctorTimeSlotDAO doctorTimeSlotDAO = new DoctorTimeSlotDAO();
-        DoctorUnavailabilityDAO doctorUnavailabilityDAO = new DoctorUnavailabilityDAO();
 
         List<TimeSlot> timeSlots = timeSlotDAO.getAllTimeSlots();
         Map<String, Set<Integer>> doctorTimeSlotMap = doctorTimeSlotDAO.getSlotMapByDoctorId(staffAccount.getStaffId());
@@ -131,6 +133,8 @@ public class DoctorTimeSlotListServlet extends HttpServlet {
         request.setAttribute("timeSlotList", timeSlots);
         request.setAttribute("doctorSlotMap", doctorTimeSlotMap);
         request.setAttribute("staffAccount", staffAccount);
+        
+        DAOUtils.disconnectAll(staffAccountDAO, timeSlotDAO, doctorTimeSlotDAO, doctorUnavailabilityDAO);
 
         request.getRequestDispatcher("/doctor/doctorTimeSlotList.jsp").forward(request, response);
     }

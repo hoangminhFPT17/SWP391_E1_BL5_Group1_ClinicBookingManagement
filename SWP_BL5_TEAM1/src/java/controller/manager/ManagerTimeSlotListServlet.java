@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dal.DoctorTimeSlotDAO;
 import dal.StaffAccountDAO;
 import dal.TimeSlotDAO;
+import dal.UserDAO;
 import dto.AssignedDoctorDTO;
 import dto.DoctorAssignDTO;
 import dto.TimeSlotDTO;
@@ -24,6 +25,7 @@ import java.util.Map;
 import model.StaffAccount;
 import model.TimeSlot;
 import model.User;
+import util.DAOUtils;
 
 /**
  *
@@ -78,8 +80,12 @@ public class ManagerTimeSlotListServlet extends HttpServlet {
             return;
         }
 
-        // 2. Check if user has a StaffAccount
+        //DAOs
+        TimeSlotDAO timeSlotDAO = new TimeSlotDAO();
+        DoctorTimeSlotDAO doctorTimeSlotDAO = new DoctorTimeSlotDAO();
         StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
+
+        // 2. Check if user has a StaffAccount
         StaffAccount staffAccount = staffAccountDAO.getStaffByUserId(loggedInUser.getUserId());
         if (staffAccount == null) {
             // User is not a staff member, redirect to login
@@ -94,9 +100,6 @@ public class ManagerTimeSlotListServlet extends HttpServlet {
             request.getRequestDispatcher("/error.jsp").forward(request, response);
             return;
         }
-        
-        TimeSlotDAO timeSlotDAO = new TimeSlotDAO();
-        DoctorTimeSlotDAO doctorTimeSlotDAO = new DoctorTimeSlotDAO();
 
         // Get filters from parameters
         String keyword = request.getParameter("keyword");
@@ -182,6 +185,8 @@ public class ManagerTimeSlotListServlet extends HttpServlet {
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("keyword", keyword);
         request.setAttribute("status", statusParam);
+        
+        DAOUtils.disconnectAll(timeSlotDAO, doctorTimeSlotDAO, staffAccountDAO);
 
         request.getRequestDispatcher("/manager/managerTimeSlotList.jsp").forward(request, response);
     }

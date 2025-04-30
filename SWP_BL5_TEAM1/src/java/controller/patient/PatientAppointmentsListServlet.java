@@ -25,6 +25,7 @@ import model.Patient;
 import model.StaffAccount;
 import model.TimeSlot;
 import model.User;
+import util.DAOUtils;
 
 /**
  *
@@ -135,6 +136,7 @@ public class PatientAppointmentsListServlet extends HttpServlet {
             dto.setAppointmentId(appt.getAppointmentId());
             dto.setAppointmentDate(appt.getAppointmentDate());
             dto.setStatus(appt.getStatus());
+            dto.setDescription(appt.getDescription());
 
             if (patient != null) {
                 dto.setPatientName(patient.getFullName());
@@ -162,7 +164,6 @@ public class PatientAppointmentsListServlet extends HttpServlet {
         List<TimeSlot> timeSlots = timeSlotDAO.getAllTimeSlots();
         request.setAttribute("timeSlots", timeSlots);
         
-
         // Pass data to JSP
         request.setAttribute("patient", patient);
         request.setAttribute("appointments", dtoList);
@@ -174,6 +175,8 @@ public class PatientAppointmentsListServlet extends HttpServlet {
         request.setAttribute("keyword", keyword);
         request.setAttribute("status", status);
         request.setAttribute("slotId", slotId);
+        
+        DAOUtils.disconnectAll(appointmentDAO, patientDAO,staffAccountDAO, timeSlotDAO, userDAO );
 
         request.getRequestDispatcher("/patient/patientAppointmentList.jsp").forward(request, response);
     }

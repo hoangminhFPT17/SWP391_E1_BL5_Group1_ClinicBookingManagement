@@ -6,6 +6,8 @@
 
 <%@page import="model.User"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -31,7 +33,6 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/tiny-slider.css"/>
         <!-- Css -->
         <link href="${pageContext.request.contextPath}/assets/css/style.min.css" rel="stylesheet" type="text/css" id="theme-opt" />
-
     </head>
 
     <body>
@@ -265,7 +266,7 @@
             </div><!--end container-->
         </section><!--end section-->
         <!-- End -->
-       
+
         <!-- Start -->
         <section class="section">
             <div class="container">
@@ -803,16 +804,44 @@
         </div>
         <!-- MOdal End -->
 
-        <!-- javascript -->
-        <script src="${pageContext.request.contextPath}/assets/js/bootstrap.bundle.min.js"></script>
-        <!-- SLIDER -->
-        <script src="${pageContext.request.contextPath}/assets/js/tiny-slider.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/js/tiny-slider-init.js"></script>
-        <!-- Counter -->
-        <script src="${pageContext.request.contextPath}/assets/js/counter.init.js"></script>
-        <!-- Icons -->
-        <script src="${pageContext.request.contextPath}/assets/js/feather.min.js"></script>
-        <!-- Main Js -->
-        <script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
-    </body>
+        <!<!-- Toast notification -->
+    <c:set var="status" value="${param.status}" />
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <c:if test="${status == 'success'}">
+            <div class="toast align-items-center text-white bg-success border-0" 
+                 id="statusToast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        Appointment booked successfully!
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </c:if>
+        <c:if test="${status == 'fail'}">
+            <div class="toast align-items-center text-white bg-danger border-0" 
+                 id="statusToast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        Failed to book appointment. Please try again.
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </c:if>
+    </div>
+
+    <!-- javascript -->
+    <script src="${pageContext.request.contextPath}/assets/js/bootstrap.bundle.min.js"></script>
+    <!-- SLIDER -->
+    <script src="${pageContext.request.contextPath}/assets/js/tiny-slider.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/tiny-slider-init.js"></script>
+    <!-- Counter -->
+    <script src="${pageContext.request.contextPath}/assets/js/counter.init.js"></script>
+    <!-- Icons -->
+    <script src="${pageContext.request.contextPath}/assets/js/feather.min.js"></script>
+    <!-- Main Js -->
+    <script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
+</body>
 </html>

@@ -211,18 +211,35 @@ public class InvoiceDAO extends DBContext {
 //
 //        return total;
 //    }
-    
-    public double getTotalRevenue() {
+    public double getTotalRevenue(Date startDate, Date endDate) {
         double totalRevenue = 0.0;
-        String sql = "SELECT SUM(ii.total_price) AS total_revenue " +
-                     "FROM InvoiceItem ii " +
-                     "JOIN Invoice i ON ii.invoice_id = i.invoice_id " +
-                     "WHERE i.status = 'Completed'"; // Only count completed invoices
+        StringBuilder sql = new StringBuilder(
+                "SELECT SUM(ii.total_price) AS total_revenue "
+                + "FROM InvoiceItem ii "
+                + "JOIN Invoice i ON ii.invoice_id = i.invoice_id "
+                + "WHERE i.status = 'Completed'"
+        );
 
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                totalRevenue = rs.getDouble("total_revenue");
+        if (startDate != null) {
+            sql.append(" AND i.generate_date >= ?");
+        }
+        if (endDate != null) {
+            sql.append(" AND i.generate_date <= ?");
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            if (startDate != null) {
+                ps.setTimestamp(paramIndex++, new Timestamp(startDate.getTime()));
+            }
+            if (endDate != null) {
+                ps.setTimestamp(paramIndex++, new Timestamp(endDate.getTime()));
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    totalRevenue = rs.getDouble("total_revenue");
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -230,7 +247,7 @@ public class InvoiceDAO extends DBContext {
 
         return totalRevenue;
     }
-    
+
     private Invoice extractAppointment(ResultSet rs) throws SQLException {
         return new Invoice(
                 rs.getInt("invoice_id"),
