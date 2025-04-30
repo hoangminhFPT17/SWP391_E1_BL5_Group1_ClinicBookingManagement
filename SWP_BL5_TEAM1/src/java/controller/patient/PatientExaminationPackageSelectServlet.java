@@ -5,6 +5,7 @@
 package controller.patient;
 
 import dal.ExaminationPackageDAO;
+import dal.SpecialtyDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -13,6 +14,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.ExaminationPackage;
+import model.Specialty;
+import util.DAOUtils;
 
 /**
  *
@@ -37,7 +40,7 @@ public class PatientExaminationPackageSelectServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet PatientExaminationPackageSelectServlet</title>");            
+            out.println("<title>Servlet PatientExaminationPackageSelectServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet PatientExaminationPackageSelectServlet at " + request.getContextPath() + "</h1>");
@@ -58,10 +61,37 @@ public class PatientExaminationPackageSelectServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ExaminationPackageDAO examinationPackageDAO = new ExaminationPackageDAO();
-        List<ExaminationPackage> examinationPackages = examinationPackageDAO.getAllPackages();
-        
+        //Daos
+        ExaminationPackageDAO packageDAO = new ExaminationPackageDAO();
+        SpecialtyDAO specialtyDAO = new SpecialtyDAO();
+
+        String tier = request.getParameter("tier");
+        String specialtyIdStr = request.getParameter("specialtyId");
+        String search = request.getParameter("search");
+        String pageStr = request.getParameter("page");
+
+        int page = (pageStr != null) ? Integer.parseInt(pageStr) : 1;
+        int pageSize = 8;
+
+        Integer specialtyId = null;
+        if (specialtyIdStr != null && !specialtyIdStr.isEmpty()) {
+            specialtyId = Integer.parseInt(specialtyIdStr);
+        }
+
+        List<Specialty> specialties = specialtyDAO.getAllSpecialties();
+
+        // Get filtered & paginated results
+        List<ExaminationPackage> examinationPackages = packageDAO.getFilteredPackages(tier, specialtyId, search, page, pageSize);
+        int totalCount = packageDAO.countFilteredPackages(tier, specialtyId, search);
+        int totalPages = (int) Math.ceil((double) totalCount / pageSize);
+
         request.setAttribute("examinationPackages", examinationPackages);
+        request.setAttribute("specialties", specialtyDAO.getAllSpecialties());
+
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        
+        DAOUtils.disconnectAll(packageDAO, specialtyDAO);
 
         request.getRequestDispatcher("/patient/patientExaminationPackageSelect.jsp").forward(request, response);
     }

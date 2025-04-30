@@ -150,18 +150,7 @@
 
                                                 </div>
                                             </div>
-
-                                            <!-- Doctor -->
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Doctor <span class="text-danger">*</span></label>
-                                                    <select name="doctorId" id="doctorSelect" class="form-control select2" required>
-                                                        <option value="">Select a time slot and date first</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-
+                                                    
                                             <!-- Appointment Date -->
                                             <div class="col-md-6">
                                                 <div class="mb-3">
@@ -180,6 +169,16 @@
                                                                 ${slot.name} (${slot.startTime} - ${slot.endTime})
                                                             </option>
                                                         </c:forEach>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Doctor -->
+                                            <div class="col-md-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Doctor <span class="text-danger">*</span></label>
+                                                    <select name="doctorId" id="doctorSelect" class="form-control select2" required>
+                                                        <option value="">Select a time slot and date first</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -209,7 +208,7 @@
             </div><!--end container-->
         </section><!--end section-->
         <!-- End -->
-        
+
         <jsp:include page="/component/footer.jsp" />
 
         <!-- Back to top -->
@@ -286,56 +285,32 @@
         <!-- Offcanvas End -->
 
         <!<!-- Toast notification -->
-        <div class="toast-container position-fixed bottom-0 end-0 p-3">
-            <div class="toast align-items-center text-white bg-success border-0 ${appointmentStatus == 'fail' ? 'd-none' : ''}" 
-                 id="successToast" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        Appointment booked successfully!
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                </div>
-            </div>
-
-            <div class="toast align-items-center text-white bg-danger border-0 ${appointmentStatus == 'success' ? 'd-none' : ''}" 
-                 id="failToast" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        Failed to book appointment. Please try again.
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                </div>
-            </div>
-        </div>
-        <%
-            String status = request.getParameter("status");
-        %>
+        <c:set var="status" value="${param.status}" />
 
         <div class="toast-container position-fixed bottom-0 end-0 p-3">
-            <% if ("success".equals(status)) { %>
-            <div class="toast align-items-center text-white bg-success border-0" 
-                 id="statusToast" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        Appointment booked successfully!
+            <c:if test="${status == 'success'}">
+                <div class="toast align-items-center text-white bg-success border-0" 
+                     id="statusToast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            Appointment booked successfully!
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
                     </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
                 </div>
-            </div>
-            <% } else if ("fail".equals(status)) { %>
-            <div class="toast align-items-center text-white bg-danger border-0" 
-                 id="statusToast" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        Failed to book appointment. Please try again.
+            </c:if>
+            <c:if test="${status == 'fail'}">
+                <div class="toast align-items-center text-white bg-danger border-0" 
+                     id="statusToast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            Failed to book appointment. Please try again.
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
                     </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
                 </div>
-            </div>
-            <% }%>
+            </c:if>
         </div>
-        
-        
 
         <!-- javascript -->
         <script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
