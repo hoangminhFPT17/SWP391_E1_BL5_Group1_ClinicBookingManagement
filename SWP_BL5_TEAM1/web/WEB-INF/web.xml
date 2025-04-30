@@ -29,7 +29,7 @@
     <servlet>
         <servlet-name>PatientExaminationPackageSelectServlet</servlet-name>
         <servlet-class>controller.patient.PatientExaminationPackageSelectServlet</servlet-class>
-    </servlet>x`
+    </servlet>
     <servlet>
         <servlet-name>queueRecordController</servlet-name>
         <servlet-class>controller.staff.queueRecordController</servlet-class>
@@ -338,18 +338,14 @@
         <url-pattern>/vnpayReturn</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-<<<<<<< Updated upstream
         <servlet-name>PatientQueueViewer</servlet-name>
         <url-pattern>/PatientQueueViewer</url-pattern>
     </servlet-mapping>
-=======
+    
+    <servlet-mapping>
         <servlet-name>ServiceManager</servlet-name>
         <url-pattern>/ServiceManager</url-pattern>
     </servlet-mapping>
-    
-    
-    
->>>>>>> Stashed changes
     <welcome-file-list>
         <welcome-file>home.jsp</welcome-file>
     </welcome-file-list>
