@@ -19,6 +19,7 @@ public class AppointmentDTO {
     private String doctorFullName;
     private String status;
     private int timeSlotId;
+    private String description;
     
     // Optionally: appointmentId, if needed for action buttons
     private int appointmentId;
@@ -49,6 +50,27 @@ public class AppointmentDTO {
         this.status = status;
         this.timeSlotId = timeSlotId;
         this.appointmentId = appointmentId;
+    }
+
+    public AppointmentDTO(int index, String patientName, Date patientDateOfBirth, Date appointmentDate, String timeSlotName, String doctorFullName, String status, int timeSlotId, String description, int appointmentId) {
+        this.index = index;
+        this.patientName = patientName;
+        this.patientDateOfBirth = patientDateOfBirth;
+        this.appointmentDate = appointmentDate;
+        this.timeSlotName = timeSlotName;
+        this.doctorFullName = doctorFullName;
+        this.status = status;
+        this.timeSlotId = timeSlotId;
+        this.description = description;
+        this.appointmentId = appointmentId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public int getIndex() {

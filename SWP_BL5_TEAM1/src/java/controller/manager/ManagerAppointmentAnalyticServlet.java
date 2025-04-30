@@ -19,6 +19,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.ExaminationPackage;
+import model.StaffAccount;
+import model.User;
+import util.DAOUtils;
 
 /**
  *
@@ -64,6 +67,35 @@ public class ManagerAppointmentAnalyticServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // 1. Get logged-in user from session
+        User loggedInUser = (User) request.getSession().getAttribute("user");
+        if (loggedInUser == null) {
+            // User not logged in, redirect to login
+            response.sendRedirect("/SWP_BL5_TEAM1/login");
+            return;
+        }
+
+        //DAOs
+        AppointmentDAO appointmentDAO = new AppointmentDAO();
+        ExaminationPackageDAO examinationPackageDAO = new ExaminationPackageDAO();
+        StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
+
+        // 2. Check if user has a StaffAccount
+        StaffAccount staffAccount = staffAccountDAO.getStaffByUserId(loggedInUser.getUserId());
+        if (staffAccount == null) {
+            // User is not a staff member, redirect to login
+            response.sendRedirect("/SWP_BL5_TEAM1/login");
+            return;
+        }
+
+        // 3. Check if StaffAccount role is "Manager"
+        if (!"Manager".equalsIgnoreCase(staffAccount.getRole())) {
+            // User is a staff, but not a Manager, forward to error.jsp
+            request.setAttribute("errorMessage", "Access denied. Manager role required.");
+            request.getRequestDispatcher("/error.jsp").forward(request, response);
+            return;
+        }
+        
         String doctorIdParam = request.getParameter("doctorId");
         String packageIdParam = request.getParameter("packageId");
         String yearParam = request.getParameter("year");
@@ -71,10 +103,6 @@ public class ManagerAppointmentAnalyticServlet extends HttpServlet {
         Integer doctorId = (doctorIdParam != null && !doctorIdParam.isEmpty()) ? Integer.parseInt(doctorIdParam) : null;
         Integer packageId = (packageIdParam != null && !packageIdParam.isEmpty()) ? Integer.parseInt(packageIdParam) : null;
         Integer year = (yearParam != null && !yearParam.isEmpty()) ? Integer.parseInt(yearParam) : Year.now().getValue();
-
-        AppointmentDAO appointmentDAO = new AppointmentDAO();
-        StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
-        ExaminationPackageDAO examinationPackageDAO = new ExaminationPackageDAO();
 
         //Data for dropbox
         List<ExaminationPackage> examinationPackages = examinationPackageDAO.getAllPackages();
@@ -92,6 +120,9 @@ public class ManagerAppointmentAnalyticServlet extends HttpServlet {
         request.setAttribute("selectedDoctorId", doctorId);
         request.setAttribute("selectedPackageId", packageId);
         request.setAttribute("currentYear", year);
+        
+        DAOUtils.disconnectAll(appointmentDAO, examinationPackageDAO, staffAccountDAO);
+        
         request.getRequestDispatcher("/manager/managerAppointmentAnalytic.jsp").forward(request, response);
 
     }

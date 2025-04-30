@@ -136,6 +136,7 @@ public class PatientAppointmentsListServlet extends HttpServlet {
             dto.setAppointmentId(appt.getAppointmentId());
             dto.setAppointmentDate(appt.getAppointmentDate());
             dto.setStatus(appt.getStatus());
+            dto.setDescription(appt.getDescription());
 
             if (patient != null) {
                 dto.setPatientName(patient.getFullName());

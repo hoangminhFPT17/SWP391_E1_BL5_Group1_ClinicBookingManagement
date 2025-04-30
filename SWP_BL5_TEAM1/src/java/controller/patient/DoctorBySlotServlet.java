@@ -1,4 +1,4 @@
-/*
+    /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
@@ -25,6 +25,7 @@ import java.util.List;
 import model.DoctorTimeSlot;
 import model.StaffAccount;
 import model.User;
+import util.DAOUtils;
 
 /**
  *
@@ -150,7 +151,9 @@ public class DoctorBySlotServlet extends HttpServlet {
 
                 availableDoctors.add(doctorDTO);
             }
-
+            
+            DAOUtils.disconnectAll(doctorTimeSlotDAO, doctorUnavailabilityDAO, appointmentDAO, staffAccountDAO,userDAO);
+            
             // 9. Output available doctors as JSON
             ObjectMapper mapper = new ObjectMapper();
             response.setContentType("application/json");

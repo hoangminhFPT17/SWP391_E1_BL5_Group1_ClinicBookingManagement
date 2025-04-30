@@ -23,7 +23,7 @@
         %>
         <jsp:useBean id="now" class="java.util.Date" scope="page" />
         <jsp:include page="/common/patientHeaderNav.jsp" />
-       
+
 
         <!-- Start Hero -->
         <section class="bg-dashboard">
@@ -155,7 +155,8 @@
                                                                        data-patient-dob="${patient.dateOfBirth}"
                                                                        data-appointment-date="${dto.appointmentDate}"
                                                                        data-timeslot="${dto.timeSlotName}"
-                                                                       data-doctor-name="${dto.doctorFullName}">
+                                                                       data-doctor-name="${dto.doctorFullName}"
+                                                                       data-description="${dto.description}">
                                                                         <i class="uil uil-eye"></i>
                                                                     </a>
 
@@ -173,7 +174,8 @@
                                                                            data-gender="${patient.gender}"
                                                                            data-doctorid="${appointment.doctorId}"
                                                                            data-date="${dto.appointmentDate}"
-                                                                           data-slotid="${appointment.timeSlotId}">
+                                                                           data-slotid="${appointment.timeSlotId}"
+                                                                           data-description="${dto.description}">
                                                                             <i class="uil uil-edit"></i>
                                                                         </a>
                                                                     </c:if>
@@ -306,6 +308,14 @@
                                     </li>
                                 </ul>
                             </li>
+                            <li>
+                                <ul class="list-unstyled mb-0">
+                                    <li class="d-flex">
+                                        <h6>Description: </h6>
+                                        <p class="text-muted ms-2" id="viewDescription">Description</p> <!-- ID added -->
+                                    </li>
+                                </ul>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -364,11 +374,14 @@
 
                                 <div class="row">
                                     <div class="form-group mb-3 col-md-6">
-                                        <label class="form-label">Doctor</label>
-                                        <select name="doctorId" id="editDoctorId" class="form-control" required data-selected-id="${selectedDoctorId}">
-                                            <!-- Options will be loaded dynamically -->
+                                        <label class="form-label">Time Slot</label>
+                                        <select name="slotId" id="editSlotId" class="form-control" required>
+                                            <c:forEach var="slot" items="${timeSlots}">
+                                                <option value="${slot.slotId}">
+                                                    ${slot.name} (${slot.startTime} - ${slot.endTime})
+                                                </option>
+                                            </c:forEach>
                                         </select>
-
                                     </div>
                                     <div class="form-group mb-3 col-md-6">
                                         <label class="form-label">Appointment Date</label>
@@ -377,22 +390,25 @@
                                 </div>
 
                                 <div class="form-group mb-3">
-                                    <label class="form-label">Time Slot</label>
-                                    <select name="slotId" id="editSlotId" class="form-control" required>
-                                        <c:forEach var="slot" items="${timeSlots}">
-                                            <option value="${slot.slotId}">
-                                                ${slot.name} (${slot.startTime} - ${slot.endTime})
-                                            </option>
-                                        </c:forEach>
+                                    <label class="form-label">Doctor</label>
+                                    <select name="doctorId" id="editDoctorId" class="form-control" required data-selected-id="${selectedDoctorId}">
+                                        <!-- Options will be loaded dynamically -->
                                     </select>
-                                </div>
 
-                                <div class="d-grid mt-4">
-                                    <button type="submit" class="btn btn-primary">Update Appointment</button>
+                                    <!-- Description -->
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">Description</label>
+                                        <textarea name="description" id="editDescription" rows="4" class="form-control"
+                                                  placeholder="Write a description for your appointment (optional)"></textarea>
+                                    </div> 
+
+                                    <div class="d-grid mt-4">
+                                        <button type="submit" class="btn btn-primary">Update Appointment</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div>                 
                 </form>
             </div>
         </div>
@@ -523,7 +539,7 @@
                 bsToast.show();
             </script>
         </c:if>
-            
+
         <jsp:include page="/component/footer.jsp" />
 
         <script> //view button script
@@ -537,8 +553,9 @@
                         const appointmentDate = this.getAttribute('data-appointment-date');
                         const timeSlot = this.getAttribute('data-timeslot');
                         const doctorName = this.getAttribute('data-doctor-name');
+                        const description = this.getAttribute('data-description');
 
-                        // 🔥 Debug logs
+                        // Debug logs
                         console.log("Clicked view appointment button:");
                         console.log("Patient Name:", patientName);
                         console.log("Patient DOB:", patientDob);
@@ -557,6 +574,7 @@
                         document.getElementById('viewAppointmentDate').textContent = formatDate(appointmentDate) || 'Unknown';
                         document.getElementById('viewTimeSlot').textContent = timeSlot || 'Unknown';
                         document.getElementById('viewDoctorName').textContent = doctorName || 'Unknown';
+                        document.getElementById('viewDescription').textContent = description || 'Unknown';
                     });
                 });
 
@@ -672,6 +690,7 @@
                 document.getElementById("editDoctorId").value = button.getAttribute("data-doctorid");
                 document.getElementById("editAppointmentDate").value = button.getAttribute("data-date");
                 document.getElementById("editSlotId").value = button.getAttribute("data-slotid");
+                document.getElementById("editDescription").value = button.getAttribute("data-description");
             }
         </script>
 
@@ -754,6 +773,6 @@
         <script src="${pageContext.request.contextPath}/assets/js/feather.min.js"></script>
         <!-- Main Js -->
         <script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
-
     </body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </html>

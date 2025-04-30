@@ -7,14 +7,19 @@ package controller.manager;
 import dal.AppointmentDAO;
 import dal.InvoiceDAO;
 import dal.PatientDAO;
+import dal.StaffAccountDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Date;
 import java.util.List;
 import java.util.Map;
+import model.StaffAccount;
+import model.User;
+import util.DAOUtils;
 
 /**
  *
@@ -60,36 +65,88 @@ public class ManagerAnalyticServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // 1. Get logged-in user from session
+        User loggedInUser = (User) request.getSession().getAttribute("user");
+        if (loggedInUser == null) {
+            // User not logged in, redirect to login
+            response.sendRedirect("/SWP_BL5_TEAM1/login");
+            return;
+        }
+
+        //DAOs
         AppointmentDAO appointmentDAO = new AppointmentDAO();
         PatientDAO patientDAO = new PatientDAO();
         InvoiceDAO invoiceDAO = new InvoiceDAO();
-        
-        //Data for info box
-        int patientCount = patientDAO.countPatients();
-        request.setAttribute("patientCount", patientCount);
-        
-        double totalRevenue = invoiceDAO.getTotalRevenue();
-        request.setAttribute("totalRevenue", totalRevenue);
-        
-        int appointmentCount = appointmentDAO.countAppointments();
-        request.setAttribute("appointmentCount", appointmentCount);
-        
-            
-        Map<String, Integer> demographics = patientDAO.getPatientDemographics();
-        request.setAttribute("demographics", demographics);
+        StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
 
-        // Data for pie chart
-        Map<String, Integer> timeSlotBookedCountMap = appointmentDAO.countAppointmentsByTimeSlot();
-        request.setAttribute("timeSlotBookedCountMap", timeSlotBookedCountMap);
-       
+        // 2. Check if user has a StaffAccount
+        StaffAccount staffAccount = staffAccountDAO.getStaffByUserId(loggedInUser.getUserId());
+        if (staffAccount == null) {
+            // User is not a staff member, redirect to login
+            response.sendRedirect("/SWP_BL5_TEAM1/login");
+            return;
+        }
+
+        // 3. Check if StaffAccount role is "Manager"
+        if (!"Manager".equalsIgnoreCase(staffAccount.getRole())) {
+            // User is a staff, but not a Manager, forward to error.jsp
+            request.setAttribute("errorMessage", "Access denied. Manager role required.");
+            request.getRequestDispatcher("/error.jsp").forward(request, response);
+            return;
+        }   
+
+        String startDateStr = request.getParameter("startDate");
+        String endDateStr = request.getParameter("endDate");
+
+        Date startDate = null;
+        Date endDate = null;
+
+        if (startDateStr != null && !startDateStr.isEmpty()) {
+            try {
+                startDate = Date.valueOf(startDateStr); // format: yyyy-MM-dd
+            } catch (IllegalArgumentException e) {
+                // Handle invalid format if needed
+                e.printStackTrace();
+            }
+        }
+
+        if (endDateStr != null && !endDateStr.isEmpty()) {
+            try {
+                endDate = Date.valueOf(endDateStr);
+            } catch (IllegalArgumentException e) {
+                // Handle invalid format if needed
+                e.printStackTrace();
+            }
+        }
+
+        //Data for info box, handle start date and end date
+        int patientCount = patientDAO.countPatients(startDate, endDate);
+        request.setAttribute("patientCount", patientCount);
+
+        double totalRevenue = invoiceDAO.getTotalRevenue(startDate, endDate);
+        request.setAttribute("totalRevenue", totalRevenue);
+
+        int appointmentCount = appointmentDAO.countAppointments(startDate, endDate);
+        request.setAttribute("appointmentCount", appointmentCount);
+
         // Data for column chart
-        List<Map<String, Object>> appointmentCountByDoctor = appointmentDAO.getAppointmentCountsByDoctor();
+        List<Map<String, Object>> appointmentCountByDoctor = appointmentDAO.getAppointmentCountsByDoctor(startDate, endDate);
         for (Map<String, Object> data : appointmentCountByDoctor) {
             System.out.println("Doctor: " + data.get("doctor_name") + ", Appointments: " + data.get("appointment_count"));
         }
         request.setAttribute("appointmentCountByDoctor", appointmentCountByDoctor);
+
+        // Data for pie chart
+        Map<String, Integer> timeSlotBookedCountMap = appointmentDAO.countAppointmentsByTimeSlot(startDate, endDate);
+        request.setAttribute("timeSlotBookedCountMap", timeSlotBookedCountMap);
+
+        // Data for bar chart
+        Map<String, Integer> demographics = patientDAO.getPatientDemographics(startDate, endDate);
+        request.setAttribute("demographics", demographics);
         
-         request.getRequestDispatcher("/manager/managerAnalytic.jsp").forward(request, response);
+        DAOUtils.disconnectAll(appointmentDAO, patientDAO, invoiceDAO, staffAccountDAO);
+
+        request.getRequestDispatcher("/manager/managerAnalytic.jsp").forward(request, response);
     }
 
     /**

@@ -82,6 +82,7 @@ public class UpdateAppointmentServlet extends HttpServlet {
         String appointmentDateStr = request.getParameter("appointmentDate");
         java.sql.Date appointmentDate = java.sql.Date.valueOf(appointmentDateStr);
         int slotId = Integer.parseInt(request.getParameter("slotId"));
+        String description = request.getParameter("description");
 
         java.sql.Date today = java.sql.Date.valueOf(java.time.LocalDate.now());
 
@@ -100,6 +101,7 @@ public class UpdateAppointmentServlet extends HttpServlet {
         appointment.setSlotId(slotId);
         appointment.setAppointmentDate(appointmentDate);
         appointment.setStatus("Pending");
+        appointment.setDescription(description);
 
         new AppointmentDAO().update(appointment);
 

@@ -1,5 +1,6 @@
 package dal;
 
+import java.sql.Timestamp;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,42 +32,44 @@ public class PatientDAO extends DBContext {
      * @return Patient object with data or null if not found
      */
     public int getTotalPatientsByPhoneAndGender(String phone, String gender) throws SQLException {
-    String sql = "SELECT COUNT(*) FROM patient WHERE phone LIKE ? AND gender = ?";
-    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-        stmt.setString(1, "%" + phone + "%");  // Partial matching for phone
-        stmt.setString(2, gender);             // Exact matching for gender
-        try (ResultSet rs = stmt.executeQuery()) {
-            if (rs.next()) {
-                return rs.getInt(1);
+        String sql = "SELECT COUNT(*) FROM patient WHERE phone LIKE ? AND gender = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, "%" + phone + "%");  // Partial matching for phone
+            stmt.setString(2, gender);             // Exact matching for gender
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
             }
         }
+        return 0;  // Return 0 if no results
     }
-    return 0;  // Return 0 if no results
-}
+
     public List<Patient> getPatientsByPhoneAndGender(String phone, String gender, int page, int pageSize) throws SQLException {
-    List<Patient> patients = new ArrayList<>();
-    String sql = "SELECT * FROM patient WHERE phone LIKE ? AND gender = ? ORDER BY full_name LIMIT ? OFFSET ?";
-    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-        stmt.setString(1, "%" + phone + "%");  // Partial matching for phone
-        stmt.setString(2, gender);             // Exact matching for gender
-        stmt.setInt(3, pageSize);              // Number of records to return
-        stmt.setInt(4, (page - 1) * pageSize); // Calculate offset (page starts at 1)
-        try (ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                Patient patient = new Patient();
-                patient.setPhone(rs.getString("phone"));
-                patient.setPatientAccountId(rs.getInt("patient_account_id") != 0 ? rs.getInt("patient_account_id") : null);
-                patient.setFullName(rs.getString("full_name"));
-                patient.setDateOfBirth(rs.getDate("date_of_birth"));
-                patient.setGender(rs.getString("gender"));
-                patient.setEmail(rs.getString("email"));
-                patient.setCreatedAt(rs.getTimestamp("created_at"));
-                patients.add(patient);
+        List<Patient> patients = new ArrayList<>();
+        String sql = "SELECT * FROM patient WHERE phone LIKE ? AND gender = ? ORDER BY full_name LIMIT ? OFFSET ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, "%" + phone + "%");  // Partial matching for phone
+            stmt.setString(2, gender);             // Exact matching for gender
+            stmt.setInt(3, pageSize);              // Number of records to return
+            stmt.setInt(4, (page - 1) * pageSize); // Calculate offset (page starts at 1)
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Patient patient = new Patient();
+                    patient.setPhone(rs.getString("phone"));
+                    patient.setPatientAccountId(rs.getInt("patient_account_id") != 0 ? rs.getInt("patient_account_id") : null);
+                    patient.setFullName(rs.getString("full_name"));
+                    patient.setDateOfBirth(rs.getDate("date_of_birth"));
+                    patient.setGender(rs.getString("gender"));
+                    patient.setEmail(rs.getString("email"));
+                    patient.setCreatedAt(rs.getTimestamp("created_at"));
+                    patients.add(patient);
+                }
             }
         }
+        return patients;
     }
-    return patients;
-}
+
     public Patient updateBasicInfo(String phone, String fullName, String email, Date dob) throws SQLException {
         String sql = "UPDATE Patients SET fullName = ?, email = ?, dateOfBirth = ? WHERE phone = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -109,8 +112,7 @@ public class PatientDAO extends DBContext {
     // New method for total patient count
     public int getTotalPatients() throws SQLException {
         String sql = "SELECT COUNT(*) FROM patient";
-        try (PreparedStatement stmt = connection.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+        try (PreparedStatement stmt = connection.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt(1);
             }
@@ -406,13 +408,31 @@ public class PatientDAO extends DBContext {
         }
     }
 
-    public int countPatients() {
+    public int countPatients(Date startDate, Date endDate) {
         int patientCount = 0;
-        String sql = "SELECT COUNT(*) AS patient_count FROM Patient";
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) AS patient_count FROM Patient WHERE 1=1");
 
-        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                patientCount = rs.getInt("patient_count");
+        if (startDate != null) {
+            sql.append(" AND created_at >= ?");
+        }
+        if (endDate != null) {
+            sql.append(" AND created_at <= ?");
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+
+            if (startDate != null) {
+                ps.setTimestamp(paramIndex++, new Timestamp(startDate.getTime()));
+            }
+            if (endDate != null) {
+                ps.setTimestamp(paramIndex++, new Timestamp(endDate.getTime()));
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    patientCount = rs.getInt("patient_count");
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -421,22 +441,35 @@ public class PatientDAO extends DBContext {
         return patientCount;
     }
 
-    public Map<String, Integer> getPatientDemographics() {
+    public Map<String, Integer> getPatientDemographics(Date startDate, Date endDate) {
         Map<String, Integer> demographics = new HashMap<>();
-        String sql = "SELECT date_of_birth FROM Patient"; // Get patients' date of birth from Patient table
+        StringBuilder sql = new StringBuilder("SELECT date_of_birth FROM Patient WHERE 1=1");
 
-        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {   
-            // Process each patient record
-            while (rs.next()) {
-                Date birthDate = rs.getDate("date_of_birth");
-                if (birthDate != null) {
-                    int age = calculateAge(birthDate); // Calculate the patient's age
+        if (startDate != null) {
+            sql.append(" AND created_at >= ?");
+        }
+        if (endDate != null) {
+            sql.append(" AND created_at <= ?");
+        }
 
-                    // Determine the age range
-                    String ageRange = getAgeRange(age);
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
 
-                    // Increment count for the specific age range
-                    demographics.put(ageRange, demographics.getOrDefault(ageRange, 0) + 1);
+            if (startDate != null) {
+                ps.setDate(paramIndex++, startDate);
+            }
+            if (endDate != null) {
+                ps.setDate(paramIndex++, endDate);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Date birthDate = rs.getDate("date_of_birth");
+                    if (birthDate != null) {
+                        int age = calculateAge(birthDate);
+                        String ageRange = getAgeRange(age);
+                        demographics.put(ageRange, demographics.getOrDefault(ageRange, 0) + 1);
+                    }
                 }
             }
         } catch (SQLException e) {

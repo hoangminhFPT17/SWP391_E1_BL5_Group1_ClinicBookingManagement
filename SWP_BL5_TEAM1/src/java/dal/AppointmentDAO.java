@@ -76,7 +76,7 @@ public class AppointmentDAO extends DBContext {
     }
 
     public void update(Appointment appointment) {
-        String sql = "UPDATE Appointment SET patient_phone = ?, doctor_id = ?, slot_id = ?, appointment_date = ?, status = ? "
+        String sql = "UPDATE Appointment SET patient_phone = ?, doctor_id = ?, slot_id = ?, appointment_date = ?, status = ?, description = ? "
                 + "WHERE appointment_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, appointment.getPatientPhone());
@@ -84,7 +84,8 @@ public class AppointmentDAO extends DBContext {
             ps.setInt(3, appointment.getSlotId());
             ps.setDate(4, appointment.getAppointmentDate());
             ps.setString(5, appointment.getStatus());
-            ps.setInt(6, appointment.getAppointmentId());
+            ps.setString(6, appointment.getDescription());
+            ps.setInt(7, appointment.getAppointmentId());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -242,19 +243,41 @@ public class AppointmentDAO extends DBContext {
         return 0;
     }
 
-    public Map<String, Integer> countAppointmentsByTimeSlot() {
+    public Map<String, Integer> countAppointmentsByTimeSlot(Date startDate, Date endDate) {
         Map<String, Integer> result = new HashMap<>();
-        String sql = "SELECT CONCAT('Slot ', s.name, ': ', DATE_FORMAT(s.start_time, '%H:%i'), '-', DATE_FORMAT(s.end_time, '%H:%i')) AS slot_name, "
+        StringBuilder sql = new StringBuilder(
+                "SELECT CONCAT('Slot ', s.name, ': ', DATE_FORMAT(s.start_time, '%H:%i'), '-', DATE_FORMAT(s.end_time, '%H:%i')) AS slot_name, "
                 + "COUNT(a.appointment_id) AS booking_count "
                 + "FROM Appointment a "
                 + "JOIN TimeSlot s ON a.slot_id = s.slot_id "
-                + "GROUP BY s.slot_id, s.name, s.start_time, s.end_time";
+                + "WHERE 1=1"
+        );
 
-        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                String slotName = rs.getString("slot_name");
-                int bookingCount = rs.getInt("booking_count");
-                result.put(slotName, bookingCount);
+        if (startDate != null) {
+            sql.append(" AND a.created_at >= ?");
+        }
+        if (endDate != null) {
+            sql.append(" AND a.created_at <= ?");
+        }
+
+        sql.append(" GROUP BY s.slot_id, s.name, s.start_time, s.end_time");
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+
+            if (startDate != null) {
+                ps.setDate(paramIndex++, startDate);
+            }
+            if (endDate != null) {
+                ps.setDate(paramIndex++, endDate);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String slotName = rs.getString("slot_name");
+                    int bookingCount = rs.getInt("booking_count");
+                    result.put(slotName, bookingCount);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -283,21 +306,42 @@ public class AppointmentDAO extends DBContext {
         return result;
     }
 
-    public List<Map<String, Object>> getAppointmentCountsByDoctor() {
+    public List<Map<String, Object>> getAppointmentCountsByDoctor(Date startDate, Date endDate) {
         List<Map<String, Object>> result = new ArrayList<>();
-        String sql = "SELECT u.full_name AS doctor_name, COUNT(a.appointment_id) AS appointment_count\n"
-                + "FROM Appointment a\n"
-                + "JOIN StaffAccount s ON a.doctor_id = s.staff_id\n"
-                + "JOIN User u ON s.user_id = u.user_id\n"
-                + "GROUP BY s.staff_id\n"
-                + "ORDER BY appointment_count DESC;";
+        StringBuilder sql = new StringBuilder(
+                "SELECT u.full_name AS doctor_name, COUNT(a.appointment_id) AS appointment_count "
+                + "FROM Appointment a "
+                + "JOIN StaffAccount s ON a.doctor_id = s.staff_id "
+                + "JOIN User u ON s.user_id = u.user_id "
+                + "WHERE 1=1 "
+        );
+        
+        if (startDate != null) {
+            sql.append("AND a.created_at >= ? ");
+        }
+        if (endDate != null) {
+            sql.append("AND a.created_at <= ? ");
+        }
 
-        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Map<String, Object> appointmentData = new HashMap<>();
-                appointmentData.put("doctor_name", rs.getString("doctor_name"));
-                appointmentData.put("appointment_count", rs.getInt("appointment_count"));
-                result.add(appointmentData);
+        sql.append("GROUP BY s.staff_id, u.full_name ORDER BY appointment_count DESC");
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+
+            if (startDate != null) {
+                ps.setDate(paramIndex++, startDate);
+            }
+            if (endDate != null) {
+                ps.setDate(paramIndex++, endDate);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> appointmentData = new HashMap<>();
+                    appointmentData.put("doctor_name", rs.getString("doctor_name"));
+                    appointmentData.put("appointment_count", rs.getInt("appointment_count"));
+                    result.add(appointmentData);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -315,6 +359,8 @@ public class AppointmentDAO extends DBContext {
         appt.setAppointmentDate(rs.getDate("appointment_date"));
         appt.setStatus(rs.getString("status"));
         appt.setCreatedAt(rs.getTimestamp("created_at"));
+        appt.setDescription(rs.getString("description"));
+        appt.setPackageId(rs.getInt("package_id"));
         return appt;
     }
 
@@ -503,48 +549,48 @@ public class AppointmentDAO extends DBContext {
     }
 
     public AppointmentDetailDTO getAppointmentDetailById(int id) {
-    String sql =
-        "SELECT a.appointment_id, " +
-        "       p.full_name       AS patientName, " +
-        "       a.patient_phone, " +
-        "       u_doc.full_name   AS doctorFullName, " +
-        "       ts.name           AS slot, " +
-        "       a.appointment_date, " +
-        "       a.status, " +
-        "       a.created_at, " +
-        "       a.description, " +
-        "       ep.name           AS examinationPackage " +
-        "  FROM Appointment a " +
-        "  JOIN Patient p          ON a.patient_phone = p.phone " +
-        "  JOIN TimeSlot ts        ON a.slot_id        = ts.slot_id " +
-        "  JOIN ExaminationPackage ep ON a.package_id   = ep.package_id " +
-        "  JOIN StaffAccount sa    ON a.doctor_id      = sa.staff_id " +
-        "  JOIN `User` u_doc       ON sa.user_id        = u_doc.user_id " +
-        " WHERE a.appointment_id = ?";
+        String sql
+                = "SELECT a.appointment_id, "
+                + "       p.full_name       AS patientName, "
+                + "       a.patient_phone, "
+                + "       u_doc.full_name   AS doctorFullName, "
+                + "       ts.name           AS slot, "
+                + "       a.appointment_date, "
+                + "       a.status, "
+                + "       a.created_at, "
+                + "       a.description, "
+                + "       ep.name           AS examinationPackage "
+                + "  FROM Appointment a "
+                + "  JOIN Patient p          ON a.patient_phone = p.phone "
+                + "  JOIN TimeSlot ts        ON a.slot_id        = ts.slot_id "
+                + "  JOIN ExaminationPackage ep ON a.package_id   = ep.package_id "
+                + "  JOIN StaffAccount sa    ON a.doctor_id      = sa.staff_id "
+                + "  JOIN `User` u_doc       ON sa.user_id        = u_doc.user_id "
+                + " WHERE a.appointment_id = ?";
 
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, id);
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                return new AppointmentDetailDTO(
-                    rs.getInt("appointment_id"),
-                    rs.getString("patientName"),       // now available
-                    rs.getString("patient_phone"),
-                    rs.getString("doctorFullName"),
-                    rs.getString("slot"),
-                    rs.getDate("appointment_date"),
-                    rs.getString("status"),
-                    rs.getTimestamp("created_at"),
-                    rs.getString("description"),
-                    rs.getString("examinationPackage")
-                );
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new AppointmentDetailDTO(
+                            rs.getInt("appointment_id"),
+                            rs.getString("patientName"), // now available
+                            rs.getString("patient_phone"),
+                            rs.getString("doctorFullName"),
+                            rs.getString("slot"),
+                            rs.getDate("appointment_date"),
+                            rs.getString("status"),
+                            rs.getTimestamp("created_at"),
+                            rs.getString("description"),
+                            rs.getString("examinationPackage")
+                    );
+                }
             }
+        } catch (SQLException e) {
+            System.err.println("getAppointmentDetailById error: " + e.getMessage());
         }
-    } catch (SQLException e) {
-        System.err.println("getAppointmentDetailById error: " + e.getMessage());
+        return null;
     }
-    return null;
-}
 
     public Integer getNextAppointmentIdForCurrentSlot(int doctorId) {
         String sql
@@ -686,13 +732,31 @@ public class AppointmentDAO extends DBContext {
         return false;
     }
 
-    public int countAppointments() {
+    public int countAppointments(Date startDate, Date endDate) {
         int totalAppointments = 0;
-        String sql = "SELECT COUNT(*) AS total_appointments FROM Appointment";
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) AS total_appointments FROM Appointment WHERE 1=1");
 
-        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                totalAppointments = rs.getInt("total_appointments");
+        if (startDate != null) {
+            sql.append(" AND appointment_date >= ?");
+        }
+        if (endDate != null) {
+            sql.append(" AND appointment_date <= ?");
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+
+            if (startDate != null) {
+                ps.setDate(paramIndex++, startDate);
+            }
+            if (endDate != null) {
+                ps.setDate(paramIndex++, endDate);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    totalAppointments = rs.getInt("total_appointments");
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

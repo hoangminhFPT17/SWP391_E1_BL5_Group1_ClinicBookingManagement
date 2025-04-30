@@ -18,49 +18,31 @@
         <!-- Load Google Charts -->
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-        <!-- Pass data into a JS variable -->
-        <script type="text/javascript"> //god I hate ugly java code in frontend
+        <script type="text/javascript">
+            // Initialize JavaScript variables
             var timeSlotBookedCountMap = {};
-            <%
-                Map<String, Integer> map = (Map<String, Integer>) request.getAttribute("timeSlotBookedCountMap");
-                if (map != null) {
-                    for (Map.Entry<String, Integer> entry : map.entrySet()) {
-            %>
-            timeSlotBookedCountMap["<%= entry.getKey()%>"] = <%= entry.getValue()%>;
-            <%
-                    }
-                }
-            %>
+            <c:if test="${not empty timeSlotBookedCountMap}">
+                <c:forEach var="entry" items="${timeSlotBookedCountMap}">
+            timeSlotBookedCountMap["${entry.key}"] = ${entry.value};
+                </c:forEach>
+            </c:if>
 
             var appointmentCountByDoctor = [];
-            <%
-                List<Map<String, Object>> appointmentList = (List<Map<String, Object>>) request.getAttribute("appointmentCountByDoctor");
-                if (appointmentList != null) {
-                    for (Map<String, Object> data : appointmentList) {
-            %>
+            <c:if test="${not empty appointmentCountByDoctor}">
+                <c:forEach var="data" items="${appointmentCountByDoctor}">
             appointmentCountByDoctor.push({
-                doctor_name: "<%= data.get("doctor_name")%>",
-                appointment_count: <%= data.get("appointment_count")%>
+                doctor_name: "${data.doctor_name}",
+                appointment_count: ${data.appointment_count}
             });
-            <%
-                    }
-                }
-            %>
+                </c:forEach>
+            </c:if>
 
             var demographics = {};
-
-            <%
-                // Retrieve the demographics map
-                Map<String, Integer> demographicsMap = (Map<String, Integer>) request.getAttribute("demographics");
-                if (demographicsMap != null) {
-                    // Loop through the map and populate the JS object
-                    for (Map.Entry<String, Integer> entry : demographicsMap.entrySet()) {
-            %>
-            demographics["<%= entry.getKey()%>"] = <%= entry.getValue()%>;
-            <%
-                            }
-                        }
-            %>
+            <c:if test="${not empty demographics}">
+                <c:forEach var="entry" items="${demographics}">
+            demographics["${entry.key}"] = ${entry.value};
+                </c:forEach>
+            </c:if>
         </script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/manager_analytic.js"></script>
         <title>Manager Analytics</title>
@@ -87,6 +69,28 @@
                 <div class="container-fluid">
                     <div class="layout-specing">
                         <h5 class="mb-0">Dashboard</h5>
+                        <div class="row">
+                            <form action="ManagerAnalyticServlet" method="get">
+                                <div class="row g-3">
+                                    <!-- Start Date -->
+                                    <div class="col-2">
+                                        <label class="form-label">Start Date</label>
+                                        <input type="date" name="startDate" class="form-control" value="${param.startDate}">
+                                    </div>
+
+                                    <!-- End Date -->
+                                    <div class="col-2">
+                                        <label class="form-label">End Date</label>
+                                        <input type="date" name="endDate" class="form-control" value="${param.endDate}">
+                                    </div>
+
+                                    <!-- Filter Button -->
+                                    <div class="col-2 d-flex align-items-end">
+                                        <button type="submit" class="btn btn-primary w-100">Filter</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
 
                         <div class="row">
                             <div class="col-xl-2 col-lg-4 col-md-4 mt-4">
@@ -136,7 +140,22 @@
                             <div class="col-xl-8 col-lg-7 mt-4">
                                 <div class="card shadow border-0 p-4">
                                     <div class="d-flex justify-content-between align-items-center mb-3"  style="height: 190px; overflow: hidden;">
-                                        <h6 class="align-items-center mb-0">Doctor appointment amount</h6>
+                                        <h6 class="align-items-center mb-0">
+                                            <c:choose>
+                                                <c:when test="${not empty param.startDate and not empty param.endDate}">
+                                                    Doctor appointment amount from ${param.startDate} to ${param.endDate}
+                                                </c:when>
+                                                <c:when test="${not empty param.startDate}">
+                                                    Doctor appointment amount from ${param.startDate} onward
+                                                </c:when>
+                                                <c:when test="${not empty param.endDate}">
+                                                    Doctor appointment amount until ${param.endDate}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    Doctor appointment amount
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </h6>
                                     </div>
 
                                     <!-- Chart goes inside here -->
@@ -147,7 +166,22 @@
                             <div class="col-xl-4 col-lg-5 mt-4">
                                 <div class="card shadow border-0 p-4" style="height: 450px; overflow: hidden;">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h6 class="align-items-center mb-0">Time Slot by Amount Booked</h6>
+                                        <h6 class="align-items-center mb-0">
+                                            <c:choose>
+                                                <c:when test="${not empty param.startDate and not empty param.endDate}">
+                                                    Time Slot by Amount Booked from ${param.startDate} to ${param.endDate}
+                                                </c:when>
+                                                <c:when test="${not empty param.startDate}">
+                                                    Time Slot by Amount Booked from ${param.startDate} onward
+                                                </c:when>
+                                                <c:when test="${not empty param.endDate}">
+                                                    Time Slot by Amount Booked until ${param.endDate}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    Time Slot by Amount Booked
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </h6>
                                     </div>
 
                                     <!-- Chart goes inside here -->
@@ -160,7 +194,23 @@
                             <div class="col-xl-8 col-lg-7 mt-4">
                                 <div class="card shadow border-0 p-4">
                                     <div class="d-flex justify-content-between align-items-center mb-3"  style="height: 190px; overflow: hidden;">
-                                        <h6 class="align-items-center mb-0">Clinic Age Demographics</h6>
+
+                                        <h6 class="align-items-center mb-0">
+                                            <c:choose>
+                                                <c:when test="${not empty param.startDate and not empty param.endDate}">
+                                                    Clinic Age Demographics from ${param.startDate} to ${param.endDate}
+                                                </c:when>
+                                                <c:when test="${not empty param.startDate}">
+                                                    Clinic Age Demographics from ${param.startDate} onward
+                                                </c:when>
+                                                <c:when test="${not empty param.endDate}">
+                                                    Clinic Age Demographics until ${param.endDate}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    Clinic Age Demographics
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </h6>
                                     </div>
 
                                     <!-- Chart goes inside here -->
