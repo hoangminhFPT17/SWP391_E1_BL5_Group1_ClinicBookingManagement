@@ -262,17 +262,29 @@ public class DoctorTimeSlotDAO extends DBContext {
         }
         return list;
     }
-    
-    // 1. Get all doctor staff IDs working a specific slot on a specific day
-    public List<Integer> getDoctorIdsBySlotAndDay(int slotId, String dayOfWeek) {
+
+    // 1. Get all doctor staff IDs working a specific slot on a specific day, order by least to most appointment that day
+    public List<Integer> getDoctorIdsBySlotAndDayOrderedByLeastAppointments(int slotId, String dayOfWeek, Date appointmentDate) {
         List<Integer> doctorIds = new ArrayList<>();
-        String sql = "SELECT staff_id FROM doctortimeslot WHERE slot_id = ? AND day_of_week = ? ORDER BY max_appointments ASC";
+        String sql = """
+        SELECT dts.staff_id, COUNT(a.appointment_id) AS current_appointments
+        FROM doctortimeslot dts
+        LEFT JOIN appointment a 
+            ON dts.staff_id = a.doctor_id 
+            AND a.slot_id = ? 
+            AND a.appointment_date = ?
+        WHERE dts.slot_id = ? AND dts.day_of_week = ?
+        GROUP BY dts.staff_id
+        ORDER BY current_appointments ASC
+        """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, slotId);
-            ps.setString(2, dayOfWeek);
-            ResultSet rs = ps.executeQuery();
+            ps.setDate(2, appointmentDate);
+            ps.setInt(3, slotId);
+            ps.setString(4, dayOfWeek);
 
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 doctorIds.add(rs.getInt("staff_id"));
             }
@@ -286,7 +298,7 @@ public class DoctorTimeSlotDAO extends DBContext {
     // 2. Get the DoctorTimeSlot details (including max appointments) for a doctor on a slot and day
     public DoctorTimeSlot getDoctorTimeSlot(int staffId, int slotId, String dayOfWeek) {
         String sql = "SELECT * FROM doctor_time_slot WHERE staff_id = ? AND slot_id = ? AND day_of_week = ?";
-        
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, staffId);
             ps.setInt(2, slotId);

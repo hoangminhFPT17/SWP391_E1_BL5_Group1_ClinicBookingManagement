@@ -238,7 +238,7 @@ public class PatientBookAppointmentServlet extends HttpServlet {
             if (user != null) {
                 response.sendRedirect(request.getContextPath() + "/PatientAppointmentsListServlet");
             } else {
-                response.sendRedirect(request.getContextPath() + "/home.jsp");
+                response.sendRedirect(request.getContextPath() + "/home.jsp?status=success");
             }
         } else {
             response.sendRedirect(request.getContextPath() + "/PatientBookAppointmentServlet?examPackageId=" + examPackageId + "&status=fail");

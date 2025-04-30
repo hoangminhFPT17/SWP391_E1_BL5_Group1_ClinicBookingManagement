@@ -97,8 +97,8 @@ public class DoctorBySlotServlet extends HttpServlet {
             UserDAO userDAO = new UserDAO();
             System.out.println("DAOs initialized");
 
-            // 4. Get all doctor IDs assigned to this slot on this day
-            List<Integer> workingDoctorIds = doctorTimeSlotDAO.getDoctorIdsBySlotAndDay(slotId, dayOfWeek);
+            // 4. Get all doctor IDs assigned to this slot on this day, order by least to most appointment that day
+            List<Integer> workingDoctorIds = doctorTimeSlotDAO.getDoctorIdsBySlotAndDayOrderedByLeastAppointments(slotId, dayOfWeek, appointmentDate);
             System.out.println("Working doctor IDs: " + workingDoctorIds);
 
             List<DoctorDTO> availableDoctors = new ArrayList<>();
