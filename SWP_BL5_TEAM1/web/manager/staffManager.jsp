@@ -36,6 +36,21 @@
                 justify-content: space-between;
                 align-items: center;
             }
+
+            html, body {
+                overflow: hidden;    /* hides page scrollbar and prevents scroll */
+                height: 100%;        /* ensure full‐height so no extra space */
+            }
+
+            /* 2) (Optional) Hide scrollbars on any inner elements that might overflow */
+            .some-scrollable-element {
+                overflow: hidden;    /* prevents scroll within that container */
+            }
+
+            /* 3) (Optional) If you only want to hide WebKit scrollbars but still allow mouse‐wheel (not recommended) */
+            ::-webkit-scrollbar {
+                display: none;
+            }
         </style>
     </head>
     <body>
@@ -44,6 +59,10 @@
             <main class="page-content bg-light">
                 <%@ include file="../component/header.jsp" %>
                 <div class="container-fluid" style="margin-top:80px;">
+                    <div class="d-flex justify-content-between align-items-center mb-3" style="margin-top:50px;">
+                        <h2 class="mb-0">Staff manager</h2>
+
+                    </div>
 
                     <div class="top-bar">
                         <!-- Global search -->
@@ -219,25 +238,23 @@
             document.addEventListener('DOMContentLoaded', () => {
                 const table = document.getElementById('staffTable');
                 const tbody = table.querySelector('tbody');
-                let rows = Array.from(tbody.querySelectorAll('tr'));
                 const sortButtons = table.querySelectorAll('.sort-btn');
                 const filters = table.querySelectorAll('.filter-input');
                 const pagination = document.getElementById('pagination');
 
-                let pageSize = 10;   // adjust default rows per page here
-                let currentPage = 1;
+                let rows = Array.from(tbody.querySelectorAll('tr'));
                 let filtered = rows.slice();
+                let pageSize = 5;
+                let currentPage = 1;
 
-                // Utility to read a cell's text
                 const getCell = (row, col) => row.children[col].innerText.trim().toLowerCase();
 
                 function applyFilter() {
-                    filtered = rows.filter(row => {
-                        return Array.from(filters).every(inp => {
-                            const col = parseInt(inp.dataset.col, 10);
-                            return getCell(row, col).includes(inp.value.trim().toLowerCase());
-                        });
-                    });
+                    filtered = rows.filter(row =>
+                        Array.from(filters).every(inp =>
+                            getCell(row, +inp.dataset.col).includes(inp.value.trim().toLowerCase())
+                        )
+                    );
                     currentPage = 1;
                     render();
                 }
@@ -273,6 +290,7 @@
                             e.preventDefault();
                             if (!disabled) {
                                 fn();
+                                render();                // <-- make sure to re-render after page change
                             }
                         });
                         li.appendChild(a);
@@ -281,17 +299,21 @@
 
                     // Prev
                     pagination.appendChild(mkBtn('Prev', () => {
-                        currentPage--;
+                        if (currentPage > 1)
+                            currentPage--;
                     }, currentPage <= 1, false));
-                    // Pages
+
+                    // Page numbers
                     for (let i = 1; i <= totalPages; i++) {
                         pagination.appendChild(mkBtn(i, () => {
-                            currentPage = i
+                            currentPage = i;
                         }, false, i === currentPage));
                     }
+
                     // Next
                     pagination.appendChild(mkBtn('Next', () => {
-                        currentPage++
+                        if (currentPage < totalPages)
+                            currentPage++;
                     }, currentPage >= totalPages, false));
                 }
 
@@ -300,14 +322,10 @@
                     renderPagination();
                 }
 
-                // wire up sort buttons
-                sortButtons.forEach(btn => {
-                    const col = parseInt(btn.dataset.col, 10);
-                    const dir = btn.dataset.dir;
-                    btn.addEventListener('click', () => applySort(col, dir));
-                });
-
-                // wire up filters
+                // wire up sorting & filtering
+                sortButtons.forEach(btn =>
+                    btn.addEventListener('click', () => applySort(+btn.dataset.col, btn.dataset.dir))
+                );
                 filters.forEach(inp => inp.addEventListener('input', applyFilter));
 
                 // initial draw
