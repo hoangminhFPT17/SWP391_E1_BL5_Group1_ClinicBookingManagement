@@ -13,6 +13,7 @@ public class ExaminationPackage {
     private String name;
     private String description;
     private int specialtyId;
+    private String tier; // "Normal" or "VIP"
 
     public ExaminationPackage() {
     }
@@ -29,8 +30,22 @@ public class ExaminationPackage {
         this.description = description;
         this.specialtyId = specialtyId;
     }
-    
-    
+
+    public ExaminationPackage(int packageId, String name, String description, int specialtyId, String tier) {
+        this.packageId = packageId;
+        this.name = name;
+        this.description = description;
+        this.specialtyId = specialtyId;
+        this.tier = tier;
+    }
+
+    public String getTier() {
+        return tier;
+    }
+
+    public void setTier(String tier) {
+        this.tier = tier;
+    }
 
     public int getPackageId() {
         return packageId;

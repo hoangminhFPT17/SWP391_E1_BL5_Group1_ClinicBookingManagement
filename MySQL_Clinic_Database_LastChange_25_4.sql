@@ -79,6 +79,8 @@ CREATE TABLE ExaminationPackage (
     specialty_id INT NOT NULL,
     FOREIGN KEY (specialty_id) REFERENCES Specialty(specialty_id)
 );
+ALTER TABLE ExaminationPackage
+ADD COLUMN tier ENUM('Normal', 'VIP') NOT NULL DEFAULT 'Normal';
 
 -- Use patient phone as FK
 CREATE TABLE Appointment (

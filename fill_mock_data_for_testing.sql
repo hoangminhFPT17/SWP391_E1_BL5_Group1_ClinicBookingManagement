@@ -9,15 +9,15 @@ INSERT INTO TimeSlot (name, start_time, end_time, is_active) VALUES
 -- Insert Users
 INSERT INTO User (email, password_hash, phone, full_name, is_verified)
 VALUES 
-('house@example.com', 'hash1', '1112223333', 'Dr. Gregory House', TRUE),
-('cuddy@example.com', 'hash2', '1112223334', 'Dr. Lisa Cuddy', TRUE),
-('wilson@example.com', 'hash3', '1112223335', 'Dr. James Wilson', TRUE),
-('cameron@example.com', 'hash4', '1112223336', 'Dr. Allison Cameron', TRUE),
-('chase@example.com', 'hash5', '1112223337', 'Dr. Robert Chase', TRUE),
-('foreman@example.com', 'hash6', '1112223338', 'Dr. Eric Foreman', TRUE),
-('reception@example.com', 'hash7', '1112223340', 'Brenda Receptionist', TRUE),
-('patient1@example.com', 'hash8', '2223334444', 'John Doe', TRUE),
-('patient2@example.com', 'hash9', '3334445555', 'Jane Smith', TRUE);
+('house@example.com', '827ccb0eea8a706c4c34a16891f84e7b', '1112223333', 'Dr. Gregory House', TRUE),
+('cuddy@example.com', '827ccb0eea8a706c4c34a16891f84e7b', '1112223334', 'Dr. Lisa Cuddy', TRUE),
+('wilson@example.com', '827ccb0eea8a706c4c34a16891f84e7b', '1112223335', 'Dr. James Wilson', TRUE),
+('cameron@example.com', '827ccb0eea8a706c4c34a16891f84e7b', '1112223336', 'Dr. Allison Cameron', TRUE),
+('chase@example.com', '827ccb0eea8a706c4c34a16891f84e7b', '1112223337', 'Dr. Robert Chase', TRUE),
+('foreman@example.com', '827ccb0eea8a706c4c34a16891f84e7b', '1112223338', 'Dr. Eric Foreman', TRUE),
+('reception@example.com', '827ccb0eea8a706c4c34a16891f84e7b', '1112223340', 'Brenda Receptionist', TRUE),
+('patient1@example.com', '827ccb0eea8a706c4c34a16891f84e7b', '2223334444', 'John Doe', TRUE),
+('patient2@example.com', '827ccb0eea8a706c4c34a16891f84e7b', '3334445555', 'Jane Smith', TRUE);
 
 -- Insert StaffAccount using subqueries to get user_id
 INSERT INTO StaffAccount (user_id, role, department) VALUES
@@ -53,12 +53,43 @@ INSERT INTO DoctorSpecialty (staff_id, specialty_id) VALUES
 (5, 4), -- Chase - Surgery
 (6, 5); -- Foreman - Neurology
 
--- Insert General Medicine Examination Packages
-INSERT INTO ExaminationPackage (name, description, specialty_id) VALUES
-('Normal Checkup', 'Basic consultation and health check for general concerns', 
- (SELECT specialty_id FROM Specialty WHERE name = 'General Medicine')),
-('VIP Checkup', 'Comprehensive consultation with extended tests and personalized care', 
- (SELECT specialty_id FROM Specialty WHERE name = 'General Medicine'));
+-- Insert Examination Packages for all specialties with Normal and VIP tiers
+INSERT INTO ExaminationPackage (name, description, specialty_id, tier) VALUES
+-- Diagnostics
+('Diagnostics - Normal Checkup', 'Basic diagnostic procedures and evaluation', 
+ (SELECT specialty_id FROM Specialty WHERE name = 'Diagnostics'), 'Normal'),
+('Diagnostics - VIP Checkup', 'Advanced diagnostic testing with priority consultation', 
+ (SELECT specialty_id FROM Specialty WHERE name = 'Diagnostics'), 'VIP'),
+
+-- Oncology
+('Oncology - Normal Screening', 'Routine cancer screening tests', 
+ (SELECT specialty_id FROM Specialty WHERE name = 'Oncology'), 'Normal'),
+('Oncology - VIP Screening', 'Comprehensive oncology tests with expert review', 
+ (SELECT specialty_id FROM Specialty WHERE name = 'Oncology'), 'VIP'),
+
+-- Immunology
+('Immunology - Normal Assessment', 'Standard immune system evaluation', 
+ (SELECT specialty_id FROM Specialty WHERE name = 'Immunology'), 'Normal'),
+('Immunology - VIP Assessment', 'Detailed immunological tests with personalized consultation', 
+ (SELECT specialty_id FROM Specialty WHERE name = 'Immunology'), 'VIP'),
+
+-- Surgery
+('Surgery - Normal Consultation', 'Basic surgical consultation and evaluation', 
+ (SELECT specialty_id FROM Specialty WHERE name = 'Surgery'), 'Normal'),
+('Surgery - VIP Consultation', 'Surgical evaluation with premium services and follow-up', 
+ (SELECT specialty_id FROM Specialty WHERE name = 'Surgery'), 'VIP'),
+
+-- Neurology
+('Neurology - Normal Exam', 'Routine neurological assessment', 
+ (SELECT specialty_id FROM Specialty WHERE name = 'Neurology'), 'Normal'),
+('Neurology - VIP Exam', 'Comprehensive brain and nerve diagnostics with top-tier specialists', 
+ (SELECT specialty_id FROM Specialty WHERE name = 'Neurology'), 'VIP'),
+
+-- General Medicine
+('General Medicine - Normal Checkup', 'Basic consultation and health check for general concerns', 
+ (SELECT specialty_id FROM Specialty WHERE name = 'General Medicine'), 'Normal'),
+('General Medicine - VIP Checkup', 'Comprehensive consultation with extended tests and personalized care', 
+ (SELECT specialty_id FROM Specialty WHERE name = 'General Medicine'), 'VIP');
 
 -- Insert DoctorTimeSlot coverage: Spread out doctor coverage at random
 INSERT INTO DoctorTimeSlot (staff_id, slot_id, day_of_week, max_appointments)
@@ -160,18 +191,17 @@ VALUES
 (2, 'MRI Scan', 1, 500.00);
 
 INSERT INTO swp_clinic.`user` (email,password_hash,phone,full_name,is_verified,otp_code,otp_expiry,created_at,img_path,user_bio,pdf_path) VALUES
-('test2@gmail.com','32c9583de09461a7210cf28cfe80aa2c','3334445557','Kiet2',1,NULL,NULL,'2025-04-28 13:39:46',NULL,NULL,NULL),
-('test@gmail.com','32c9583de09461a7210cf28cfe80aa2c','3334445556','Kiet',1,NULL,NULL,'2025-04-28 13:39:46',NULL,NULL,NULL);
+('test1@gmail.com','827ccb0eea8a706c4c34a16891f84e7b','3334445557','Kiet1',1,NULL,NULL,'2025-04-28 13:39:46',NULL,NULL,NULL),
+('test2@gmail.com','827ccb0eea8a706c4c34a16891f84e7b','3334445556','Kiet2',1,NULL,NULL,'2025-04-28 13:39:46',NULL,NULL,NULL),
+('test3@gmail.com','827ccb0eea8a706c4c34a16891f84e7b','3334445557','Kiet3',1,NULL,NULL,'2025-04-28 13:39:46',NULL,NULL,NULL),
+('test4@gmail.com','827ccb0eea8a706c4c34a16891f84e7b','3334445556','Kiet4',1,NULL,NULL,'2025-04-28 13:39:46',NULL,NULL,NULL);
 
 INSERT INTO StaffAccount (user_id, role, department) VALUES
-((SELECT user_id FROM User WHERE email = 'test@gmail.com'), 'Doctor', 'Neurology'),
+((SELECT user_id FROM User WHERE email = 'test1@gmail.com'), 'Doctor', 'Neurology'),
 ((SELECT user_id FROM User WHERE email = 'test2@gmail.com'), 'Doctor', 'Neurology'),
 ((SELECT user_id FROM User WHERE email = 'test3@gmail.com'), 'Manager', 'Administration'),
 ((SELECT user_id FROM User WHERE email = 'test4@gmail.com'), 'Receptionist', 'Front desk');
 
-INSERT INTO swp_clinic.`user` (email,password_hash,phone,full_name,is_verified,otp_code,otp_expiry,created_at,img_path,user_bio,pdf_path) VALUES
-('test3@gmail.com','32c9583de09461a7210cf28cfe80aa2c','3334445557','Kiet2',1,NULL,NULL,'2025-04-28 13:39:46',NULL,NULL,NULL),
-('test4@gmail.com','32c9583de09461a7210cf28cfe80aa2c','3334445556','Kiet',1,NULL,NULL,'2025-04-28 13:39:46',NULL,NULL,NULL);
 /*
 -- Full DoctorTimeSlot coverage: 5 doctors × 5 slots × 7 days = 175 entries
 INSERT INTO DoctorTimeSlot (staff_id, slot_id, day_of_week, max_appointments)
