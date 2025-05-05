@@ -5,6 +5,7 @@
 package controller.patient;
 
 import dal.AppointmentDAO;
+import dal.InvoiceItemDAO;
 import dto.ReceptionAppointmentDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import model.InvoiceDetailed;
+import model.InvoiceItem;
 
 /**
  *
@@ -61,13 +63,16 @@ public class InvoiceDetailsServlet extends HttpServlet {
             throws ServletException, IOException {
         String idParam = request.getParameter("id");
         int id = Integer.parseInt(idParam);
-        
+
         AppointmentDAO dao = new AppointmentDAO();
         InvoiceDetailed invoice = new InvoiceDetailed();
+        InvoiceItemDAO itemDAO = new InvoiceItemDAO();
+        List<InvoiceItem> items;
+
+        
         try {
             invoice = dao.getInvoiceByAppointmentId(id);
-            
-            
+            items = itemDAO.getItemsByInvoiceId(id);
 
         } catch (Exception e) {
 
@@ -76,6 +81,7 @@ public class InvoiceDetailsServlet extends HttpServlet {
 
         // 3) Push into request & forward
         request.setAttribute("invoice", invoice);
+        request.setAttribute("items", items);
         request.getRequestDispatcher("InvoiceDetails.jsp").forward(request, response);
     }
 

@@ -34,9 +34,9 @@ public class InvoiceDAO extends DBContext {
             ps.setInt(1, invoice.getInvoiceId());
             ps.setString(2, invoice.getPatientPhone());
             ps.setInt(3, invoice.getAppointmentId());
-            ps.setString(4, invoice.getPaymentMethod());
+            ps.setString(4, "VNPay");
             ps.setDate(5, invoice.getGeneratedDate());
-            ps.setString(6, invoice.getStatus());
+            ps.setString(6, "Processing");
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

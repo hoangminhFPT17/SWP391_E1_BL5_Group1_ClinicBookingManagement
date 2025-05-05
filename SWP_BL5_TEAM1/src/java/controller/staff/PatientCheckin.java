@@ -43,7 +43,7 @@ public class PatientCheckin extends HttpServlet {
             return;
         }
         // Show initial form
-        req.getRequestDispatcher("receptionist/patientCheckin.jsp").forward(req, resp);
+        req.getRequestDispatcher("receptionist/patientCheckIn.jsp").forward(req, resp);
     }
 
     @Override

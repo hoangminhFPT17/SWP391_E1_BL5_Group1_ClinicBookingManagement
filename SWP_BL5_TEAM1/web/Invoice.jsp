@@ -266,21 +266,21 @@
                                             <tbody>
                                                 <tr data-index="1">
                                                     <td class="text-start p-3">1</td>
-                                                    <td class="text-start p-3"><span class="item-name">Hospital Charges</span></td>
-                                                    <td class="p-3"><span class="item-rate">125</span></td>
-                                                    <td class="p-3"><span class="item-total">125</span></td>
+                                                    <td class="text-start p-3"><span class="item-name">N/A</span></td>
+                                                    <td class="p-3"><span class="item-rate">0</span></td>
+                                                    <td class="p-3"><span class="item-total">0</span></td>
                                                 </tr>
                                                 <tr data-index="2">
                                                     <td class="text-start p-3">2</td>
-                                                    <td class="text-start p-3"><span class="item-name">Medicine</span></td>
-                                                    <td class="p-3"><span class="item-rate">245</span></td>
-                                                    <td class="p-3"><span class="item-total">245</span></td>
+                                                    <td class="text-start p-3"><span class="item-name">N/A</span></td>
+                                                    <td class="p-3"><span class="item-rate">0</span></td>
+                                                    <td class="p-3"><span class="item-total">0</span></td>
                                                 </tr>
                                                 <tr data-index="3">
                                                     <td class="text-start p-3">3</td>
-                                                    <td class="text-start p-3"><span class="item-name">Special Visit Fee</span></td>
-                                                    <td class="p-3"><span class="item-rate">150</span></td>
-                                                    <td class="p-3"><span class="item-total">150</span></td>
+                                                    <td class="text-start p-3"><span class="item-name">N/A</span></td>
+                                                    <td class="p-3"><span class="item-rate">0</span></td>
+                                                    <td class="p-3"><span class="item-total">0</span></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -288,9 +288,9 @@
                                     <div class="row">
                                         <div class="col-lg-4 col-md-5 ms-auto">
                                             <ul class="list-unstyled h6 fw-normal mt-4 mb-0 ms-md-5 ms-lg-4">
-                                                <li class="text-muted d-flex justify-content-between pe-3">Subtotal :<span id="invoiceSubtotal">520</span></li>
+                                                <li class="text-muted d-flex justify-content-between pe-3">Subtotal :<span id="invoiceSubtotal">0</span></li>
                                                 <li class="text-muted d-flex justify-content-between pe-3">Taxes :<span id="invoiceTaxes">0</span></li>
-                                                <li class="d-flex justify-content-between pe-3">Total :<span id="invoiceTotal">520</span></li>
+                                                <li class="d-flex justify-content-between pe-3">Total :<span id="invoiceTotal">0</span></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -309,23 +309,23 @@
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="inputInvoiceNo" class="form-label">Invoice No.</label>
-                                        <input id="inputInvoiceNo" name="invoiceNumber" type="number" class="form-control" value="5412350">
+                                        <input id="inputInvoiceNo" name="invoiceNumber" type="number" class="form-control" value="${param.id}">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="inputPackage" class="form-label">Package</label>
-                                        <input id="inputPackage" name="packageName" type="text" class="form-control" value="Basic Health Package">
+                                        <input id="inputPackage" name="packageName" type="text" class="form-control" value="${param.packageName}">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="inputDoctor" class="form-label">Doctor Name</label>
-                                        <input id="inputDoctor" name="doctorName" type="text" class="form-control" value="Dr. Smith">
+                                        <input id="inputDoctor" name="doctorName" type="text" class="form-control" value="${param.doctorName}">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="inputIssueDate" class="form-label">Issue Date</label>
-                                        <input id="inputIssueDate" name="issueDate" type="date" class="form-control" value="2025-04-28">
+                                        <input id="inputIssueDate" name="issueDate" type="date" class="form-control" value="${param.currentDate}">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="inputDueDate" class="form-label">Due Date</label>
-                                        <input id="inputDueDate" type="date" name="dueDate" class="form-control" value="2025-05-28">
+                                        <input id="inputDueDate" type="date" name="dueDate" class="form-control" value="${param.futureDate}">
                                     </div>
                                 </div>
                                 <h6 class="mt-4">Items</h6>
@@ -341,18 +341,18 @@
                                         <tbody>
                                             <tr>
                                                 <td>1</td>
-                                                <td><input type="text" name="item1Description" class="form-control item-input-name" value="Hospital Charges"></td>
-                                                <td><input type="number" name="item1Rate" class="form-control item-input-rate" value="125"></td>
+                                                <td><input type="text" name="item1Description" class="form-control item-input-name" value="N/A"></td>
+                                                <td><input type="number" name="item1Rate" class="form-control item-input-rate" value="0"></td>
                                             </tr>
                                             <tr>
                                                 <td>2</td>
-                                                <td><input type="text" name="item2Description" class="form-control item-input-name" value="Medicine"></td>
-                                                <td><input type="number" name="item2Rate" class="form-control item-input-rate" value="245"></td>
+                                                <td><input type="text" name="item2Description" class="form-control item-input-name" value="N/A"></td>
+                                                <td><input type="number" name="item2Rate" class="form-control item-input-rate" value="0"></td>
                                             </tr>
                                             <tr>
                                                 <td>3</td>
-                                                <td><input type="text" name="item3Description" class="form-control item-input-name" value="Special Visit Fee"></td>
-                                                <td><input type="number" name="item3Rate" class="form-control item-input-rate" value="150"></td>
+                                                <td><input type="text" name="item3Description" class="form-control item-input-name" value="N/A"></td>
+                                                <td><input type="number" name="item3Rate" class="form-control item-input-rate" value="0"></td>
                                             </tr>
                                         </tbody>
                                     </table>
