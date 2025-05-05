@@ -16,6 +16,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
+import model.StaffAccount;
+import model.User;
 
 /**
  *
@@ -27,6 +29,33 @@ public class TransferPatient extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+        
+        // 1. Get logged-in user from session
+        User loggedInUser = (User) req.getSession().getAttribute("user");
+        if (loggedInUser == null) {
+            // User not logged in, redirect to login
+            resp.sendRedirect("/SWP_BL5_TEAM1/login");
+            return;
+        }
+        //DAOs
+        StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
+
+        // 2. Check if user has a StaffAccount
+        StaffAccount staffAccount = staffAccountDAO.getStaffByUserId(loggedInUser.getUserId());
+        if (staffAccount == null) {
+            // User is not a staff member, redirect to login
+            resp.sendRedirect("/SWP_BL5_TEAM1/login");
+            return;
+        }
+        // 3. Check if StaffAccount role is "Manager"
+        if (!"Doctor".equalsIgnoreCase(staffAccount.getRole())) {
+            // User is a staff, but not a Manager, forward to error.jsp
+            req.setAttribute("errorMessage", "Access denied. Manager role required.");
+            req.getRequestDispatcher("/error.jsp").forward(req, resp);
+            return;
+        }
+        
+        
 
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("userId") == null) {
