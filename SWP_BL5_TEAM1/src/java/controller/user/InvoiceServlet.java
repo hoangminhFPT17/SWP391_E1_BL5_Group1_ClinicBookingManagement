@@ -7,6 +7,7 @@ package controller.user;
 import dal.AppointmentDAO;
 import dal.InvoiceDAO;
 import dal.InvoiceDetailedDAO;
+import dal.InvoiceItemDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,7 +16,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.Date;
+import model.Invoice;
 import model.InvoiceDetailed;
+import model.InvoiceItem;
 
 /**
  *
@@ -84,7 +87,7 @@ public class InvoiceServlet extends HttpServlet {
             String patientPhone = request.getParameter("patientPhone");
             String packageName = request.getParameter("packageName");
             String doctorName = request.getParameter("doctorName");
-            // Parse the date safely
+
             String issueDateStr = request.getParameter("issueDate");
             String dueDateStr = request.getParameter("dueDate");
 
@@ -105,19 +108,45 @@ public class InvoiceServlet extends HttpServlet {
             String item3Description = request.getParameter("item3Description");
             int item3Rate = Integer.parseInt(request.getParameter("item3Rate"));
 
-            // Create Invoice object
-            InvoiceDetailed invoice = new InvoiceDetailed(invoiceId, appointmentId, address, patientName,
-                    patientPhone, packageName, doctorName, issueDate, dueDate, item1Description, item1Rate, item2Description, item2Rate, item3Description, item3Rate);
-            
+            Invoice basicInvoice = new Invoice(
+                    invoiceId,
+                    appointmentId,
+                    patientPhone,
+                    "VNPay",
+                    "Processing"
+            );
 
-            // Insert into DB
+            InvoiceDAO basicInvoiceDao = new InvoiceDAO();
+            basicInvoiceDao.insert(basicInvoice);
+            
+            InvoiceItemDAO itemDAO = new InvoiceItemDAO();
+            itemDAO.addInvoiceItem(new InvoiceItem(invoiceId, item1Description, 1, item1Rate));
+            itemDAO.addInvoiceItem(new InvoiceItem(invoiceId, item2Description, 1, item2Rate));
+            itemDAO.addInvoiceItem(new InvoiceItem(invoiceId, item3Description, 1, item3Rate));
+            
+            // Insert invoice details
+            InvoiceDetailed invoice = new InvoiceDetailed(
+                    invoiceId,
+                    appointmentId,
+                    address,
+                    patientName,
+                    patientPhone,
+                    packageName,
+                    doctorName,
+                    issueDate,
+                    dueDate,
+                    item1Description, item1Rate,
+                    item2Description, item2Rate,
+                    item3Description, item3Rate
+            );
             InvoiceDetailedDAO invoiceDAO = new InvoiceDetailedDAO();
             invoiceDAO.insertInvoice(invoice);
 
-            // Redirect or show success
+            // Update appointment status
             AppointmentDAO a_dao = new AppointmentDAO();
             a_dao.updatePaymentToWaitingPayment(appointmentId);
-            response.sendRedirect("ReceptionAppointmentsListServlet"); // Redirect to a success page
+
+            response.sendRedirect("ReceptionAppointmentsListServlet");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -125,6 +154,7 @@ public class InvoiceServlet extends HttpServlet {
             request.getRequestDispatcher("invoice_error.jsp").forward(request, response);
         }
     }
+
 }
 
 /**

@@ -28,6 +28,13 @@ public class InvoiceItem {
         this.totalPrice = totalPrice;
     }
 
+    public InvoiceItem(int invoiceId, String description, int quantity, double unitPrice) {
+        this.invoiceId = invoiceId;
+        this.description = description;
+        this.quantity = quantity;
+        this.unitPrice = unitPrice;
+    }
+
     public int getItemId() {
         return itemId;
     }

@@ -4,6 +4,8 @@
     Author     : JackGarland
 --%>
 
+<%@page import="model.InvoiceItem"%>
+<%@page import="java.util.List"%>
 <%@page import="model.InvoiceDetailed"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
@@ -269,24 +271,29 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr data-index="1">
-                                                    <td class="text-start p-3">1</td>
-                                                    <td class="text-start p-3"><span class="item-name">${invoice.item1Description}</span></td>
-                                                    <td class="p-3"><span class="item-rate">${invoice.item1Rate}</span></td>
-                                                    <td class="p-3"><span class="item-total">${invoice.item1Rate}</span></td>
+                                                <%
+                                                    List<InvoiceItem> items = (List<InvoiceItem>) request.getAttribute("items");
+                                                    if (items != null && !items.isEmpty()) {
+                                                        int index = 1;
+                                                        for (InvoiceItem item : items) {
+                                                %>
+                                                <tr data-index="<%= index%>">
+                                                    <td class="text-start p-3"><%= index%></td>
+                                                    <td class="text-start p-3"><span class="item-name"><%= item.getDescription()%></span></td>
+                                                    <td class="p-3"><span class="item-rate"><%= item.getUnitPrice()%></span></td>
+                                                    <td class="p-3"><span class="item-total"><%= item.getTotalPrice()%></span></td>
                                                 </tr>
-                                                <tr data-index="2">
-                                                    <td class="text-start p-3">2</td>
-                                                    <td class="text-start p-3"><span class="item-name">${invoice.item2Description}</span></td>
-                                                    <td class="p-3"><span class="item-rate">${invoice.item2Rate}</span></td>
-                                                    <td class="p-3"><span class="item-total">${invoice.item2Rate}</span></td>
+                                                <%
+                                                        index++;
+                                                    }
+                                                } else {
+                                                %>
+                                                <tr>
+                                                    <td colspan="4" class="text-center text-muted">No items found.</td>
                                                 </tr>
-                                                <tr data-index="3">
-                                                    <td class="text-start p-3">3</td>
-                                                    <td class="text-start p-3"><span class="item-name">${invoice.item3Description}</span></td>
-                                                    <td class="p-3"><span class="item-rate">${invoice.item3Rate}</span></td>
-                                                    <td class="p-3"><span class="item-total">${invoice.item3Rate}</span></td>
-                                                </tr>
+                                                <%
+                                                    }
+                                                %>
                                             </tbody>
                                         </table>
                                     </div>
@@ -309,7 +316,7 @@
                                 double totalVnd = invoice.getTotal() * usdToVndRate;
                             %>
                             <form action="payment" method="post">
-                                <input type="hidden" name="totalBill" value="<%= totalVnd %>">
+                                <input type="hidden" name="totalBill" value="<%= totalVnd%>">
                                 <%
                                     session.setAttribute("id1", invoice.getAppointmentId());
                                     session.setAttribute("id2", invoice.getInvoiceId());
