@@ -35,7 +35,7 @@
                                 <!-- Start: only if Pending -->
                                 <button type="submit" name="action" value="start"
                                         class="btn btn-primary"
-                                        <c:if test="${appointmentDetail.status ne 'Pending'}">disabled</c:if>>
+                                        <c:if test="${appointmentDetail.status ne 'Waiting'}">disabled</c:if>>
                                             Start
                                         </button>
 
