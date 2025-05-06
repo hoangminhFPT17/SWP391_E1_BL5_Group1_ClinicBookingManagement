@@ -35,11 +35,18 @@ VALUES
 ((SELECT user_id FROM User WHERE email = 'patient1@example.com')),
 ((SELECT user_id FROM User WHERE email = 'patient2@example.com'));
 
--- Insert Patients
+-- Patients with linked accounts
 INSERT INTO Patient (phone, patient_account_id, full_name, date_of_birth, gender, email)
 VALUES
 ('2223334444', (SELECT patient_account_id FROM PatientAccount WHERE user_id = (SELECT user_id FROM User WHERE email = 'patient1@example.com')), 'John Doe', '1990-05-15', 'Male', 'patient1@example.com'),
 ('3334445555', (SELECT patient_account_id FROM PatientAccount WHERE user_id = (SELECT user_id FROM User WHERE email = 'patient2@example.com')), 'Jane Smith', '1985-10-22', 'Female', 'patient2@example.com');
+
+-- Walk-in patients (no patient_account_id)
+INSERT INTO Patient (phone, patient_account_id, full_name, date_of_birth, gender, email)
+VALUES
+('4445556666', NULL, 'Martha M. Masters', '1992-08-10', 'Female', 'martha@example.com'),
+('5556667777', NULL, 'Amber Volakis', '1984-03-05', 'Female', 'amber@example.com'),
+('6667778888', NULL, 'Michael Tritter', '1970-01-20', 'Male', 'tritter@example.com');
 
 -- Insert Specialties
 INSERT INTO Specialty (name) VALUES 
@@ -143,11 +150,34 @@ VALUES
 (5, 1, 'Sunday', 4),
 (6, 1, 'Sunday', 4);
 
--- Insert Appointments
+-- Insert Appointments (future/pending)
 INSERT INTO Appointment (patient_phone, doctor_id, slot_id, appointment_date, status, package_id, description)
 VALUES
-('2223334444', 1, 1, '2025-04-25', 'Pending', 1, 'House diagnostic evaluation'),
-('3334445555', 3, 2, '2025-04-26', 'Pending', 2, 'Oncology initial consult');
+('2223334444', 1, 1, '2025-04-25', 'Pending', 
+    (SELECT package_id FROM ExaminationPackage WHERE name = 'Diagnostics - Normal Checkup'), 
+    'House diagnostic evaluation'),
+('3334445555', 3, 2, '2025-04-26', 'Pending', 
+    (SELECT package_id FROM ExaminationPackage WHERE name = 'Oncology - Normal Screening'), 
+    'Oncology initial consult'),
+
+-- Appointments (linked to real patients, past/completed)
+('2223334444', 1, 1, '2025-04-01', 'Completed', 
+    (SELECT package_id FROM ExaminationPackage WHERE name = 'Diagnostics - Normal Checkup'), 
+    'Diagnostics with House'),
+('3334445555', 3, 2, '2025-04-05', 'Completed', 
+    (SELECT package_id FROM ExaminationPackage WHERE name = 'Oncology - Normal Screening'), 
+    'Oncology consult with Wilson'),
+
+-- Appointments (walk-ins)
+('4445556666', 4, 3, '2025-04-07', 'Completed', 
+    (SELECT package_id FROM ExaminationPackage WHERE name = 'General Medicine - Normal Checkup'), 
+    'General checkup with Cameron'),
+('5556667777', 5, 4, '2025-04-10', 'Completed', 
+    (SELECT package_id FROM ExaminationPackage WHERE name = 'Surgery - VIP Consultation'), 
+    'VIP Surgery consult with Chase'),
+('6667778888', 6, 1, '2025-04-12', 'Completed', 
+    (SELECT package_id FROM ExaminationPackage WHERE name = 'Neurology - Normal Exam'), 
+    'Neurology screening with Foreman');
 
 -- Insert Medical Records
 INSERT INTO MedicalRecord (patient_phone, diagnosis, prescription, notes)
