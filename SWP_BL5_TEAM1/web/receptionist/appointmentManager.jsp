@@ -273,16 +273,16 @@
                     const now = new Date();
                     const h = now.getHours();
                     let slot = '';
-                    if (h >= 0 && h < 9)
-                        slot = 'Morning';
+                    if (h >= 7 && h < 9)
+                        slot = 'Morning1';
                     else if (h >= 9 && h < 11)
-                        slot = 'Afternoon';
+                        slot = 'Morning2';
                     else if (h >= 12 && h < 14)
-                        slot = 'Afternoon';
+                        slot = 'Afternoon1';
                     else if (h >= 14 && h < 16)
-                        slot = 'Afternoon';
+                        slot = 'Afternoon2';
                     else
-                        slot = 'Evening';
+                        slot = 'Night';
                     document.querySelector('.filter-input[data-col="4"]').value = slot;
                     applyFilter();
                 });
