@@ -316,7 +316,7 @@ public class AppointmentDAO extends DBContext {
                 + "JOIN User u ON s.user_id = u.user_id "
                 + "WHERE 1=1 "
         );
-        
+
         if (startDate != null) {
             sql.append("AND a.created_at >= ? ");
         }
@@ -512,12 +512,11 @@ public class AppointmentDAO extends DBContext {
         return invoice;
     }
 
-    public List<ReceptionAppointmentDTO> getAwaitingPaymentAppointments() throws SQLException {
+    public List<ReceptionAppointmentDTO> getAwaitingPaymentAppointments(String phone) throws SQLException {
         List<ReceptionAppointmentDTO> list = new ArrayList<>();
 
-        String sql
-                = "SELECT\n"
-                + "    a.appointment_id as appointment_id,\n"
+        String sql = "SELECT\n"
+                + "    a.appointment_id AS appointment_id,\n"
                 + "    p.phone AS patient_phone,\n"
                 + "    p.full_name AS patient_fullName,\n"
                 + "    u.user_id AS doctor_userId,\n"
@@ -532,15 +531,24 @@ public class AppointmentDAO extends DBContext {
                 + "INNER JOIN User u ON sa.user_id = u.user_id\n"
                 + "INNER JOIN TimeSlot ts ON a.slot_id = ts.slot_id\n"
                 + "LEFT JOIN ExaminationPackage ep ON a.package_id = ep.package_id\n"
-                + "WHERE a.status = 'Waiting-Payment' \n"
+                + "WHERE a.status = 'Waiting-Payment' AND p.phone = ?\n"
                 + "ORDER BY a.appointment_date;";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, phone); // Bind phone to the query
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    ReceptionAppointmentDTO dto = new ReceptionAppointmentDTO(rs.getInt("appointment_id"), rs.getString("patient_phone"),
-                            rs.getString("patient_fullName"), rs.getInt("doctor_userId"), rs.getString("doctor_fullName"),
-                            rs.getTime("slot_startTime"), rs.getString("package_name"), rs.getString("appointment_description"), rs.getTime("slot_endTime"));
+                    ReceptionAppointmentDTO dto = new ReceptionAppointmentDTO(
+                            rs.getInt("appointment_id"),
+                            rs.getString("patient_phone"),
+                            rs.getString("patient_fullName"),
+                            rs.getInt("doctor_userId"),
+                            rs.getString("doctor_fullName"),
+                            rs.getTime("slot_startTime"),
+                            rs.getString("package_name"),
+                            rs.getString("appointment_description"),
+                            rs.getTime("slot_endTime")
+                    );
                     list.add(dto);
                 }
             }
@@ -814,57 +822,57 @@ public class AppointmentDAO extends DBContext {
 
         return monthlyCounts;
     }
-    
+
     public PatientQueueDTO getTodayWaitingForPatient(String patientPhone) {
-        String sql =
-          "WITH Ordered AS ( " +
-          "  SELECT " +
-          "    a.appointment_id, " +
-          "    sa.staff_id, u.full_name AS doctorName, " +
-          "    ts.name AS slot, " +
-          "    a.appointment_date, a.status, a.created_at, " +
-          "    ROW_NUMBER() OVER ( " +
-          "      ORDER BY " +
-          "        CASE a.status " +
-          "          WHEN 'In progress'        THEN 1 " +
-          "          WHEN 'Back-from-hand-off' THEN 2 " +
-          "          WHEN 'Waiting'            THEN 3 " +
-          "          WHEN 'Pending'            THEN 4 " +
-          "          ELSE 5 END, " +
-          "        a.created_at " +
-          "    ) AS queueNum " +
-          "  FROM Appointment a " +
-          "  JOIN StaffAccount sa ON a.doctor_id = sa.staff_id " +
-          "  JOIN `User` u       ON sa.user_id   = u.user_id " +
-          "  JOIN TimeSlot ts    ON a.slot_id    = ts.slot_id " +
-          "  WHERE a.appointment_date = CURDATE() " +
-          "    AND a.status = 'Waiting' " +
-          ") " +
-          "SELECT * FROM Ordered WHERE appointment_id = ( " +
-          "  SELECT appointment_id " +
-          "  FROM Appointment " +
-          "  WHERE patient_phone = ? " +
-          "    AND appointment_date = CURDATE() " +
-          "    AND status = 'Waiting' " +
-          "  LIMIT 1" +
-          ")";
+        String sql
+                = "WITH Ordered AS ( "
+                + "  SELECT "
+                + "    a.appointment_id, "
+                + "    sa.staff_id, u.full_name AS doctorName, "
+                + "    ts.name AS slot, "
+                + "    a.appointment_date, a.status, a.created_at, "
+                + "    ROW_NUMBER() OVER ( "
+                + "      ORDER BY "
+                + "        CASE a.status "
+                + "          WHEN 'In progress'        THEN 1 "
+                + "          WHEN 'Back-from-hand-off' THEN 2 "
+                + "          WHEN 'Waiting'            THEN 3 "
+                + "          WHEN 'Pending'            THEN 4 "
+                + "          ELSE 5 END, "
+                + "        a.created_at "
+                + "    ) AS queueNum "
+                + "  FROM Appointment a "
+                + "  JOIN StaffAccount sa ON a.doctor_id = sa.staff_id "
+                + "  JOIN `User` u       ON sa.user_id   = u.user_id "
+                + "  JOIN TimeSlot ts    ON a.slot_id    = ts.slot_id "
+                + "  WHERE a.appointment_date = CURDATE() "
+                + "    AND a.status = 'Waiting' "
+                + ") "
+                + "SELECT * FROM Ordered WHERE appointment_id = ( "
+                + "  SELECT appointment_id "
+                + "  FROM Appointment "
+                + "  WHERE patient_phone = ? "
+                + "    AND appointment_date = CURDATE() "
+                + "    AND status = 'Waiting' "
+                + "  LIMIT 1"
+                + ")";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, patientPhone);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return new PatientQueueDTO(
-                      rs.getInt("appointment_id"),
-                      rs.getString("doctorName"),
-                      rs.getString("slot"),
-                      rs.getDate("appointment_date"),
-                      rs.getString("status"),
-                      rs.getTimestamp("created_at"),
-                      rs.getInt("queueNum")
+                            rs.getInt("appointment_id"),
+                            rs.getString("doctorName"),
+                            rs.getString("slot"),
+                            rs.getDate("appointment_date"),
+                            rs.getString("status"),
+                            rs.getTimestamp("created_at"),
+                            rs.getInt("queueNum")
                     );
                 }
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             System.err.println("getTodayWaitingForPatient: " + e.getMessage());
         }
         return null;

@@ -62,9 +62,8 @@
 </head>
 <body>
     <div class="page-wrapper doctris-theme toggled">
-        <%@ include file="../component/doctorSideBar.jsp" %>
+        <jsp:include page="/common/patientHeaderNav.jsp" />
         <main class="page-content bg-light">
-            <%@ include file="../component/header.jsp" %>
             <div class="container-fluid">
                 <div class="d-flex justify-content-between align-items-center mb-3" style="margin-top:80px;">
                     <h2 class="mb-0">Patient's Payment History</h2>
