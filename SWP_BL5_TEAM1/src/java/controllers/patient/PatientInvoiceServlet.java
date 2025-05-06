@@ -12,7 +12,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
+import model.User;
 
 /**
  *
@@ -58,17 +60,25 @@ public class PatientInvoiceServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        HttpSession session = request.getSession(false); // Don't create a new session if one doesn't exist
+        if (session == null || session.getAttribute("user") == null) {
+            // User is not logged in; redirect to login or show error
+            response.sendRedirect("login.jsp"); // Adjust path as needed
+            return;
+        }
+
+        User user = (User) session.getAttribute("user"); // Cast to your actual user type
+
         AppointmentDAO dao = new AppointmentDAO();
         List<ReceptionAppointmentDTO> appointments;
+
         try {
-            appointments = dao.getAwaitingPaymentAppointments();
-
+            appointments = dao.getAwaitingPaymentAppointments(user.getPhone()); // Assuming user has getPhone()
         } catch (Exception e) {
-
             throw new ServletException("Error fetching appointments", e);
         }
 
-        // 3) Push into request & forward
         request.setAttribute("appointments", appointments);
         request.getRequestDispatcher("PatientInvoice.jsp").forward(request, response);
     }
