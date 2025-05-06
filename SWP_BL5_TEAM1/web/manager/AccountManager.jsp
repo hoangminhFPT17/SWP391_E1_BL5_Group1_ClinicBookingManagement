@@ -82,12 +82,7 @@
                             <button class="btn btn-primary">Search</button>
                         </form>
 
-                        <!-- Add User -->
-                        <button class="btn btn-success"
-                                data-bs-toggle="modal"
-                                data-bs-target="#addUserModal">
-                            Add User
-                        </button>
+                       
                     </div>
                     <div class="d-flex align-items-center mb-2">
                         <label for="pageSize" class="me-2 mb-0">Rows per page:</label>

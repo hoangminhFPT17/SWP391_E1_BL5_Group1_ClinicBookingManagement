@@ -143,14 +143,14 @@
                                                     </button>
                                                 </form>
                                             </c:when>
-                                            <c:when test="${appt.status == 'Waiting payment'}">
+                                            <c:when test="${appt.status == 'Waiting-Payment'}">
                                                 <form class="inline"
                                                       method="post"
                                                       action="${pageContext.request.contextPath}/AppointmentManager">
                                                     <input type="hidden" name="appointmentId" value="${appt.appointmentId}" />
                                                     <input type="hidden" name="action" value="complete" />
                                                     <button type="submit" class="btn btn-sm btn-success">
-                                                        Complete
+                                                        Payment-Complete
                                                     </button>
                                                 </form>
                                             </c:when>

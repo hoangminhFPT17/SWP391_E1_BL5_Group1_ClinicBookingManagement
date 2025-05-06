@@ -119,7 +119,7 @@ public class AccountManager extends HttpServlet {
         }
 
         resp.sendRedirect(req.getContextPath()
-                + "/manager/AccountManager?search="
+                + "/AccountManager?search="
                 + java.net.URLEncoder.encode(search, "UTF-8"));
     }
 
