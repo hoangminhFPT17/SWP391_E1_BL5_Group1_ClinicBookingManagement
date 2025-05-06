@@ -119,7 +119,7 @@
         <!-- Back to top -->
 
         <jsp:include page="/component/footer.jsp" />
-
+        <script src="<c:url value='/assets/js/bootstrap.bundle.min.js'/>"></script>
         <!-- javascript -->
         <script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/bootstrap.bundle.min.js"></script>

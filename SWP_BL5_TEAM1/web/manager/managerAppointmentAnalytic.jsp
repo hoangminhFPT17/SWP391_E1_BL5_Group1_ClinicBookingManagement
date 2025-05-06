@@ -182,7 +182,7 @@
             </div>
         </div>
         <!-- Offcanvas End -->
-
+        <script src="<c:url value='/assets/js/bootstrap.bundle.min.js'/>"></script>
         <!-- javascript -->
         <script src="${pageContext.request.contextPath}/assets/js/bootstrap.bundle.min.js"></script>
         <!-- simplebar -->
