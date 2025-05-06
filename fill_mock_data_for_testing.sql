@@ -232,6 +232,33 @@ INSERT INTO StaffAccount (user_id, role, department) VALUES
 ((SELECT user_id FROM User WHERE email = 'test3@gmail.com'), 'Manager', 'Administration'),
 ((SELECT user_id FROM User WHERE email = 'test4@gmail.com'), 'Receptionist', 'Front desk');
 
+-- Walk-in patients (no account)
+INSERT INTO Patient (phone, patient_account_id, full_name, date_of_birth, gender, email, created_at)
+VALUES
+('7771112222', NULL, 'Rachel Taub', '1985-09-20', 'Female', 'rachel.taub@example.com', '2025-03-01 09:30:00'),
+('8882223333', NULL, 'Jeffrey Cole', '1988-01-11', 'Male', 'jeffrey.cole@example.com', '2025-03-02 10:00:00'),
+('9993334444', NULL, 'Amber Volakis', '1983-04-25', 'Female', 'amber.volakis@example.com', '2025-03-03 11:15:00'),
+('0004445555', NULL, 'Henry Dobson', '1979-08-14', 'Male', 'henry.dobson@example.com', '2025-03-04 08:50:00'),
+('1115556666', NULL, 'Sam Carr', '1990-06-30', 'Male', 'sam.carr@example.com', '2025-03-05 14:45:00');
+
+-- Past completed appointments (walk-in patients)
+INSERT INTO Appointment (patient_phone, doctor_id, slot_id, appointment_date, status, description, package_id, created_at)
+VALUES
+('7771112222', 2, 1, '2025-03-01', 'Completed', 'Routine diagnostics by Dr. Foreman',
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Diagnostics - Normal Checkup'), '2025-02-28 16:00:00'),
+
+('8882223333', 3, 2, '2025-03-02', 'Completed', 'Cancer screening with Dr. Wilson',
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Oncology - Normal Screening'), '2025-03-01 09:00:00'),
+
+('9993334444', 4, 3, '2025-03-03', 'Completed', 'Neurology review with Dr. Foreman',
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Neurology - Normal Exam'), '2025-03-02 11:00:00'),
+
+('0004445555', 5, 4, '2025-03-04', 'Completed', 'Surgery consult with Dr. Chase',
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Surgery - Normal Consultation'), '2025-03-03 10:15:00'),
+
+('1115556666', 6, 1, '2025-03-05', 'Completed', 'General medicine visit with Dr. Cameron',
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'General Medicine - Normal Checkup'), '2025-03-04 14:10:00');
+
 /*
 -- Full DoctorTimeSlot coverage: 5 doctors × 5 slots × 7 days = 175 entries
 INSERT INTO DoctorTimeSlot (staff_id, slot_id, day_of_week, max_appointments)

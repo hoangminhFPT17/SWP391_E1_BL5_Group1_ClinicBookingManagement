@@ -243,4 +243,4 @@ CREATE TABLE `payment` (
   COLLATE=utf8mb4_general_ci;
 
 ALTER TABLE `swp_clinic`.`appointment` 
-CHANGE COLUMN `status` `status` ENUM('Pending', 'Approved', 'Waiting', 'Cancelled', 'Completed', 'No-show', 'Waiting-Payment', 'Payment-Complete') NULL DEFAULT 'Pending' ;
+CHANGE COLUMN `status` `status` ENUM('Pending', 'Approved', 'Waiting', 'In progress', 'Cancelled', 'Completed', 'No-show', 'Waiting-Payment', 'Payment-Complete') NULL DEFAULT 'Pending' ;
