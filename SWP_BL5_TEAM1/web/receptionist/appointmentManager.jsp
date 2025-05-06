@@ -135,7 +135,7 @@
                                             <c:when test="${appt.status == 'Pending'}">
                                                 <form class="inline"
                                                       method="post"
-                                                      action="${pageContext.request.contextPath}/receptionist/AppointmentManager">
+                                                      action="${pageContext.request.contextPath}/AppointmentManager">
                                                     <input type="hidden" name="appointmentId" value="${appt.appointmentId}" />
                                                     <input type="hidden" name="action" value="toWaiting" />
                                                     <button type="submit" class="btn btn-sm btn-warning">
@@ -146,7 +146,7 @@
                                             <c:when test="${appt.status == 'Waiting payment'}">
                                                 <form class="inline"
                                                       method="post"
-                                                      action="${pageContext.request.contextPath}/receptionist/AppointmentManager">
+                                                      action="${pageContext.request.contextPath}/AppointmentManager">
                                                     <input type="hidden" name="appointmentId" value="${appt.appointmentId}" />
                                                     <input type="hidden" name="action" value="complete" />
                                                     <button type="submit" class="btn btn-sm btn-success">

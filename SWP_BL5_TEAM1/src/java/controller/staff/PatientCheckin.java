@@ -86,7 +86,7 @@ public class PatientCheckin extends HttpServlet {
         // always reload the lists
         req.setAttribute("timeSlots", slotDao.getAllTimeSlots());
         req.setAttribute("packages", pkgDao.getAllPackages());
-        req.setAttribute("doctors", staffDao.getDoctorsBySpecialty(6));
+        req.setAttribute("doctors", staffDao.getAllDoctors());
 
         if ("checkPhone".equals(action)) {
             Patient p = patientDao.getPatientByPhone(phone);
@@ -127,7 +127,7 @@ public class PatientCheckin extends HttpServlet {
             apptDao.create(appt);
         }
 
-        req.getRequestDispatcher("/receptionist/patientCheckin.jsp")
+        req.getRequestDispatcher("/receptionist/patientCheckIn.jsp")
                 .forward(req, resp);
     }
     

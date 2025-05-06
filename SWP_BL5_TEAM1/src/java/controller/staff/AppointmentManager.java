@@ -102,19 +102,45 @@ public class AppointmentManager extends HttpServlet {
                 .forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+    // 1) Authentication / role checks (same as in doGet)
+    HttpSession session = request.getSession(false);
+    User loggedInUser = (User) session.getAttribute("user");
+    if (loggedInUser == null) {
+        response.sendRedirect(request.getContextPath() + "/login");
+        return;
     }
+    StaffAccountDAO staffAccountDAO = new StaffAccountDAO();
+    StaffAccount staffAccount = staffAccountDAO.getStaffByUserId(loggedInUser.getUserId());
+    if (staffAccount == null || !"Receptionist".equalsIgnoreCase(staffAccount.getRole())) {
+        request.setAttribute("errorMessage", "Access denied.");
+        request.getRequestDispatcher("/error.jsp").forward(request, response);
+        return;
+    }
+
+    // 2) Read parameters
+    String action = request.getParameter("action");
+    String rawId = request.getParameter("appointmentId");
+    if (action != null && rawId != null) {
+        int appointmentId = Integer.parseInt(rawId);
+        AppointmentDAO dao = new AppointmentDAO();
+
+        switch (action) {
+            case "toWaiting":
+                dao.updateAppointmentStatus(appointmentId, "Waiting");
+                break;
+            case "complete":
+                dao.updateAppointmentStatus(appointmentId, "Completed");
+                break;
+        }
+    }
+
+    // 3) Redirect back to GET so the table reloads
+    response.sendRedirect(request.getContextPath() + "/AppointmentManager");
+}
 
     /**
      * Returns a short description of the servlet.
