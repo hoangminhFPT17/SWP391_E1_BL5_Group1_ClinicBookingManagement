@@ -100,13 +100,14 @@ public class RegisterUser extends HttpServlet {
             // Tạo đối tượng User với mật khẩu plaintext
             User newUser = new User(0, email, password, phone, fullName, isVerified, otpCode, createAt, otpExpiry);
             PatientAccount newPatientAccount = new PatientAccount();
-            
+
             // Đăng ký người dùng và lấy UserID
             int userId = dao.registerUser(newUser);
-            
+
             //Add new patientAccount when register
-            patientAccountDAO.insertPatientAccount(userId);
-            
+//            patientAccountDAO.insertPatientAccount(userId);
+            patient_dao.connectPatient(userId, userId);
+
             if (userId > 0) {
                 // Tạo token kích hoạt bằng resetService
                 ResetService resetSvc = new ResetService();
@@ -138,9 +139,9 @@ public class RegisterUser extends HttpServlet {
                 request.removeAttribute("last_email");
                 request.removeAttribute("last_phone");
                 request.removeAttribute("last_name");
-                
+
                 patient_dao.connectPatient(userId, userId);
-                
+
                 Patient patient = patient_dao.getPatientByPhone(phone);
                 if (patient == null) {
                     patient = new Patient();
