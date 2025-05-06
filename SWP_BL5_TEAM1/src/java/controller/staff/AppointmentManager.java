@@ -133,7 +133,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
                 dao.updateAppointmentStatus(appointmentId, "Waiting");
                 break;
             case "complete":
-                dao.updateAppointmentStatus(appointmentId, "Completed");
+                dao.updateAppointmentStatus(appointmentId, "Payment-Complete");
                 break;
         }
     }
