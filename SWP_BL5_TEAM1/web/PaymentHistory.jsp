@@ -35,9 +35,6 @@
         %>
 
         <!-- Example URL with both dates -->
-    <a href="NextPage.jsp?currentDate=<%= currentDate%>&futureDate=<%= futureDate%>">
-        View Data Range
-    </a>
     <meta charset="utf-8"/>
     <title>NNNN</title>
     <%@ include file="../assets/css/css-js.jsp" %>
