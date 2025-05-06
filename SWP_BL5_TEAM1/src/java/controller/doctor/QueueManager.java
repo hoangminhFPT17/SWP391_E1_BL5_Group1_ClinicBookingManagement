@@ -124,9 +124,9 @@ public class QueueManager extends HttpServlet {
             dao.updateAppointmentStatus(appointmentId, "On-hand-off");
             // 2) insert handoff record
             doctorHandoffDao.insert(loggedDoctor, toDoctorId, appointmentId, reason);
-        } else if ("finish ".equals(action)) {
+        } else if ("finish".equals(action)) {
             int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
-            dao.updateAppointmentStatus(appointmentId, "Waiting payment");
+            dao.updateAppointmentStatus(appointmentId, "Completed");
         } else if ("addRecord".equals(action)) {
             String patientPhone = request.getParameter("patientPhone");
             String diagnosis = request.getParameter("diagnosis");
@@ -146,7 +146,7 @@ public class QueueManager extends HttpServlet {
         }
 
         // reload to show updated next appointment
-        response.sendRedirect(request.getContextPath() + "/QueueManager?doctorId=1");
+        response.sendRedirect(request.getContextPath() + "/QueueManager");
     }
 
     /**
