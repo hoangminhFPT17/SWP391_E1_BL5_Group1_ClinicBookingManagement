@@ -259,6 +259,133 @@ VALUES
 ('1115556666', 6, 1, '2025-03-05', 'Completed', 'General medicine visit with Dr. Cameron',
  (SELECT package_id FROM ExaminationPackage WHERE name = 'General Medicine - Normal Checkup'), '2025-03-04 14:10:00');
 
+-- Walk-in patients for 2024
+INSERT INTO Patient (phone, patient_account_id, full_name, date_of_birth, gender, email, created_at) VALUES
+('1010101010', NULL, 'Martha M. Masters', '1994-05-12', 'Female', 'martha.masters@example.com', '2024-01-10 09:00:00'),
+('2020202020', NULL, 'Lawrence Kutner', '1984-03-18', 'Male', 'lawrence.kutner@example.com', '2024-02-14 10:20:00'),
+('3030303030', NULL, 'Chris Taub', '1977-06-09', 'Male', 'chris.taub@example.com', '2024-03-12 11:30:00'),
+('4040404040', NULL, 'Stacy Warner', '1980-09-01', 'Female', 'stacy.warner@example.com', '2024-04-18 08:45:00'),
+('5050505050', NULL, 'Edward Vogler', '1970-12-05', 'Male', 'edward.vogler@example.com', '2024-05-10 14:05:00'),
+('6060606060', NULL, 'Trent Hall', '1986-11-22', 'Male', 'trent.hall@example.com', '2024-06-07 13:45:00'),
+('7070707070', NULL, 'Bonnie Wilson', '1990-04-29', 'Female', 'bonnie.wilson@example.com', '2024-07-20 16:00:00'),
+('8080808080', NULL, 'David Shore', '1975-08-15', 'Male', 'david.shore@example.com', '2024-08-13 15:00:00'),
+('9090909090', NULL, 'Lisa Cuddy', '1971-01-10', 'Female', 'lisa.cuddy@example.com', '2024-09-25 11:30:00'),
+('1111111111', NULL, 'Mark Warner', '1983-02-14', 'Male', 'mark.warner@example.com', '2024-10-03 09:50:00'),
+('1212121212', NULL, 'Rebecca Adler', '1987-07-08', 'Female', 'rebecca.adler@example.com', '2024-11-14 10:10:00'),
+('1313131313', NULL, 'James Wilson', '1973-04-20', 'Male', 'james.wilson@example.com', '2024-12-05 08:20:00');
+
+-- One or more completed appointments each month in 2024
+INSERT INTO Appointment (patient_phone, doctor_id, slot_id, appointment_date, status, description, package_id, created_at) VALUES
+-- January
+('1010101010', 1, 1, '2024-01-10', 'Completed', 'Diagnostics with Dr. House',
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Diagnostics - Normal Checkup'), '2024-01-09 08:30:00'),
+
+-- February
+('2020202020', 3, 2, '2024-02-14', 'Completed', 'Oncology screening with Dr. Wilson',
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Oncology - Normal Screening'), '2024-02-13 09:00:00'),
+
+-- March
+('3030303030', 4, 3, '2024-03-12', 'Completed', 'Surgical consult with Dr. Chase',
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Surgery - Normal Consultation'), '2024-03-10 14:00:00'),
+
+-- April
+('4040404040', 6, 1, '2024-04-18', 'Completed', 'Neurology test with Dr. Foreman',
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Neurology - VIP Exam'), '2024-04-17 13:00:00'),
+
+-- May
+('5050505050', 2, 1, '2024-05-10', 'Completed', 'General medicine with Dr. Cameron',
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'General Medicine - Normal Checkup'), '2024-05-09 10:30:00'),
+
+-- June
+('6060606060', 3, 2, '2024-06-07', 'Completed', 'Immunology exam with Dr. Wilson',
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Immunology - VIP Assessment'), '2024-06-06 11:00:00'),
+
+-- July
+('7070707070', 4, 3, '2024-07-20', 'Completed', 'Surgical evaluation by Dr. Chase',
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Surgery - VIP Consultation'), '2024-07-19 12:45:00'),
+
+-- August
+('8080808080', 6, 1, '2024-08-13', 'Completed', 'VIP diagnostic review with Dr. House',
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Diagnostics - VIP Checkup'), '2024-08-12 10:00:00'),
+
+-- September
+('9090909090', 2, 1, '2024-09-25', 'Completed', 'General medicine exam with Dr. Cameron',
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'General Medicine - VIP Checkup'), '2024-09-24 15:30:00'),
+
+-- October
+('1111111111', 3, 2, '2024-10-03', 'Completed', 'Oncology full test with Dr. Wilson',
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Oncology - VIP Screening'), '2024-10-02 08:45:00'),
+
+-- November
+('1212121212', 4, 3, '2024-11-14', 'Completed', 'Immunology check by Dr. Cameron',
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Immunology - Normal Assessment'), '2024-11-13 14:00:00'),
+
+-- December
+('1313131313', 6, 1, '2024-12-05', 'Completed', 'Neurology with Dr. Foreman',
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Neurology - Normal Exam'), '2024-12-04 13:00:00');
+
+INSERT INTO Patient (phone, patient_account_id, full_name, date_of_birth, gender, email, created_at) VALUES
+('1414141414', NULL, 'Amber Volakis', '1986-08-12', 'Female', 'amber.volakis@example.com', '2024-01-05 08:45:00'),
+('1515151515', NULL, 'Sam Carr', '1982-11-01', 'Male', 'sam.carr@example.com', '2024-03-05 09:30:00'),
+('1616161616', NULL, 'Henry Dobson', '1974-10-30', 'Male', 'henry.dobson@example.com', '2024-07-11 11:15:00'),
+('1717171717', NULL, 'Cole', '1985-01-23', 'Male', 'cole@example.com', '2024-10-01 07:50:00'),
+('1818181818', NULL, 'Annie', '1992-02-18', 'Female', 'annie@example.com', '2024-12-02 10:20:00');
+
+INSERT INTO Appointment (patient_phone, doctor_id, slot_id, appointment_date, status, description, package_id, created_at) VALUES
+-- January
+('1414141414', 3, 2, '2024-01-11', 'Completed', 'Oncology screening', 
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Oncology - Normal Screening'), '2024-01-10 11:00:00'),
+
+-- February
+('2020202020', 1, 1, '2024-02-28', 'Completed', 'Follow-up diagnostics', 
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Diagnostics - VIP Checkup'), '2024-02-26 16:00:00'),
+
+-- March (busier)
+('3030303030', 4, 3, '2024-03-15', 'Completed', 'Surgery re-evaluation', 
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Surgery - Normal Consultation'), '2024-03-14 10:00:00'),
+('1515151515', 2, 1, '2024-03-22', 'Completed', 'General health check', 
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'General Medicine - Normal Checkup'), '2024-03-20 09:30:00'),
+
+-- April
+('4040404040', 6, 1, '2024-04-27', 'Completed', 'Neurology testing', 
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Neurology - VIP Exam'), '2024-04-25 08:00:00'),
+
+-- May
+('5050505050', 3, 2, '2024-05-28', 'Completed', 'VIP Oncology review', 
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Oncology - VIP Screening'), '2024-05-27 15:20:00'),
+
+-- June
+('6060606060', 1, 1, '2024-06-18', 'Completed', 'Diagnostics session', 
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Diagnostics - Normal Checkup'), '2024-06-17 12:00:00'),
+
+-- July (busier)
+('1616161616', 4, 3, '2024-07-12', 'Completed', 'Surgery consult', 
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Surgery - VIP Consultation'), '2024-07-10 14:15:00'),
+('7070707070', 6, 1, '2024-07-27', 'Completed', 'Neuro follow-up', 
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Neurology - Normal Exam'), '2024-07-25 10:45:00'),
+
+-- August
+('8080808080', 2, 1, '2024-08-28', 'Completed', 'General exam', 
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'General Medicine - Normal Checkup'), '2024-08-27 09:15:00'),
+
+-- September
+('9090909090', 1, 1, '2024-09-14', 'Completed', 'Diagnostics check', 
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Diagnostics - Normal Checkup'), '2024-09-13 15:00:00'),
+
+-- October (busier)
+('1717171717', 4, 3, '2024-10-06', 'Completed', 'Surgery review', 
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Surgery - Normal Consultation'), '2024-10-05 13:00:00'),
+('1111111111', 6, 1, '2024-10-28', 'Completed', 'Neuro specialist follow-up', 
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Neurology - VIP Exam'), '2024-10-27 14:30:00'),
+
+-- November
+('1212121212', 2, 1, '2024-11-25', 'Completed', 'General medicine test', 
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'General Medicine - VIP Checkup'), '2024-11-24 10:45:00'),
+
+-- December
+('1818181818', 3, 2, '2024-12-15', 'Completed', 'Oncology scan', 
+ (SELECT package_id FROM ExaminationPackage WHERE name = 'Oncology - Normal Screening'), '2024-12-14 11:45:00');
+
 /*
 -- Full DoctorTimeSlot coverage: 5 doctors × 5 slots × 7 days = 175 entries
 INSERT INTO DoctorTimeSlot (staff_id, slot_id, day_of_week, max_appointments)
