@@ -19,9 +19,14 @@
 
         <%
             java.time.LocalDate today = java.time.LocalDate.now();
+            java.util.Date todayDate = java.sql.Date.valueOf(today);
             request.setAttribute("currentDate", today.toString());
         %>
         <jsp:useBean id="now" class="java.util.Date" scope="page" />
+        <%
+            // Set the current date to midnight by resetting the time to 0
+            now.setTime(0);
+        %>
         <jsp:include page="/common/patientHeaderNav.jsp" />
 
 
@@ -160,7 +165,7 @@
                                                                         <i class="uil uil-eye"></i>
                                                                     </a>
 
-                                                                    <c:if test="${dto.appointmentDate.time > now.time}">
+                                                                    <c:if test="${dto.appointmentDate.time > now.time && dto.status == 'Pending'}">
                                                                         <a href="#" 
                                                                            class="btn btn-icon btn-pills btn-soft-success"
                                                                            data-bs-toggle="modal" 
