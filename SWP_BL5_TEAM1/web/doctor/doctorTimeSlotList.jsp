@@ -267,7 +267,7 @@
                 </c:if>
             </main>
         </div>
-
+        <script src="<c:url value='/assets/js/bootstrap.bundle.min.js'/>"></script>                               
         <script>
             document.querySelectorAll('.time-slot-checkbox').forEach(checkbox => {
                 checkbox.addEventListener('change', function () {
